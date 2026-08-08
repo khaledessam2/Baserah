@@ -11,9 +11,10 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { finalize } from 'rxjs';
+import { finalize, switchMap } from 'rxjs';
 import { I18nService } from '@/services/i18n.service';
 import { cn } from '@/shared/utils/utils';
+import { afterPaint } from '@/shared/utils/after-paint';
 import { exportAnalysisToPDF } from '@/shared/utils/pdf-export';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
@@ -338,7 +339,10 @@ export class ResultsView implements OnDestroy {
     this.isExporting.set(true);
     const t = (key: string, fallback: string) => this.i18n.t(key, fallback);
 
-    exportAnalysisToPDF(result as any, {
+    // jsPDF blocks the main thread, so wait for the spinner to reach the screen
+    // before starting — otherwise the flag flips on and off within one frame
+    // and the user just sees the tab freeze.
+    const export$ = exportAnalysisToPDF(result as any, {
       language: this.i18n.language(),
       translations: {
         title: t('pdf.title', 'Competency Analysis Report'),
@@ -371,8 +375,11 @@ export class ResultsView implements OnDestroy {
         total: t('results.total', 'Total'),
         poweredBy: t('pdf.powered_by', 'Powered by Baserah AI'),
       },
-    })
+    });
+
+    afterPaint()
       .pipe(
+        switchMap(() => export$),
         finalize(() => this.isExporting.set(false)),
         takeUntilDestroyed(this.destroyRef)
       )

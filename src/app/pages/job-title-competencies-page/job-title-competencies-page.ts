@@ -147,7 +147,12 @@ export class JobTitleCompetenciesPage implements OnInit, OnDestroy {
 
   loadData(): void {
     const jobTitle = this.jobTitle();
-    if (!jobTitle) return;
+    if (!jobTitle) {
+      // Nothing to query without a job title — drop the spinner so the empty
+      // state shows instead of loading forever.
+      this.loading.set(false);
+      return;
+    }
     this.loading.set(true);
 
     const userId = this.auth.user()?.id;

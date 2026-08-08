@@ -130,7 +130,13 @@ export class EmployeesPage implements OnDestroy {
 
   loadData(): void {
     const organizationName = this.organizationName();
-    if (!organizationName) return;
+    if (!organizationName) {
+      // No organization to query — drop the spinner so the empty state shows
+      // instead of loading forever.
+      this.employees.set([]);
+      this.isLoading.set(false);
+      return;
+    }
     this.isLoading.set(true);
     this.employeeService
       .getEmployees(organizationName, this.auth.user()?.id)

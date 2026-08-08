@@ -88,7 +88,12 @@ export class JobTitlesPage implements OnDestroy {
 
   loadData(): void {
     const userId = this.auth.user()?.id;
-    if (!userId) return;
+    if (!userId) {
+      // Nothing to query without a user — drop the spinner so the empty state
+      // shows instead of loading forever.
+      this.loading.set(false);
+      return;
+    }
     this.loading.set(true);
     this.dashboardService
       .getJobTitlesDashboard(userId, this.organizationName())
