@@ -1,0 +1,107 @@
+<div class="container mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
+  <!-- Header -->
+  <div [class]="headerClass()">
+    <div [class]="headerRowClass()">
+      <div
+        class="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center shrink-0">
+        <app-icon
+          name="FileText"
+          class="w-8 h-8 sm:w-12 sm:h-12 text-white" />
+      </div>
+      <div class="space-y-1 sm:space-y-2">
+        <h1 class="text-2xl sm:text-3xl font-bold">تقاريري</h1>
+        <p class="text-primary-foreground/80 text-base sm:text-lg">
+          عرض تقارير الأداء والتقييمات الخاصة بك
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reports Section -->
+  <div data-tour="reports-list" class="space-y-6">
+    @if (isLoading()) {
+      <div
+        class="flex flex-col items-center justify-center py-20 space-y-4">
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <p class="text-muted-foreground font-medium">
+          جاري تحميل التقارير...
+        </p>
+      </div>
+    } @else if (reports().length > 0) {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (
+          report of reports();
+          track report.report_id;
+          let index = $index
+        ) {
+          <div
+            appCard
+            class="group hover:shadow-2xl transition-all duration-300 border-none bg-card overflow-hidden animate-in fade-in-0 zoom-in-95 h-full flex flex-col"
+            [style.animation-delay.ms]="index * 50">
+            <div class="p-4 relative">
+              <span [class]="statusBadgeClass(report)">
+                {{ report.viewed_by_employee ? 'تمت المشاهدة' : 'جديد' }}
+              </span>
+              <div
+                class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground mb-4 shadow-lg shadow-primary/10">
+                <app-icon name="FileCheck" class="w-8 h-8" />
+              </div>
+              <h3 appCardTitle [class]="cardTitleClass()">
+                تقرير تقييم الأداء
+              </h3>
+            </div>
+
+            <div
+              appCardContent
+              class="p-6 flex-grow flex flex-col justify-between space-y-6">
+              <div [class]="infoListClass()">
+                @for (info of reportInfo(report); track info.label) {
+                  <div [class]="infoRowClass()">
+                    <div class="mt-1 p-1 rounded-md bg-primary/10">
+                      <app-icon
+                        [name]="info.icon"
+                        class="w-4 h-4 text-primary" />
+                    </div>
+                    <div class="space-y-0.5">
+                      <p
+                        class="text-muted-foreground font-medium text-xs uppercase tracking-wider">
+                        {{ info.label }}
+                      </p>
+                      <p class="text-foreground font-bold">
+                        {{ info.value }}
+                      </p>
+                    </div>
+                  </div>
+                }
+              </div>
+
+              <button
+                appButton
+                (click)="openReport(report)"
+                class="w-full bg-card hover:bg-muted text-primary border-2 border-primary/20 py-6 text-lg font-bold transition-all duration-300 group">
+                <app-icon name="Eye" [class]="eyeIconClass()" />
+                <span>عرض التقرير</span>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div
+        class="bg-card rounded-2xl border-2 border-dashed border-border p-20 text-center">
+        <div
+          class="w-24 h-24 bg-muted rounded-full flex items-center justify-center mx-auto mb-6">
+          <app-icon name="Inbox" class="w-12 h-12 text-muted-foreground" />
+        </div>
+        <h3 class="text-2xl font-bold text-foreground mb-2">
+          لا توجد تقارير
+        </h3>
+        <p class="text-muted-foreground max-w-md mx-auto">
+          لم يتم إرسال أي تقارير إليك بعد. سيتم إشعارك عندما يقوم قسم
+          الموارد البشرية بإرسال تقرير لك.
+        </p>
+      </div>
+    }
+  </div>
+</div>

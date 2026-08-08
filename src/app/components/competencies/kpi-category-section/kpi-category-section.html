@@ -1,0 +1,64 @@
+@if (kpis().length > 0) {
+  <div class="animate-in fade-in-0 duration-300">
+    <div [class]="headerClass()" [style.border-color]="color()">
+      <span [style.color]="color()">
+        <app-icon [name]="icon()" class="w-4 h-4" />
+      </span>
+      <h4 class="font-bold text-md text-foreground">{{ title() }}</h4>
+    </div>
+    <div class="space-y-2">
+      @for (kpi of kpis(); track $index) {
+        <div
+          class="bg-card p-4 rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow group">
+          <div [class]="rowClass()">
+            <div class="flex-1">
+              <p [class]="kpiTextClass()">{{ kpi.kpi || kpi.kpi_text }}</p>
+              <div [class]="tagRowClass()">
+                @if (kpi.performance_dimension) {
+                  <span
+                    class="px-2 py-1 bg-tertiary/10 text-tertiary rounded border border-tertiary/20">
+                    {{ kpi.performance_dimension }}
+                  </span>
+                }
+                @if (kpi.measurement_type) {
+                  <span
+                    class="px-2 py-1 bg-secondary/10 text-secondary rounded border border-secondary/20">
+                    {{ kpi.measurement_type }}
+                  </span>
+                }
+                @if (kpi.target_period) {
+                  <span
+                    class="px-2 py-1 bg-emerald-500/10 text-emerald-500 rounded border border-emerald-500/20">
+                    {{ kpi.target_period }}
+                  </span>
+                }
+                @if (kpi.competency) {
+                  <span
+                    class="px-2 py-1 bg-muted text-muted-foreground rounded border border-border">
+                    {{ kpi.competency }}
+                  </span>
+                }
+              </div>
+            </div>
+            <div [class]="actionsClass()">
+              <button
+                type="button"
+                (click)="edit.emit(kpi)"
+                class="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded transition-colors"
+                [title]="'common.edit' | t">
+                <app-icon name="Edit" class="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                (click)="delete.emit(kpi)"
+                class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded"
+                [title]="'common.delete' | t">
+                <app-icon name="Trash2" class="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

@@ -1,0 +1,234 @@
+@if (loading()) {
+  <div class="flex flex-col items-center justify-center py-24 gap-3">
+    <app-icon name="Loader2" class="w-10 h-10 animate-spin text-indigo-500" />
+    <p class="text-sm text-slate-400 animate-pulse">
+      {{ 'skills_gap.loading_heatmap' | t }}
+    </p>
+  </div>
+} @else if (!data() || data().total === 0) {
+  <div class="text-center py-24">
+    <div
+      class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+      <app-icon name="Grid3X3" class="w-8 h-8 text-slate-300" />
+    </div>
+    <p class="text-slate-400 font-medium">
+      {{ 'skills_gap.no_heatmap_data' | t }}
+    </p>
+  </div>
+} @else {
+  <div class="space-y-4">
+    <!-- Filters Bar -->
+    <div appCard class="glass-card border-none shadow-lg">
+      <div appCardContent class="p-4">
+        <div class="flex items-center gap-4 flex-wrap">
+          <div class="flex items-center gap-2">
+            <app-icon
+              name="Filter"
+              class="w-4 h-4 text-indigo-500 shrink-0" />
+            <span class="text-sm font-bold text-slate-600 dark:text-slate-300">
+              {{ 'skills_gap.heatmap.filter_label' | t }}
+            </span>
+          </div>
+          <div class="flex-1 max-w-[200px]">
+            <app-select
+              [value]="filterDept()"
+              (valueChange)="filterDept.set($event)">
+              <app-select-trigger
+                class="bg-white/50 dark:bg-slate-800/50 rounded-xl border-slate-200/50 dark:border-slate-700/50 h-9 text-xs">
+                <app-select-value
+                  [placeholder]="'skills_gap.heatmap.all_departments' | t" />
+              </app-select-trigger>
+              <app-select-content
+                class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
+                <app-select-item value="__all__">
+                  {{ 'skills_gap.heatmap.all_departments' | t }}
+                </app-select-item>
+                @for (d of departments(); track d) {
+                  <app-select-item [value]="d">{{ d }}</app-select-item>
+                }
+              </app-select-content>
+            </app-select>
+          </div>
+          <div class="flex-1 max-w-[200px]">
+            <app-select
+              [value]="filterRole()"
+              (valueChange)="filterRole.set($event)">
+              <app-select-trigger
+                class="bg-white/50 dark:bg-slate-800/50 rounded-xl border-slate-200/50 dark:border-slate-700/50 h-9 text-xs">
+                <app-select-value
+                  [placeholder]="'skills_gap.heatmap.all_roles' | t" />
+              </app-select-trigger>
+              <app-select-content
+                class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700">
+                <app-select-item value="__all__">
+                  {{ 'skills_gap.heatmap.all_roles' | t }}
+                </app-select-item>
+                @for (r of roles(); track r) {
+                  <app-select-item [value]="r">{{ r }}</app-select-item>
+                }
+              </app-select-content>
+            </app-select>
+          </div>
+          <span
+            class="text-[10px] text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-1.5 rounded-lg font-medium ms-auto">
+            {{ filteredEmployees().length }}
+            {{ 'skills_gap.employee_count' | t }} × {{ comps().length }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Color Legend — Labeled levels like Skills Matrix reference -->
+    <div class="flex items-center justify-center gap-2 flex-wrap">
+      @for (level of levels; track level.label) {
+        <div
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200/50 dark:border-slate-700/50 bg-white/50 dark:bg-slate-800/30">
+          <div
+            class="w-5 h-5 rounded flex items-center justify-center text-[9px] font-black"
+            [style.background-color]="level.bg"
+            [style.color]="level.text">
+            {{ level.min }}
+          </div>
+          <span
+            class="text-[10px] font-bold text-slate-600 dark:text-slate-300">
+            {{ level.label }}
+          </span>
+        </div>
+      }
+    </div>
+
+    <!-- Heatmap Grid -->
+    <div appCard class="glass-card border-none shadow-xl overflow-hidden">
+      <div appCardHeader class="pb-3">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <h3 appCardTitle class="text-lg flex items-center gap-2">
+            <app-icon name="Grid3X3" class="w-5 h-5 text-indigo-500" />
+            {{ 'skills_gap.heatmap.title' | t }}
+          </h3>
+        </div>
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          {{ 'skills_gap.heatmap.subtitle' | t }}
+        </p>
+      </div>
+      <div appCardContent class="p-4">
+        @if (filteredEmployees().length === 0) {
+          <div class="text-center py-12 text-slate-400">
+            {{ 'skills_gap.heatmap.no_match' | t }}
+          </div>
+        } @else {
+          <div
+            class="overflow-x-auto rounded-xl border border-slate-200/50 dark:border-white/5">
+            <table class="w-full border-collapse min-w-[800px]">
+              <thead>
+                <tr class="bg-indigo-600 text-white">
+                  <th [class]="stickyHeaderClass()">
+                    {{ 'skills_gap.table.employee' | t }}
+                  </th>
+                  <th
+                    class="px-2 py-3 text-xs font-bold text-center min-w-[65px] border-b border-r border-indigo-500/50">
+                    {{ 'skills_gap.table.overall' | t }}
+                  </th>
+                  @for (c of comps(); track c) {
+                    <th
+                      class="px-1 py-3 text-center border-b border-indigo-500/50">
+                      <span
+                        class="text-[9px] font-bold block max-w-[80px] truncate mx-auto leading-tight"
+                        [title]="c">
+                        {{ truncate(c, 16) }}
+                      </span>
+                    </th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                @for (emp of filteredEmployees(); track $index) {
+                  <tr
+                    class="border-b border-slate-100/40 dark:border-white/3 hover:bg-slate-50/40 dark:hover:bg-slate-800/20 transition-colors">
+                    <td [class]="stickyCellClass()">
+                      <div class="flex items-center gap-2">
+                        <div
+                          class="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0">
+                          {{ (emp.employee_name || '?')[0] }}
+                        </div>
+                        <div>
+                          <div
+                            class="text-xs font-bold text-slate-900 dark:text-white truncate max-w-[130px]">
+                            {{ emp.employee_name }}
+                          </div>
+                          <div
+                            class="text-[9px] text-slate-400 truncate max-w-[130px]">
+                            {{ emp.job_title }}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td
+                      class="px-2 py-2 text-center border-r border-slate-100/40 dark:border-white/5">
+                      <span [class]="overallScoreClass(emp.overall_score)">
+                        {{ emp.overall_score }}%
+                      </span>
+                    </td>
+                    @for (cell of emp.cells || []; track $index) {
+                      <td class="px-0.5 py-1 text-center">
+                        @if (cell.score !== null) {
+                          <div
+                            class="mx-auto w-12 h-8 rounded-md flex items-center justify-center text-[11px] font-black transition-all duration-200 cursor-default hover:scale-110 hover:shadow-lg hover:z-10 relative"
+                            [style.background-color]="heatBg(cell.score)"
+                            [style.color]="heatText(cell.score)"
+                            [title]="cell.competency + ': ' + cell.score + '%'">
+                            {{ cell.score }}
+                          </div>
+                        } @else {
+                          <div
+                            class="mx-auto w-12 h-8 rounded-md bg-slate-100/30 dark:bg-slate-800/20 flex items-center justify-center text-[10px] text-slate-300 dark:text-slate-600">
+                            —
+                          </div>
+                        }
+                      </td>
+                    }
+                  </tr>
+                }
+                <!-- ── Summary: Average Row ── -->
+                <tr
+                  class="bg-slate-100/80 dark:bg-slate-800/60 border-t-2 border-indigo-300 dark:border-indigo-700">
+                  <td [class]="stickySummaryCellClass()">
+                    <span
+                      class="text-xs font-black text-indigo-600 dark:text-indigo-400">
+                      {{
+                        'skills_gap.heatmap.skills_average' | t: 'Skills Average'
+                      }}
+                    </span>
+                  </td>
+                  <td
+                    class="px-2 py-2.5 text-center border-r border-slate-200/50 dark:border-white/5">
+                    <span
+                      class="text-xs font-black text-indigo-600 dark:text-indigo-400">
+                      {{ overallAverage() }}%
+                    </span>
+                  </td>
+                  @for (avg of summaryAverages(); track $index) {
+                    <td class="px-0.5 py-1 text-center">
+                      @if (avg !== null) {
+                        <div
+                          class="mx-auto w-12 h-8 rounded-md flex items-center justify-center text-[11px] font-black"
+                          [style.background-color]="heatBg(avg)"
+                          [style.color]="heatText(avg)">
+                          {{ avg }}
+                        </div>
+                      } @else {
+                        <div
+                          class="mx-auto w-12 h-8 rounded-md bg-slate-200/50 flex items-center justify-center text-[10px] text-slate-400">
+                          —
+                        </div>
+                      }
+                    </td>
+                  }
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

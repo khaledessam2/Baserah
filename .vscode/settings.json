@@ -1,0 +1,8 @@
+{
+  // The Angular Language Service extension ships its own TypeScript, which can
+  // lag the workspace one (6.0.3) and report phantom template errors — e.g. the
+  // 2-argument `t` / `| t: 'default'` calls that `ng build` accepts. Pin both to
+  // node_modules so the editor and the compiler agree.
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}

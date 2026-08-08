@@ -1,0 +1,92 @@
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in-0 duration-200">
+  <div
+    class="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+    <!-- Header with Gradient -->
+    <div
+      class="bg-linear-to-r from-indigo-500 to-purple-600 p-6 flex items-center justify-between text-white">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-white/20 rounded-full">
+          <app-icon name="Users" class="w-6 h-6" />
+        </div>
+        <h2 class="text-xl font-bold">
+          {{ 'employees_page.modal.title' | t }}
+        </h2>
+      </div>
+      <button
+        type="button"
+        (click)="closed.emit()"
+        class="p-2 hover:bg-white/20 rounded-full transition-colors">
+        <app-icon name="X" class="w-6 h-6" />
+      </button>
+    </div>
+
+    <!-- Content -->
+    <div [class]="contentClass()">
+      @for (row of detailRows(); track row.label) {
+        <div class="flex flex-col gap-1">
+          <span
+            class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+            {{ row.label }}
+          </span>
+          <span
+            class="text-base font-semibold text-slate-700 dark:text-slate-200">
+            {{ row.value }}
+          </span>
+        </div>
+      }
+    </div>
+
+    <!-- Footer Actions -->
+    <div
+      class="p-6 bg-slate-50 dark:bg-slate-800/50 flex flex-wrap items-center justify-center gap-4 border-t dark:border-slate-700">
+      <button
+        appButton
+        variant="outline"
+        (click)="closed.emit()"
+        class="px-8 rounded-xl border-slate-200 hover:bg-slate-100 h-12 gap-2">
+        <app-icon name="X" class="w-4 h-4" />
+        {{ 'employees_page.modal.close' | t }}
+      </button>
+
+      <button
+        appButton
+        class="h-12 px-6 bg-[#d946ef] hover:bg-[#c026d3] text-white rounded-xl gap-2 shadow-lg shadow-pink-100 border-none disabled:opacity-50"
+        (click)="handleTeamAssessment()"
+        [disabled]="isSending() !== null">
+        <app-icon name="Users" class="w-4 h-4" />
+        {{
+          isSending() === 'team'
+            ? ('employees_page.modal.sending' | t)
+            : ('employees_page.modal.send_team_assessment' | t)
+        }}
+      </button>
+
+      <button
+        appButton
+        class="h-12 px-6 bg-[#f97316] hover:bg-[#ea580c] text-white rounded-xl gap-2 shadow-lg shadow-orange-100 border-none disabled:opacity-50"
+        (click)="handleManagerAssessment()"
+        [disabled]="isSending() !== null">
+        <app-icon name="UserCheck" class="w-4 h-4" />
+        {{
+          isSending() === 'manager'
+            ? ('employees_page.modal.sending' | t)
+            : ('employees_page.modal.send_manager_assessment' | t)
+        }}
+      </button>
+
+      <button
+        appButton
+        class="h-12 px-6 bg-[#8b5cf6] hover:bg-[#7c3aed] text-white rounded-xl gap-2 shadow-lg shadow-indigo-100 border-none disabled:opacity-50"
+        (click)="handleTechnicalAssessment()"
+        [disabled]="isSending() !== null">
+        <app-icon name="Briefcase" class="w-4 h-4" />
+        {{
+          isSending() === 'technical'
+            ? ('employees_page.modal.sending' | t)
+            : ('employees_page.modal.send_technical_assessment' | t)
+        }}
+      </button>
+    </div>
+  </div>
+</div>

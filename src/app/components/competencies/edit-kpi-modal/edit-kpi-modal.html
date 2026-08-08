@@ -1,0 +1,82 @@
+@if (isOpen() && kpi(); as k) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div
+      class="bg-card rounded-2xl p-6 max-w-lg w-[90%] max-h-[85vh] overflow-y-auto shadow-2xl border border-border">
+      <h2 class="text-xl font-bold mb-6 text-primary flex items-center gap-2">
+        <app-icon name="Edit" class="w-6 h-6" />
+        {{ 'job_title_competencies.kpis.edit_modal_title' | t }}
+      </h2>
+
+      <div
+        class="bg-background/80 p-4 rounded-xl mb-6 text-sm text-foreground border border-border/50">
+        <p class="font-medium leading-relaxed">
+          {{ k.kpi || k.kpi_text }}
+        </p>
+      </div>
+
+      <div class="space-y-5">
+        <div>
+          <label class="block text-sm font-semibold text-foreground mb-2">
+            {{ 'job_title_competencies.kpis.performance_dimension' | t }}
+          </label>
+          <select
+            name="dimension"
+            [(ngModel)]="dimension"
+            class="w-full p-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all">
+            <option value="">
+              {{ 'job_title_competencies.kpis.select_dimension' | t }}
+            </option>
+            @for (d of dimensions(); track d.value) {
+              <option [value]="d.label">{{ d.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-foreground mb-2">
+            {{ 'job_title_competencies.kpis.measurement_type' | t }}
+          </label>
+          <select
+            name="measurement"
+            [(ngModel)]="measurement"
+            class="w-full p-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all">
+            <option value="">
+              {{ 'job_title_competencies.kpis.select_measurement' | t }}
+            </option>
+            @for (m of measurements(); track m.value) {
+              <option [value]="m.label">{{ m.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-foreground mb-2">
+            {{ 'job_title_competencies.kpis.target_period' | t }}
+          </label>
+          <select
+            name="period"
+            [(ngModel)]="period"
+            class="w-full p-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all">
+            <option value="">
+              {{ 'job_title_competencies.kpis.select_period' | t }}
+            </option>
+            @for (p of periods(); track p.value) {
+              <option [value]="p.label">{{ p.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="flex gap-3 justify-end mt-6">
+        <button appButton variant="outline" (click)="closed.emit()">
+          {{ 'common.cancel' | t }}
+        </button>
+        <button appButton (click)="handleSubmit()">
+          <app-icon name="Save" [class]="saveIconClass()" />
+          {{ 'common.save' | t }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

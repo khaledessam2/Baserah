@@ -1,0 +1,39 @@
+<section
+  class="py-24 px-4 md:px-8 bg-white dark:bg-slate-950/50 border-t border-slate-200 dark:border-slate-800">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+      <h2
+        appReveal
+        class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
+        {{ 'landing.features.title' | t }}
+      </h2>
+      <p
+        appReveal
+        [revealDelay]="0.1"
+        class="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+        {{ 'landing.features.subtitle' | t }}
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      @for (feature of features; track feature.key; let i = $index) {
+        <div
+          appReveal
+          [revealDelay]="i * 0.1"
+          class="p-8 rounded-[32px] bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900/50 transition-all hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1.5 group">
+          <div
+            class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center mb-6 shadow-sm border border-slate-200 dark:border-slate-700 group-hover:scale-110 transition-transform">
+            <app-icon [name]="feature.icon" [class]="feature.iconClass" />
+          </div>
+          <h3
+            class="text-xl font-bold text-slate-900 dark:text-white mb-3">
+            {{ feature.key + '.title' | t }}
+          </h3>
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+            {{ feature.key + '.description' | t }}
+          </p>
+        </div>
+      }
+    </div>
+  </div>
+</section>

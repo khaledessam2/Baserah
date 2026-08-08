@@ -1,0 +1,35 @@
+@if (visible()) {
+  <div class="w-full py-8 mb-8">
+    <div class="w-full px-4 md:px-8">
+      <div
+        class="relative flex items-center justify-between max-w-4xl mx-auto">
+        <div
+          class="absolute top-1/2 left-0 w-full h-1 bg-muted -translate-y-1/2 rounded-full z-0"></div>
+
+        <div
+          class="absolute top-1/2 left-0 h-1 bg-linear-to-r from-primary via-secondary to-primary bg-size-[200%_100%] animate-shimmer -translate-y-1/2 rounded-full z-0 transition-all duration-1000 ease-out"
+          [style.width.%]="progressWidth()"></div>
+
+        @for (step of steps; track $index; let index = $index) {
+          <div class="relative flex flex-col items-center">
+            <div
+              [class]="markerClass(index)"
+              (click)="onStepClick(index)">
+              @if (isCompleted(index)) {
+                <app-icon
+                  name="Check"
+                  class="w-5 h-5 md:w-6 md:h-6 animate-in zoom-in-95 duration-300" />
+              } @else {
+                <app-icon [name]="step.icon" [class]="stepIconClass(index)" />
+              }
+            </div>
+
+            <span [class]="labelClass(index)">
+              {{ i18n.t(step.labelKey, step.fallback) }}
+            </span>
+          </div>
+        }
+      </div>
+    </div> 
+  </div>
+}

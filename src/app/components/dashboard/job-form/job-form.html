@@ -1,0 +1,223 @@
+<div appCard class="h-full">
+  <div appCardHeader class="pb-4">
+    <h3 appCardTitle class="flex items-center gap-2 text-lg">
+      <span class="bg-primary/10 p-2 rounded-lg text-primary">
+        <app-icon name="Edit3" class="w-5 h-5" />
+      </span>
+      {{ 'analyzer.input_section_title' | t }}
+    </h3>
+  </div>
+  <div appCardContent>
+    <form (ngSubmit)="handleSubmit()" class="space-y-5">
+      <!-- Input Method Tabs -->
+      <app-tabs
+        [value]="inputMethod()"
+        (valueChange)="inputMethod.set($any($event))"
+        class="w-full">
+        <div appTabsList class="grid w-full grid-cols-2">
+          <button appTabsTrigger value="database" class="gap-2">
+            <app-icon name="Database" class="w-4 h-4" />
+            {{ 'analyzer.method_database' | t }}
+          </button>
+          <button appTabsTrigger value="manual" class="gap-2">
+            <app-icon name="Edit3" class="w-4 h-4" />
+            {{ 'analyzer.method_manual' | t }}
+          </button>
+        </div>
+
+        <app-tabs-content value="database" class="space-y-4 pt-4 block">
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label appLabel class="text-base font-bold text-slate-700">
+                {{ 'analyzer.job_title_label' | t }}
+              </label>
+              <button
+                appButton
+                type="button"
+                variant="ghost"
+                size="sm"
+                class="h-7 text-xs gap-1"
+                (click)="fetchJobTitles()"
+                [disabled]="isLoadingTitles()">
+                @if (isLoadingTitles()) {
+                  <app-icon name="Loader2" class="w-3 h-3 animate-spin" />
+                } @else {
+                  <app-icon name="RefreshCw" class="w-3 h-3" />
+                }
+                {{ 'analyzer.refresh_list' | t }}
+              </button>
+            </div>
+            <app-select
+              [value]="jobTitle()"
+              (valueChange)="jobTitle.set($event)">
+              <app-select-trigger>
+                <app-select-value [placeholder]="titlePlaceholder()" />
+              </app-select-trigger>
+              <app-select-content>
+                @if (availableTitles().length === 0) {
+                  <app-select-item value="empty" [disabled]="true">
+                    {{ 'job_titles.empty_state' | t }}
+                  </app-select-item>
+                } @else {
+                  @for (title of availableTitles(); track title) {
+                    <app-select-item [value]="title">
+                      <span
+                        class="flex items-center justify-between w-full gap-2">
+                        <span>{{ title }}</span>
+                        @if (hasJd(title)) {
+                          <app-icon
+                            name="CheckCircle2"
+                            class="w-3.5 h-3.5 text-green-500" />
+                        }
+                      </span>
+                    </app-select-item>
+                  }
+                }
+              </app-select-content>
+            </app-select>
+            <p class="text-xs text-muted-foreground">
+              {{ availableTitles().length }} {{ 'job_titles.tab_titles' | t }}
+            </p>
+          </div>
+        </app-tabs-content>
+
+        <app-tabs-content value="manual" class="space-y-4 pt-4 block">
+          <div
+            class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-md flex gap-2 text-sm text-blue-700 dark:text-blue-300">
+            <app-icon name="Sparkles" class="w-4 h-4 mt-0.5 shrink-0" />
+            <p>{{ 'analyzer.manual_input_hint' | t }}</p>
+          </div>
+          <div class="space-y-2">
+            <label appLabel class="text-base font-bold text-slate-700">
+              {{ 'analyzer.job_title_label' | t }}
+            </label>
+            <input
+              type="text"
+              name="jobTitleManual"
+              class="w-full px-3 py-2 rounded-md border bg-background"
+              [placeholder]="
+                'analyzer.job_title_placeholder' | t: 'Software Engineer...'
+              "
+              [(ngModel)]="jobTitle" />
+          </div>
+        </app-tabs-content>
+      </app-tabs>
+
+      <!-- Job Description -->
+      <div class="space-y-2">
+        <div class="flex justify-between items-center">
+          <label appLabel class="text-base font-bold text-slate-700">
+            {{ 'analyzer.job_desc_label' | t }}
+          </label>
+          <button
+            appButton
+            type="button"
+            variant="ghost"
+            size="sm"
+            class="h-7 text-xs gap-1 text-purple-600 hover:text-purple-700"
+            (click)="handleGenerateDescription()"
+            [disabled]="isGeneratingJD() || !jobTitle()">
+            @if (isGeneratingJD()) {
+              <app-icon name="Loader2" class="w-3 h-3 animate-spin" />
+            } @else {
+              <app-icon name="Sparkles" class="w-3 h-3" />
+            }
+            {{
+              isGeneratingJD()
+                ? ('results.analyzing' | t)
+                : ('analyzer.source_ai' | t)
+            }}
+          </button>
+        </div>
+        <textarea
+          appTextarea
+          name="jobDescription"
+          [placeholder]="'analyzer.job_desc_placeholder' | t"
+          class="min-h-[400px] text-lg leading-relaxed p-6 rounded-2xl border-2 border-indigo-100 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all duration-300 resize-none font-sans"
+          [(ngModel)]="jobDescription"
+          required></textarea>
+      </div>
+
+      <!-- Settings Grid -->
+      <div class="grid grid-cols-2 gap-4">
+        <div class="space-y-2">
+          <label appLabel>{{ 'analyzer.job_level_label' | t }}</label>
+          <app-select
+            [value]="jobLevel()"
+            (valueChange)="jobLevel.set($event)">
+            <app-select-trigger>
+              <app-select-value />
+            </app-select-trigger>
+            <app-select-content>
+              <app-select-item value="1">
+                {{ 'analyzer.level_entry' | t }} (1)
+              </app-select-item>
+              <app-select-item value="2">
+                {{ 'analyzer.level_junior' | t }} (2)
+              </app-select-item>
+              <app-select-item value="3">
+                {{ 'analyzer.level_mid' | t }} (3)
+              </app-select-item>
+              <app-select-item value="4">
+                {{ 'analyzer.level_senior' | t }} (4)
+              </app-select-item>
+              <app-select-item value="5">
+                {{ 'analyzer.level_lead' | t }} (5)
+              </app-select-item>
+            </app-select-content>
+          </app-select>
+        </div>
+        <div class="space-y-2">
+          <label appLabel>{{ 'analyzer.competencies_source' | t }}</label>
+          <app-select
+            [value]="competencySource()"
+            (valueChange)="competencySource.set($event)">
+            <app-select-trigger>
+              <app-select-value />
+            </app-select-trigger>
+            <app-select-content>
+              <app-select-item value="ai">
+                {{ 'analyzer.source_ai' | t }}
+              </app-select-item>
+              <app-select-item value="standard">
+                {{ 'analyzer.source_default' | t }}
+              </app-select-item>
+              <app-select-item value="manual">
+                {{ 'analyzer.source_manual' | t }}
+              </app-select-item>
+            </app-select-content>
+          </app-select>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-2 pt-2">
+        <button
+          appButton
+          type="button"
+          variant="outline"
+          class="flex-1"
+          (click)="clearForm()">
+          <app-icon name="Trash2" class="w-4 h-4 mr-2" />
+          {{ 'analyzer.actions.clear' | t }}
+        </button>
+        <button
+          appButton
+          type="submit"
+          class="flex-[2] bg-gradient-to-r from-primary to-purple-600"
+          [disabled]="isAnalyzing() || !jobDescription().trim()">
+          @if (isAnalyzing()) {
+            <app-icon name="RotateCcw" class="w-4 h-4 mr-2 animate-spin" />
+          } @else {
+            <app-icon name="Play" class="w-4 h-4 mr-2" />
+          }
+          {{
+            isAnalyzing()
+              ? ('results.analyzing' | t)
+              : ('analyzer.actions.analyze' | t)
+          }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

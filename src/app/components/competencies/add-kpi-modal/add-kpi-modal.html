@@ -1,0 +1,110 @@
+@if (isOpen()) {
+  <div
+    class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div
+      class="bg-card rounded-2xl p-6 max-w-lg w-[90%] max-h-[85vh] overflow-y-auto shadow-2xl border border-border">
+      <h2 class="text-xl font-bold mb-6 text-primary flex items-center gap-2">
+        <app-icon name="Target" class="w-6 h-6" />
+        {{ 'job_title_competencies.kpis.add_modal_title' | t }}
+      </h2>
+
+      <div class="space-y-5">
+        <div>
+          <label class="block text-sm font-semibold text-foreground mb-2">
+            {{ 'job_title_competencies.kpis.text_label' | t }}
+          </label>
+          <textarea
+            name="kpiText"
+            [(ngModel)]="kpiText"
+            class="w-full p-4 bg-background border border-border rounded-xl resize-none h-28 focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+            [placeholder]="
+              'job_title_competencies.kpis.text_placeholder' | t
+            "></textarea>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-foreground mb-2">
+            {{ 'job_title_competencies.kpis.associated_competency' | t }}
+          </label>
+          <select
+            name="selectedCompetency"
+            [(ngModel)]="selectedCompetency"
+            class="w-full p-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all">
+            <option value="">
+              {{ 'job_title_competencies.kpis.select_competency' | t }}
+            </option>
+            @for (c of competencies(); track c.competency_name) {
+              <option [value]="c.competency_name">
+                {{ c.competency_name }}
+              </option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-foreground mb-2">
+            {{ 'job_title_competencies.kpis.performance_dimension' | t }}
+          </label>
+          <select
+            name="dimension"
+            [(ngModel)]="dimension"
+            class="w-full p-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all">
+            <option value="">
+              {{ 'job_title_competencies.kpis.select_dimension' | t }}
+            </option>
+            @for (d of dimensions(); track d.value) {
+              <option [value]="d.label">{{ d.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-foreground mb-2">
+            {{ 'job_title_competencies.kpis.measurement_type' | t }}
+          </label>
+          <select
+            name="measurement"
+            [(ngModel)]="measurement"
+            class="w-full p-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all">
+            <option value="">
+              {{ 'job_title_competencies.kpis.select_measurement' | t }}
+            </option>
+            @for (m of measurements(); track m.value) {
+              <option [value]="m.label">{{ m.label }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-foreground mb-2">
+            {{ 'job_title_competencies.kpis.target_period' | t }}
+          </label>
+          <select
+            name="period"
+            [(ngModel)]="period"
+            class="w-full p-3 bg-background border border-border rounded-xl focus:ring-2 focus:ring-primary outline-none transition-all">
+            <option value="">
+              {{ 'job_title_competencies.kpis.select_period' | t }}
+            </option>
+            @for (p of periods(); track p.value) {
+              <option [value]="p.label">{{ p.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="flex gap-3 justify-end mt-6">
+        <button appButton variant="outline" (click)="closed.emit()">
+          {{ 'common.cancel' | t }}
+        </button>
+        <button
+          appButton
+          (click)="handleSubmit()"
+          [disabled]="!kpiText().trim()">
+          <app-icon name="Save" [class]="saveIconClass()" />
+          {{ 'job_title_competencies.kpis.add' | t }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

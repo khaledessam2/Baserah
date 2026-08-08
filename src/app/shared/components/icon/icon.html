@@ -1,0 +1,54 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  [attr.width]="size() ?? '100%'"
+  [attr.height]="size() ?? '100%'"
+  viewBox="0 0 24 24"
+  stroke="currentColor"
+  [attr.stroke-width]="strokeWidth()"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false">
+  @for (node of nodes(); track $index) {
+    @switch (node[0]) {
+      @case ('path') {
+        <svg:path [attr.d]="attr(node[1], 'd')" [attr.fill]="attr(node[1], 'fill')" />
+      }
+      @case ('circle') {
+        <svg:circle
+          [attr.cx]="attr(node[1], 'cx')"
+          [attr.cy]="attr(node[1], 'cy')"
+          [attr.r]="attr(node[1], 'r')"
+          [attr.fill]="attr(node[1], 'fill')" />
+      }
+      @case ('ellipse') {
+        <svg:ellipse
+          [attr.cx]="attr(node[1], 'cx')"
+          [attr.cy]="attr(node[1], 'cy')"
+          [attr.rx]="attr(node[1], 'rx')"
+          [attr.ry]="attr(node[1], 'ry')"
+          [attr.fill]="attr(node[1], 'fill')" />
+      }
+      @case ('rect') {
+        <svg:rect
+          [attr.x]="attr(node[1], 'x')"
+          [attr.y]="attr(node[1], 'y')"
+          [attr.width]="attr(node[1], 'width')"
+          [attr.height]="attr(node[1], 'height')"
+          [attr.rx]="attr(node[1], 'rx')"
+          [attr.ry]="attr(node[1], 'ry')"
+          [attr.fill]="attr(node[1], 'fill')" />
+      }
+      @case ('line') {
+        <svg:line
+          [attr.x1]="attr(node[1], 'x1')"
+          [attr.y1]="attr(node[1], 'y1')"
+          [attr.x2]="attr(node[1], 'x2')"
+          [attr.y2]="attr(node[1], 'y2')" />
+      }
+      @case ('polyline') {
+        <svg:polyline [attr.points]="attr(node[1], 'points')" />
+      }
+    }
+  }
+</svg>

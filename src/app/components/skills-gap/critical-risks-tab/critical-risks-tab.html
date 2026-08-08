@@ -1,0 +1,277 @@
+@if (loading()) {
+  <div class="flex flex-col items-center justify-center py-24 gap-3">
+    <app-icon name="Loader2" class="w-10 h-10 animate-spin text-red-500" />
+    <p class="text-sm text-slate-400 animate-pulse">
+      {{ 'skills_gap.loading_risks' | t }}
+    </p>
+  </div>
+} @else if (!data()) {
+  <div class="text-center py-24">
+    <div
+      class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+      <app-icon name="ShieldAlert" class="w-8 h-8 text-slate-300" />
+    </div>
+    <p class="text-slate-400 font-medium">
+      {{ 'skills_gap.no_risk_data' | t }}
+    </p>
+  </div>
+} @else if (data(); as d) {
+  <div class="space-y-6">
+    <!-- Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <app-gap-stat-card
+        [title]="'skills_gap.overview.total_employees' | t"
+        [value]="d.total_employees"
+        icon="Users"
+        gradient="from-indigo-500 to-purple-600"
+        [subtitle]="'skills_gap.overview.assessed' | t" />
+      <app-gap-stat-card
+        [title]="'skills_gap.risks.at_risk_count' | t"
+        [value]="d.at_risk_count"
+        icon="AlertTriangle"
+        gradient="from-red-500 to-rose-600"
+        [subtitle]="'skills_gap.risks.risk_threshold' | t" />
+      <app-gap-stat-card
+        [title]="'skills_gap.risks.risk_percentage' | t"
+        [value]="d.risk_percentage + '%'"
+        icon="Percent"
+        gradient="from-amber-500 to-orange-600"
+        [subtitle]="'skills_gap.risks.of_total_employees' | t" />
+      <app-gap-stat-card
+        [title]="'skills_gap.risks.critical_skills_count' | t"
+        [value]="d.critical_skills?.length || 0"
+        icon="ShieldAlert"
+        gradient="from-red-600 to-red-800"
+        [subtitle]="'skills_gap.risks.needs_intervention' | t" />
+    </div>
+
+    <!-- Risk Gauge -->
+    @if (d.risk_percentage > 0) {
+      <div
+        class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-950 via-red-900 to-rose-950 p-6 shadow-2xl">
+        <div
+          class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-red-500/10 via-transparent to-orange-500/10"></div>
+        <div
+          class="relative flex items-center justify-around gap-6 flex-wrap">
+          <div class="text-center">
+            <div class="relative w-24 h-24">
+              <svg class="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.1)"
+                  stroke-width="8" />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="none"
+                  stroke="#ef4444"
+                  stroke-width="8"
+                  stroke-linecap="round"
+                  [attr.stroke-dasharray]="gaugeDash(d.risk_percentage)"
+                  class="transition-all duration-1000" />
+              </svg>
+              <span
+                class="absolute inset-0 flex items-center justify-center text-2xl font-black text-white">
+                {{ d.risk_percentage }}%
+              </span>
+            </div>
+            <p class="text-xs text-red-300 mt-2 font-medium">
+              {{ 'skills_gap.risks.risk_percentage' | t }}
+            </p>
+          </div>
+          <div class="space-y-2">
+            <h3 class="text-lg font-black text-white">
+              {{ 'skills_gap.risks.risk_summary' | t }}
+            </h3>
+            <p class="text-sm text-red-200">{{ riskSummaryText() }}</p>
+            <p class="text-sm text-red-200">{{ criticalSkillsText() }}</p>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Critical Skill Gaps — Bar Chart -->
+    @if ((d.critical_skills || []).length > 0) {
+      <div appCard class="glass-card border-none shadow-xl overflow-hidden">
+        <div appCardHeader class="pb-2">
+          <h3 appCardTitle class="text-lg flex items-center gap-2">
+            <app-icon name="BarChart3" class="w-5 h-5 text-red-500" />
+            {{ 'skills_gap.risks.chart_title' | t }}
+          </h3>
+          <p class="text-sm text-slate-500 dark:text-slate-400">
+            {{ 'skills_gap.risks.chart_subtitle' | t }}
+          </p>
+        </div>
+        <div appCardContent>
+          <div dir="ltr" class="h-[280px] w-full">
+            <app-chart
+              type="bar"
+              [data]="criticalSkillsChart()"
+              [options]="horizontalBarOptions" />
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Critical Skills -->
+    <div appCard class="glass-card border-none shadow-xl overflow-hidden">
+      <div appCardHeader class="pb-3">
+        <h3 appCardTitle class="text-lg flex items-center gap-2">
+          <app-icon name="ShieldAlert" class="w-5 h-5 text-red-500" />
+          {{ 'skills_gap.risks.critical_skills_title' | t }}
+        </h3>
+      </div>
+      <div appCardContent>
+        @if ((d.critical_skills || []).length === 0) {
+          <div class="text-center py-12">
+            <div class="text-5xl mb-3">🎉</div>
+            <p class="text-lg font-bold text-slate-700 dark:text-slate-200">
+              {{ 'skills_gap.risks.no_critical' | t }}
+            </p>
+            <p class="text-sm text-slate-400 mt-1">
+              {{ 'skills_gap.risks.no_critical_subtitle' | t }}
+            </p>
+          </div>
+        } @else {
+          <div class="space-y-4">
+            @for (skill of d.critical_skills; track $index) {
+              <div
+                class="p-5 rounded-2xl bg-gradient-to-l from-red-50/80 to-rose-50/40 dark:from-red-950/20 dark:to-rose-950/10 border border-red-100 dark:border-red-900/30 hover:shadow-lg hover:shadow-red-500/5 transition-all">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="flex items-center gap-2.5">
+                    <div
+                      class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-600 flex items-center justify-center text-white shadow-lg shadow-red-500/25">
+                      <app-icon name="AlertTriangle" class="w-4 h-4" />
+                    </div>
+                    <span class="font-bold text-red-700 dark:text-red-400">
+                      {{ skill.competency }}
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    <span
+                      class="text-xs bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 px-3 py-1 rounded-lg font-black">
+                      {{ 'skills_gap.risks.gap_label' | t }}
+                      {{ skill.avg_gap }}%
+                    </span>
+                    <span
+                      class="text-xs text-slate-500 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg font-medium">
+                      {{ skill.affected_employees }}
+                      {{ 'skills_gap.risks.affected_employees' | t }}
+                    </span>
+                  </div>
+                </div>
+                <!-- Affected employees -->
+                <div class="flex flex-wrap gap-2">
+                  @for (emp of (skill.employees || []).slice(0, 8); track $index) {
+                    <div
+                      class="flex items-center gap-1.5 text-[10px] px-2.5 py-1.5 rounded-xl bg-white/70 dark:bg-slate-900/50 border border-red-100/50 dark:border-red-800/30 text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-900 transition-colors">
+                      <div
+                        class="w-4 h-4 rounded bg-gradient-to-br from-red-400 to-rose-500 text-white flex items-center justify-center text-[8px] font-bold">
+                        {{ (emp.employee_name || '?')[0] }}
+                      </div>
+                      <span class="font-medium">{{ emp.employee_name }}</span>
+                      <span class="font-black text-red-500">
+                        ({{ emp.score }}%)
+                      </span>
+                    </div>
+                  }
+                  @if ((skill.employees || []).length > 8) {
+                    <span
+                      class="text-[10px] px-2.5 py-1.5 text-slate-400 font-medium self-center">
+                      {{ moreEmployeesText(skill.employees.length - 8) }}
+                    </span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- At-Risk Employees Table -->
+    @if (d.at_risk_employees?.length > 0) {
+      <div appCard class="glass-card border-none shadow-xl overflow-hidden">
+        <div appCardHeader class="pb-3">
+          <h3 appCardTitle class="text-lg flex items-center gap-2">
+            <app-icon name="Target" class="w-5 h-5 text-amber-500" />
+            {{ 'skills_gap.risks.at_risk_table_title' | t }}
+          </h3>
+        </div>
+        <div appCardContent class="p-0">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr
+                  class="bg-gradient-to-l from-red-50/80 to-slate-50 dark:from-red-950/20 dark:to-slate-900">
+                  <th
+                    class="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider text-start">
+                    {{ 'skills_gap.table.employee' | t }}
+                  </th>
+                  <th
+                    class="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider text-start">
+                    {{ 'skills_gap.table.job_title' | t }}
+                  </th>
+                  <th
+                    class="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider text-start">
+                    {{ 'skills_gap.table.department' | t }}
+                  </th>
+                  <th
+                    class="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
+                    {{ 'skills_gap.table.score' | t }}
+                  </th>
+                  <th
+                    class="px-5 py-3.5 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">
+                    {{ 'skills_gap.table.critical_gaps' | t }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-white/5">
+                @for (emp of d.at_risk_employees; track $index) {
+                  <tr
+                    class="hover:bg-red-50/30 dark:hover:bg-red-950/10 transition-colors">
+                    <td class="px-5 py-3.5">
+                      <div class="flex items-center gap-2.5">
+                        <div
+                          class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-rose-600 text-white flex items-center justify-center text-xs font-bold shadow-sm shrink-0">
+                          {{ (emp.employee_name || '?')[0] }}
+                        </div>
+                        <span
+                          class="text-sm font-bold text-slate-900 dark:text-white">
+                          {{ emp.employee_name }}
+                        </span>
+                      </div>
+                    </td>
+                    <td
+                      class="px-5 py-3.5 text-sm text-slate-500 dark:text-slate-400">
+                      {{ emp.job_title }}
+                    </td>
+                    <td
+                      class="px-5 py-3.5 text-sm text-slate-500 dark:text-slate-400">
+                      {{ emp.department }}
+                    </td>
+                    <td class="px-5 py-3.5 text-center">
+                      <span [class]="riskScoreClass(emp.overall_score)">
+                        {{ emp.overall_score }}%
+                      </span>
+                    </td>
+                    <td class="px-5 py-3.5 text-center">
+                      <span
+                        class="bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 px-3 py-1 rounded-lg text-xs font-black shadow-sm">
+                        {{ emp.critical_count }}
+                      </span>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}

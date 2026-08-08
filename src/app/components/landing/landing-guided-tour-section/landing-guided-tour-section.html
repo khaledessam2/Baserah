@@ -1,0 +1,147 @@
+<section
+  class="py-24 px-4 bg-white dark:bg-slate-950 relative overflow-hidden">
+  <!-- Background Decorative Elements -->
+  <div
+    class="absolute top-1/2 left-0 w-96 h-96 bg-blue-500/5 blur-[120px] rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+  <div
+    class="absolute bottom-0 right-0 w-96 h-96 bg-indigo-500/5 blur-[120px] rounded-full translate-x-1/2 translate-y-1/2"></div>
+
+  <div class="max-w-7xl mx-auto relative z-10">
+    <div class="text-center mb-16">
+      <div
+        appReveal
+        class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-sm font-bold mb-6">
+        <app-icon name="Zap" class="w-4 h-4" />
+        <span>{{ 'landing.tour.title' | t }}</span>
+      </div>
+
+      <h2
+        appReveal
+        [revealDelay]="0.1"
+        class="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-linear-to-r from-slate-900 via-blue-600 to-indigo-600 dark:from-white dark:via-blue-400 dark:to-indigo-400 mb-6">
+        {{ 'landing.tour.title' | t }}
+      </h2>
+
+      <p
+        appReveal
+        [revealDelay]="0.2"
+        class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+        {{ 'landing.tour.subtitle' | t }}
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      @for (feature of features; track feature.key; let index = $index) {
+        <div
+          appReveal
+          [revealDelay]="index * 0.1"
+          class="p-8 rounded-[32px] bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800 hover:border-blue-500/30 dark:hover:border-blue-400/30 transition-all duration-300 group shadow-sm hover:shadow-xl hover:shadow-blue-500/5 hover:-translate-y-1.5">
+          <div
+            class="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500"
+            [class]="feature.color">
+            <app-icon [name]="feature.icon" [class]="feature.iconClass" />
+          </div>
+          <h3
+            class="text-xl font-bold text-slate-900 dark:text-white mb-4">
+            {{ feature.key + '.title' | t }}
+          </h3>
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+            {{ feature.key + '.description' | t }}
+          </p>
+        </div>
+      }
+    </div>
+
+    <!-- Visual Representation of Tour Tooltip (Premium UI Mockup) -->
+    <div
+      appReveal
+      [revealDelay]="0.4"
+      class="mt-20 p-8 md:p-12 rounded-[40px] bg-linear-to-br from-blue-600 to-indigo-700 text-white relative overflow-hidden shadow-2xl">
+      <!-- Decorative shapes -->
+      <div
+        class="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[60px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
+      <div
+        class="absolute bottom-0 left-0 w-48 h-48 bg-black/10 blur-[40px] rounded-full -translate-x-1/2 translate-y-1/2"></div>
+
+      <div
+        class="flex flex-col md:flex-row items-center gap-12 relative z-10">
+        <div class="flex-1 text-center md:text-left">
+          <div
+            class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-white/20 backdrop-blur-md text-xs font-bold uppercase tracking-wider mb-6"
+            [class.md:text-right]="isRtl()">
+            <span
+              class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span>
+            Live Demo Preview
+          </div>
+          <h3 class="text-3xl font-bold mb-6">
+            {{
+              isRtl()
+                ? 'تجربة تفاعلية من اللحظة الأولى'
+                : 'Interactive experience from day one'
+            }}
+          </h3>
+          <p class="text-blue-100 text-lg mb-8 leading-relaxed">
+            {{
+              isRtl()
+                ? 'لا نتركك وحيداً في مواجهة التعقيد. نظامنا يحتوي على مرشد ذكي يظهر لك أهم الميزات ويشرح لك كيفية البدء في تحليل الوظائف وتقييم الموظفين بضغطة زر.'
+                : "We don't leave you alone to face complexity. Our system includes a smart guide that shows you the most important features and explains how to start analyzing jobs and evaluating employees with a click of a button."
+            }}
+          </p>
+        </div>
+
+        <div class="w-full max-w-sm">
+          <div
+            class="bg-white dark:bg-slate-900 p-6 rounded-[30px] shadow-2xl text-slate-900 dark:text-white relative ring-8 ring-white/10">
+            <!-- Simulated Tour Tooltip UI -->
+            <div class="flex justify-between items-center mb-6">
+              <span
+                class="text-xs font-bold px-2 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md">
+                Step 2 of 5
+              </span>
+              <div class="flex gap-1">
+                @for (i of dots; track i) {
+                  <div
+                    class="h-1.5 rounded-full"
+                    [class]="
+                      i === 2
+                        ? 'bg-blue-600 w-4'
+                        : 'bg-slate-200 dark:bg-slate-700 w-1.5'
+                    "></div>
+                }
+              </div>
+            </div>
+            <h4 class="text-xl font-bold mb-3">
+              {{
+                isRtl() ? 'تحليل الوصف الوظيفي' : 'Job Description Analysis'
+              }}
+            </h4>
+            <p
+              class="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
+              {{
+                isRtl()
+                  ? 'في هذا القسم، يمكنك كتابة أو رفع الوصف الوظيفي. ستقوم بصيرة بتحليله واستخراج الجدارات المطلوبة المعتمدة.'
+                  : 'In this section, you can write or upload the job description. Baserah will analyze it and extract the required certified competencies.'
+              }}
+            </p>
+            <div class="flex justify-between items-center">
+              <button
+                type="button"
+                class="text-slate-400 text-sm font-bold hover:text-slate-600 transition-colors uppercase">
+                {{ isRtl() ? 'تخطي' : 'Skip' }}
+              </button>
+              <button
+                type="button"
+                class="px-6 py-2 bg-blue-600 text-white rounded-full text-sm font-bold shadow-lg shadow-blue-500/20 hover:bg-blue-700 transition-all">
+                {{ isRtl() ? 'التالي' : 'Next' }}
+              </button>
+            </div>
+
+            <!-- Simulated Arrow -->
+            <div
+              class="absolute -top-3 left-10 w-6 h-6 bg-white dark:bg-slate-900 rotate-45 border-t border-l border-white dark:border-slate-800"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,292 @@
+@if (isLoading()) {
+  <div class="min-h-screen flex items-center justify-center bg-background">
+    <div class="text-center space-y-4">
+      <app-icon
+        name="Loader2"
+        class="w-12 h-12 text-primary animate-spin mx-auto" />
+      <p class="text-muted-foreground font-medium">
+        {{ 'view_report.loading' | t }}
+      </p>
+    </div>
+  </div>
+} @else if (!report()) {
+  <div
+    class="min-h-screen flex items-center justify-center bg-background p-4">
+    <div appCard class="max-w-md w-full text-center p-8 space-y-6 glass-card">
+      <div
+        class="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto">
+        <app-icon name="AlertCircle" class="w-10 h-10 text-amber-500" />
+      </div>
+      <h2 class="text-2xl font-bold text-foreground">
+        {{ 'view_report.alert_title' | t }}
+      </h2>
+      <p class="text-muted-foreground">{{ 'view_report.not_found' | t }}</p>
+      <button appButton (click)="backToReports()" class="w-full">
+        {{ 'view_report.back_reports' | t }}
+      </button>
+    </div>
+  </div>
+} @else if (report(); as rep) {
+  <div [class]="rootClass()" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+    <!-- Action Bar (Sticky) -->
+    <div
+      class="sticky top-0 z-20 bg-card/80 backdrop-blur-md border-b border-border print:hidden">
+      <div
+        class="container mx-auto px-4 h-16 flex items-center justify-between">
+        <button
+          appButton
+          variant="ghost"
+          (click)="backToReports()"
+          class="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+          @if (isRtl()) {
+            <app-icon name="ArrowRight" class="w-5 h-5" />
+          } @else {
+            <app-icon name="ArrowLeft" class="w-5 h-5" />
+          }
+          <span class="font-bold">{{ 'view_report.back_action' | t }}</span>
+        </button>
+
+        <div class="flex items-center gap-2">
+          <button
+            appButton
+            variant="outline"
+            (click)="handlePrint()"
+            class="flex items-center gap-2 border-2 border-border hover:bg-muted">
+            <app-icon name="Printer" class="w-4 h-4" />
+            <span class="font-bold">{{ 'view_report.print' | t }}</span>
+          </button>
+          @if (auth.user()?.role !== 'employee') {
+            <button
+              appButton
+              (click)="isAssignModalOpen.set(true)"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white flex items-center gap-2">
+              <app-icon name="BookOpen" class="w-4 h-4" />
+              <span class="font-bold">
+                {{ 'development_plan.assign_course' | t: 'تعيين دورة' }}
+              </span>
+            </button>
+          }
+          <button
+            appButton
+            class="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-primary-foreground shadow-lg shadow-primary/20 flex items-center gap-2 border-none">
+            <app-icon name="Download" class="w-4 h-4" />
+            <span class="font-bold">
+              {{ 'view_report.download_pdf' | t }}
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Content -->
+    <div class="container max-w-5xl mx-auto mt-8 px-4">
+      <div
+        appCard
+        class="border-none shadow-2xl bg-card overflow-hidden print:shadow-none print:border print:rounded-none">
+        <!-- Report Header -->
+        <div
+          class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 text-white p-12 relative overflow-hidden">
+          <div [class]="headerBlobTopClass()"></div>
+          <div [class]="headerBlobBottomClass()"></div>
+
+          <div
+            class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="p-3 bg-white/10 backdrop-blur-md rounded-2xl">
+                  <app-icon name="Award" class="w-8 h-8 text-amber-400" />
+                </div>
+                <div>
+                  <h2
+                    class="text-xl font-bold text-indigo-100 opacity-80 uppercase tracking-widest">
+                    {{ reportTypeLabel() }}
+                  </h2>
+                  <h1 class="text-4xl font-black mt-1">
+                    {{ headerName() }}
+                  </h1>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 text-indigo-100/90 font-medium">
+              <div class="flex items-center gap-2">
+                <app-icon
+                  name="Briefcase"
+                  class="w-5 h-5 text-indigo-300" />
+                <span>{{ headerJobTitle() }}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <app-icon
+                  name="Building2"
+                  class="w-5 h-5 text-indigo-300" />
+                <span>{{ rep.organization_name }}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <app-icon name="Calendar" class="w-5 h-5 text-indigo-300" />
+                <span>{{ generatedDate() }}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <app-icon name="FileText" class="w-5 h-5 text-indigo-300" />
+                <span>ID: {{ rep.report_id?.slice(-8) || 'N/A' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Report Body -->
+        <div appCardContent class="p-12 md:p-16">
+          <div
+            class="prose prose-indigo dark:prose-invert max-w-none text-foreground/90 leading-relaxed text-lg"
+            [innerHTML]="renderedContent()"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Print Footer -->
+    <div
+      class="hidden print:block fixed bottom-0 left-0 right-0 p-8 text-center text-xs text-gray-400">
+      <p>{{ 'view_report.print_footer' | t }}</p>
+    </div>
+
+    <!-- Assign Course Modal -->
+    <app-dialog
+      [open]="isAssignModalOpen()"
+      [contentClass]="isRtl() ? 'rtl text-right' : 'ltr text-left'"
+      (openChange)="isAssignModalOpen.set(false)">
+      <div appDialogHeader [class]="isRtl() ? 'text-right' : 'text-left'">
+        <h2 appDialogTitle>
+          {{ 'development_plan.assign_course' | t: 'تعيين دورة تدريبية' }}
+        </h2>
+        <p appDialogDescription>
+          {{
+            'development_plan.assign_desc'
+              | t: 'قم بتحديد الدورة التدريبية المطلوبة ضمن خطة التطوير.'
+          }}
+        </p>
+      </div>
+
+      <div class="space-y-4 py-4">
+        <!-- AI Suggestions Section -->
+        <div [class]="fieldClass()">
+          <label appLabel [class]="labelClass()">
+            <app-icon name="Sparkles" class="w-4 h-4 text-amber-500" />
+            {{
+              'development_plan.ai_suggestions_title'
+                | t: 'اقتراحات الذكاء الاصطناعي'
+            }}
+          </label>
+          @if (isLoadingSuggestions()) {
+            <div
+              class="flex items-center gap-2 p-3 rounded-lg bg-muted/50 text-sm text-muted-foreground">
+              <app-icon name="Loader2" class="w-4 h-4 animate-spin" />
+              {{
+                'development_plan.ai_suggestions_loading'
+                  | t: 'جاري تحليل التقرير واقتراح الدورات...'
+              }}
+            </div>
+          } @else if (suggestionsError()) {
+            <p class="text-sm text-muted-foreground p-2">
+              {{
+                'development_plan.ai_suggestions_error'
+                  | t: 'تعذر تحميل الاقتراحات'
+              }}
+            </p>
+          } @else if (aiSuggestions().length > 0) {
+            <div class="flex flex-col gap-2">
+              @for (s of aiSuggestions(); track s.course_name) {
+                <button
+                  type="button"
+                  [disabled]="isAlreadyAssigned(s.course_name)"
+                  (click)="pickSuggestion(s)"
+                  [class]="suggestionClass(s)">
+                  <span
+                    class="font-bold text-foreground flex items-center gap-2">
+                    @if (isAlreadyAssigned(s.course_name)) {
+                      <app-icon
+                        name="CheckCircle"
+                        class="w-4 h-4 text-green-600" />
+                    }
+                    {{ s.course_name }}
+                    @if (isAlreadyAssigned(s.course_name)) {
+                      <span
+                        appBadge
+                        variant="outline"
+                        class="text-[10px] py-0 px-1.5 border-green-300 text-green-600">
+                        {{
+                          'development_plan.already_assigned'
+                            | t: 'تم تعيينها'
+                        }}
+                      </span>
+                    }
+                  </span>
+                  <p class="text-xs text-muted-foreground mt-1">
+                    {{ s.reason }}
+                  </p>
+                </button>
+              }
+            </div>
+          } @else if (hasFetchedSuggestions()) {
+            <p class="text-sm text-muted-foreground p-2">
+              {{
+                'development_plan.ai_suggestions_empty'
+                  | t: 'لا توجد اقتراحات متاحة'
+              }}
+            </p>
+          }
+        </div>
+
+        <div [class]="fieldClass()">
+          <label appLabel [class]="isRtl() ? 'font-cairo' : ''">
+            {{ 'development_plan.course_name' | t: 'اسم الدورة' }}
+          </label>
+          <input
+            appInput
+            name="courseName"
+            [(ngModel)]="courseName"
+            placeholder="PMP, AWS Solutions Architect..."
+            [class]="isRtl() ? 'text-right' : 'text-left'" />
+        </div>
+
+        <div [class]="fieldClass()">
+          <label appLabel [class]="isRtl() ? 'font-cairo' : ''">
+            {{
+              'development_plan.course_reason' | t: 'ملاحظات وتفاصيل الدورة'
+            }}
+          </label>
+          <input
+            appInput
+            name="courseReason"
+            [(ngModel)]="courseReason"
+            [placeholder]="
+              'development_plan.reason_ph'
+                | t: 'سيساعد الموظف في إدارة فرع الشركة الجديد'
+            "
+            [class]="isRtl() ? 'text-right' : 'text-left'" />
+        </div>
+      </div>
+
+      <div
+        appDialogFooter
+        [class]="isRtl() ? 'flex-row-reverse sm:justify-start' : ''">
+        <button
+          appButton
+          variant="outline"
+          (click)="isAssignModalOpen.set(false)">
+          {{ 'common.cancel' | t: 'إلغاء' }}
+        </button>
+        <button
+          appButton
+          [disabled]="isAssigning() || !courseName().trim()"
+          (click)="handleAssignCourse()"
+          class="bg-primary hover:bg-primary/90">
+          @if (isAssigning()) {
+            <app-icon name="Loader2" class="w-4 h-4 animate-spin" />
+          } @else {
+            {{ 'development_plan.assign_btn' | t: 'تعيين وبدء الخطة' }}
+          }
+        </button>
+      </div>
+    </app-dialog>
+  </div>
+}

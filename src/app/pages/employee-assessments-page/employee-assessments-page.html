@@ -1,0 +1,210 @@
+<div class="mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
+  <!-- Header -->
+  <div [class]="headerClass()">
+    <div [class]="headerRowClass()">
+      <div
+        class="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center shrink-0">
+        <app-icon
+          name="ClipboardCheck"
+          class="w-8 h-8 sm:w-12 sm:h-12 text-white" />
+      </div>
+      <div class="space-y-1 sm:space-y-2">
+        <h1 class="text-2xl sm:text-3xl font-bold">
+          {{ 'employee_assessments.header_title' | t }}
+        </h1>
+        <p class="text-white/80 text-base sm:text-lg">
+          {{ 'employee_assessments.header_subtitle' | t }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div
+    data-tour="stats-grid"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    @for (stat of statCards(); track stat.label) {
+      <div appCard [class]="statCardClass(stat.color)">
+        <div appCardContent class="p-6">
+          <div class="flex justify-between items-start">
+            <div class="space-y-1">
+              <p
+                class="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                {{ stat.label }}
+              </p>
+              <p class="text-3xl font-bold text-foreground">
+                {{ stat.value }}
+              </p>
+            </div>
+            <div [class]="statIconWrapClass(stat.color)">
+              <app-icon [name]="stat.icon" class="w-6 h-6" />
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Filter Section -->
+  <div
+    appCard
+    data-tour="filter-section"
+    class="border-none shadow-lg glass-card overflow-hidden">
+    <div appCardContent class="p-6">
+      <div [class]="filterBarClass()">
+        <div [class]="filterLabelClass()">
+          <app-icon name="Filter" class="w-5 h-5 text-primary" />
+          <span>{{ 'employee_assessments.filter_title' | t }}</span>
+        </div>
+        <div [class]="filterButtonsClass()">
+          @for (option of filterOptions; track option.value) {
+            <button
+              type="button"
+              (click)="filter.set(option.value)"
+              [class]="filterButtonClass(option.value)">
+              {{ option.labelKey | t }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assessments Grid -->
+  <div data-tour="assessments-list" class="space-y-6">
+    <div
+      class="flex items-center gap-2 text-2xl font-bold text-foreground">
+      <app-icon name="ClipboardCheck" class="w-7 h-7 text-primary" />
+      <h2>{{ 'employee_assessments.available_assessments' | t }}</h2>
+    </div>
+
+    @if (isLoading()) {
+      <div
+        class="flex flex-col items-center justify-center py-20 space-y-4">
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <p class="text-gray-500 font-medium">
+          {{ 'employee_assessments.loading' | t }}
+        </p>
+      </div>
+    } @else if (filteredAssessments().length > 0) {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (
+          assessment of filteredAssessments();
+          track assessment.assessment_id;
+          let index = $index
+        ) {
+          <div
+            appCard
+            class="group hover:shadow-xl transition-all duration-300 border-none bg-card overflow-hidden animate-in fade-in-0 zoom-in-95"
+            [style.animation-delay.ms]="index * 50">
+            <div [class]="cardBannerClass(assessment)">
+              <div class="flex items-center gap-3">
+                @if (isTechnical(assessment)) {
+                  <app-icon name="Code2" class="w-5 h-5" />
+                } @else {
+                  <app-icon name="UserCircle" class="w-5 h-5" />
+                }
+                <span class="font-bold flex items-center gap-2">
+                  {{
+                    isTechnical(assessment)
+                      ? ('employee_assessments.technical_assessment' | t)
+                      : ('employee_assessments.manager_assessment' | t)
+                  }}
+                  @if (assessment.is_reevaluation) {
+                    <span
+                      class="text-[10px] bg-amber-500/20 text-amber-200 px-2 py-0.5 rounded-full font-bold flex items-center gap-1 leading-none shadow-inner border border-amber-500/30">
+                      <app-icon name="RotateCcw" class="w-3 h-3" />
+                      {{ 'reevaluation.badge' | t: 'إعادة تقييم' }}
+                    </span>
+                  }
+                </span>
+              </div>
+              <span
+                class="text-xs bg-white/20 px-2 py-1 rounded-full backdrop-blur-sm">
+                {{ assessment.job_title }}
+              </span>
+            </div>
+            <div appCardContent class="p-6 space-y-6">
+              <div class="space-y-4">
+                <div
+                  class="flex justify-between items-center text-sm border-b border-border pb-2">
+                  <span class="text-muted-foreground font-medium">
+                    {{ 'employee_assessments.status_label' | t }}
+                  </span>
+                  <span class="text-foreground font-bold">
+                    <span [class]="statusBadgeClass(assessment.status)">
+                      {{ statusLabel(assessment.status) }}
+                    </span>
+                  </span>
+                </div>
+                <div
+                  class="flex justify-between items-center text-sm border-b border-border pb-2">
+                  <span class="text-muted-foreground font-medium">
+                    {{ 'employee_assessments.department_label' | t }}
+                  </span>
+                  <span class="text-foreground font-bold">
+                    {{ assessment.department }}
+                  </span>
+                </div>
+                <div
+                  class="flex justify-between items-center text-sm border-b border-border pb-2">
+                  <span class="text-muted-foreground font-medium">
+                    {{ 'employee_assessments.date_label' | t }}
+                  </span>
+                  <span class="text-foreground font-bold">
+                    {{ assessmentDate(assessment) }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="pt-4 border-t border-border">
+                @if (assessment.status !== 'completed') {
+                  <button
+                    appButton
+                    (click)="takeAssessment(assessment)"
+                    class="w-full bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/10 py-6 text-lg font-bold group">
+                    <span>
+                      {{ 'employee_assessments.start_assessment' | t }}
+                    </span>
+                    <app-icon
+                      name="ArrowRight"
+                      class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
+                  </button>
+                } @else {
+                  <button
+                    appButton
+                    (click)="viewResults(assessment)"
+                    class="w-full bg-card text-primary border-2 border-primary/20 py-6 text-lg font-bold group hover:bg-muted transition-colors">
+                    <span>
+                      {{ 'employee_assessments.view_results' | t }}
+                    </span>
+                    <app-icon
+                      name="Eye"
+                      class="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div
+        class="bg-card rounded-2xl border-2 border-dashed border-border p-12 text-center">
+        <div
+          class="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+          <app-icon
+            name="AlertCircle"
+            class="w-10 h-10 text-muted-foreground" />
+        </div>
+        <h3 class="text-xl font-bold text-foreground mb-2">
+          {{ 'employee_assessments.empty_state_title' | t }}
+        </h3>
+        <p class="text-muted-foreground">
+          {{ 'employee_assessments.no_filtered_assessments' | t }}
+        </p>
+      </div>
+    }
+  </div>
+</div>

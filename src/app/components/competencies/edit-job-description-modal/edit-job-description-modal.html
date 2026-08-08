@@ -1,0 +1,32 @@
+<app-dialog
+  [open]="isOpen()"
+  contentClass="max-w-3xl max-h-[85vh] overflow-y-auto"
+  (openChange)="closed.emit()">
+  <div appDialogHeader>
+    <h2 appDialogTitle class="flex items-center gap-2 text-indigo-600">
+      <app-icon name="Sparkles" class="w-5 h-5" />
+      تعديل الوصف الوظيفي
+    </h2>
+  </div>
+
+  <div class="py-4">
+    <textarea
+      appTextarea
+      name="description"
+      [(ngModel)]="description"
+      class="min-h-[300px] font-sans text-sm resize-y"
+      placeholder="أدخل الوصف الوظيفي..."
+      dir="rtl"></textarea>
+  </div>
+
+  <div appDialogFooter class="gap-2 sm:justify-start">
+    <button
+      appButton
+      (click)="handleSave()"
+      [disabled]="isSaving()"
+      class="bg-indigo-600 hover:bg-indigo-700">
+      {{ isSaving() ? 'جاري الحفظ...' : 'حفظ التغييرات' }}
+    </button>
+    <button appButton variant="outline" (click)="closed.emit()">إلغاء</button>
+  </div>
+</app-dialog>

@@ -1,0 +1,220 @@
+@if (isLoading()) {
+  <div
+    class="min-h-screen flex items-center justify-center bg-background">
+    <div class="text-center space-y-4">
+      <app-icon
+        name="Loader2"
+        class="w-12 h-12 text-primary animate-spin mx-auto" />
+      <p class="text-muted-foreground font-medium">
+        {{ 'take_assessment.loading' | t }}
+      </p>
+    </div>
+  </div>
+} @else if (!assessment() || questions().length === 0) {
+  <div
+    class="min-h-screen flex items-center justify-center bg-background p-4">
+    <div appCard class="max-w-md w-full text-center p-8 space-y-6 glass-card">
+      <div
+        class="w-20 h-20 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto">
+        <app-icon name="AlertTriangle" class="w-10 h-10 text-amber-500" />
+      </div>
+      <h3 appCardTitle class="text-2xl font-bold text-foreground">
+        {{ 'take_assessment.alert_title' | t }}
+      </h3>
+      <p class="text-muted-foreground">
+        {{ 'take_assessment.no_questions' | t }}
+      </p>
+      <button
+        appButton
+        (click)="router.navigate(['/app/employee-dashboard'])"
+        class="w-full">
+        {{ 'take_assessment.back_home' | t }}
+      </button>
+    </div>
+  </div>
+} @else {
+  <app-confirmation-modal
+    [isOpen]="showConfirmDialog()"
+    [title]="'take_assessment.confirm_title' | t: 'Confirmation'"
+    [description]="
+      'take_assessment.confirm_submit' | t: 'Are you sure you want to submit?'
+    "
+    [confirmText]="'common.confirm' | t: 'Confirm'"
+    [cancelText]="'common.cancel' | t: 'Cancel'"
+    (closed)="showConfirmDialog.set(false)"
+    (confirmed)="submitAssessment()" />
+
+  <div [class]="rootClass()" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+    <div class="container max-w-4xl mx-auto space-y-8">
+      <!-- Header Card -->
+      <div
+        appCard
+        class="border-none shadow-2xl glass-card overflow-hidden animate-in fade-in-0 slide-in-from-top-2 duration-700">
+        <div appCardContent class="p-8">
+          <div
+            class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-primary">
+                <app-icon name="ClipboardList" class="w-6 h-6" />
+                <span class="font-bold text-lg">
+                  {{
+                    isReadOnly()
+                      ? ('take_assessment.view_results' | t)
+                      : ('take_assessment.take_assessment' | t)
+                  }}
+                </span>
+              </div>
+              <h1 class="text-3xl font-extrabold text-foreground">
+                {{ headingText() }}
+              </h1>
+              <p class="text-muted-foreground font-medium">
+                {{ assessment()?.job_title }} -
+                {{ assessment()?.department }}
+              </p>
+            </div>
+            <div [class]="progressWrapClass()">
+              <p class="text-sm font-bold text-muted-foreground">
+                {{ 'take_assessment.progress' | t }}
+              </p>
+              <div class="flex items-center gap-4">
+                <app-progress
+                  [value]="progress()"
+                  class="h-3 w-full md:w-48 bg-muted" />
+                <span
+                  class="text-xl font-black text-primary min-w-[3rem]">
+                  {{ round(progress()) }}%
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      @if (currentQuestion(); as question) {
+        <div
+          appCard
+          class="border-none shadow-2xl bg-card animate-in fade-in-0 slide-in-from-bottom-2 duration-700">
+          <div appCardHeader class="border-b border-border bg-muted/30 p-8">
+            <div class="flex justify-between items-center mb-4">
+              <span
+                class="px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-bold">
+                {{ questionOfLabel() }}
+              </span>
+              @if (question.competency) {
+                <span
+                  class="flex items-center gap-1.5 text-amber-500 font-bold text-sm bg-amber-500/10 px-4 py-1.5 rounded-full">
+                  <app-icon name="Info" class="w-4 h-4" />
+                  {{ question.competency }}
+                </span>
+              }
+            </div>
+            <h3
+              appCardTitle
+              class="text-2xl font-extrabold leading-relaxed text-foreground">
+              {{ question.text || $any(question).question }}
+            </h3>
+          </div>
+
+          <div appCardContent class="p-8 space-y-8">
+            <!-- Options for Multiple Choice / Likert -->
+            @if (question.type === 'multiple_choice' || $any(question).choices) {
+              <div class="grid grid-cols-1 gap-4">
+                @for (option of optionsFor(question); track $index; let idx = $index) {
+                  <button
+                    type="button"
+                    (click)="handleOptionSelect(idx)"
+                    [class]="optionButtonClass(idx)">
+                    <div [class]="optionBadgeClass(idx)">
+                      @if (currentAnswer() === idx) {
+                        <app-icon name="CheckCircle2" class="w-5 h-5" />
+                      } @else {
+                        <span class="text-sm font-bold">{{ idx + 1 }}</span>
+                      }
+                    </div>
+                    <span [class]="optionTextClass(idx)">{{ option }}</span>
+                  </button>
+                }
+              </div>
+            }
+
+            <!-- Assessment Type: Text area -->
+            @if (question.type === 'text') {
+              <div class="space-y-4">
+                <textarea
+                  class="w-full min-h-[200px] p-6 rounded-2xl border-2 border-border focus:border-primary focus:ring-0 text-lg font-medium transition-colors resize-none bg-background/50 text-foreground"
+                  name="answerText"
+                  [placeholder]="'take_assessment.write_answer' | t"
+                  [ngModel]="currentAnswer() || ''"
+                  (ngModelChange)="handleTextChange($event)"></textarea>
+              </div>
+            }
+
+            <!-- Assessment Type: Likert Scale (1-5) -->
+            @if (question.type === 'likert') {
+              <div class="space-y-12 py-8">
+                <div
+                  class="flex justify-between text-sm font-black text-muted-foreground px-2 uppercase tracking-widest">
+                  <span class="text-red-500">
+                    {{ 'take_assessment.strongly_disagree' | t }}
+                  </span>
+                  <span class="text-green-500">
+                    {{ 'take_assessment.strongly_agree' | t }}
+                  </span>
+                </div>
+                <div
+                  class="flex justify-between items-center gap-2 md:gap-4 ltr"
+                  dir="ltr">
+                  @for (val of likertScale; track val) {
+                    <button
+                      type="button"
+                      (click)="handleOptionSelect(val)"
+                      [class]="likertButtonClass(val)">
+                      <span class="text-3xl font-black">{{ val }}</span>
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Navigation -->
+          <div
+            class="p-8 bg-muted/30 border-t border-border flex justify-between gap-4">
+            <button
+              appButton
+              variant="outline"
+              (click)="handlePrev()"
+              [disabled]="currentQuestionIndex() === 0"
+              class="px-8 py-6 h-auto text-lg font-bold border-2">
+              @if (isRtl()) {
+                <app-icon name="ChevronRight" class="w-5 h-5 ml-2" />
+              } @else {
+                <app-icon name="ChevronLeft" class="w-5 h-5 mr-2" />
+              }
+              <span>{{ 'take_assessment.previous' | t }}</span>
+            </button>
+
+            <button
+              appButton
+              [variant]="isLastQuestion() ? 'default' : 'secondary'"
+              (click)="handlePrimaryAction()"
+              [disabled]="isSubmitting() || (!isReadOnly() && !hasAnswered())"
+              [class]="primaryButtonClass()">
+              @if (isSubmitting()) {
+                <app-icon name="Loader2" class="w-5 h-5 animate-spin" />
+              } @else {
+                <span>{{ primaryButtonLabel() }}</span>
+                @if (isRtl()) {
+                  <app-icon name="ChevronLeft" class="w-5 h-5 mr-2" />
+                } @else {
+                  <app-icon name="ChevronRight" class="w-5 h-5 ml-2" />
+                }
+              }
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

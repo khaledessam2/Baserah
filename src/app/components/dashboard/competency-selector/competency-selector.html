@@ -1,0 +1,272 @@
+<app-dialog
+  [open]="isOpen()"
+  contentClass="max-w-[1500px] h-[90vh] flex flex-col p-0 overflow-hidden glass border-white/20 dark:border-white/10 rounded-3xl shadow-2xl"
+  (openChange)="closed.emit()">
+  <div
+    appDialogHeader
+    class="p-8 border-b border-border/50 bg-linear-to-r from-primary/5 via-transparent to-secondary/5">
+    <h2
+      appDialogTitle
+      class="flex items-center gap-4 text-3xl font-bold tracking-tight">
+      <div
+        class="p-3 bg-linear-to-br from-primary to-secondary text-white rounded-2xl shadow-xl shadow-primary/20 flex items-center justify-center">
+        <app-icon name="Star" class="w-7 h-7" />
+      </div>
+      <span class="text-gradient">
+        {{
+          'analyzer.refinement_title' | t: 'Customize Competencies & Weights'
+        }}
+      </span>
+    </h2>
+  </div>
+
+  <app-tabs
+    [value]="activeTab()"
+    (valueChange)="activeTab.set($event)"
+    class="flex-1 flex flex-col overflow-hidden">
+    <div
+      class="relative border-b border-border/50 bg-background/50 backdrop-blur-md">
+      <div class="px-8 overflow-x-auto scrollbar-hide">
+        <div
+          appTabsList
+          class="bg-transparent h-16 w-full justify-start gap-6 min-w-max">
+          @for (cat of categories; track cat.id) {
+            <button
+              appTabsTrigger
+              [value]="cat.id"
+              [class]="tabTriggerClass(cat)">
+              <div class="p-2 rounded-lg transition-colors" [class]="cat.bg">
+                <app-icon [name]="cat.icon" [class]="'w-4 h-4 ' + cat.color" />
+              </div>
+              <span class="font-semibold text-sm tracking-wide">
+                {{ cat.labelKey | t: cat.fallback }}
+              </span>
+              @if (activeTab() === cat.id) {
+                <div
+                  class="absolute bottom-0 left-0 right-0 h-1 rounded-t-full bg-current"
+                  [class]="cat.color"></div>
+              }
+            </button>
+          }
+        </div>
+      </div>
+      <!-- Edge Fades -->
+      <div
+        class="absolute top-0 right-0 bottom-0 w-12 bg-linear-to-l from-background to-transparent pointer-events-none z-10"></div>
+      <div
+        class="absolute top-0 left-0 bottom-0 w-12 bg-linear-to-r from-background to-transparent pointer-events-none z-10"></div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-1 sm:p-8 bg-background/40">
+      @for (cat of competencyCategories; track cat.id) {
+        <app-tabs-content
+          [value]="cat.id"
+          class="mt-0 space-y-6 animate-fade-up block">
+          <div class="grid gap-6">
+            @for (comp of byCategory(cat.id); track comp.name) {
+              <div [class]="competencyRowClass(comp)">
+                <div class="flex items-center gap-6 flex-1">
+                  <div class="relative">
+                    <input
+                      type="checkbox"
+                      [checked]="comp.selected"
+                      (change)="toggleSelection(comp.name)"
+                      class="w-6 h-6 rounded-lg border-2 border-border text-primary focus:ring-primary/30 transition-all cursor-pointer accent-primary" />
+                  </div>
+                  <div class="flex-1">
+                    <h4 class="font-bold text-lg text-foreground mb-1">
+                      {{ comp.name }}
+                    </h4>
+                    <div class="flex flex-wrap gap-2">
+                      @for (skill of comp.skills.slice(0, 3); track skill) {
+                        <div
+                          appBadge
+                          variant="secondary"
+                          class="text-[11px] px-2.5 py-0.5 font-medium bg-secondary/5 text-secondary border-secondary/10">
+                          {{ skill }}
+                        </div>
+                      }
+                      @if (comp.skills.length > 3) {
+                        <div
+                          appBadge
+                          variant="outline"
+                          class="text-[11px] px-2.5 py-0.5 font-medium border-border/50">
+                          +{{ comp.skills.length - 3 }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-8">
+                  <div class="flex flex-col items-end gap-2">
+                    <span
+                      class="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                      {{ 'results.priority' | t }}
+                    </span>
+                    <div class="flex gap-1.5">
+                      @for (star of stars; track star) {
+                        <app-icon
+                          name="Star"
+                          [class]="starClass(star, comp.priority)"
+                          (click)="updatePriority(comp.name, star)" />
+                      }
+                    </div>
+                  </div>
+                  <button
+                    appButton
+                    variant="ghost"
+                    size="icon"
+                    (click)="removeCompetency(comp.name)"
+                    class="text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-xl transition-colors">
+                    <app-icon name="Trash2" class="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            }
+
+            @if (byCategory(cat.id).length === 0) {
+              <div
+                class="text-center py-20 text-muted-foreground border-2 border-dashed border-border/50 rounded-3xl bg-muted/20">
+                <div class="flex flex-col items-center gap-4">
+                  <app-icon [name]="cat.icon" class="w-12 h-12 opacity-20" />
+                  <p class="font-medium">
+                    {{
+                      'competencies.empty_category'
+                        | t: 'No competencies in this category'
+                    }}
+                  </p>
+                </div>
+              </div>
+            }
+          </div>
+        </app-tabs-content>
+      }
+
+      <app-tabs-content
+        value="Weights"
+        class="mt-0 space-y-8 animate-fade-up block">
+        <div
+          class="glass-card p-8 border border-white/20 dark:border-white/5 space-y-8">
+          <div class="flex items-center justify-between gap-6">
+            <div class="space-y-1 flex-1">
+              <h3 class="font-bold text-2xl text-foreground">
+                {{
+                  'competencies.distribution_title'
+                    | t: 'Relative Weight Distribution'
+                }}
+              </h3>
+              <p class="text-muted-foreground font-medium">
+                {{
+                  'competencies.distribution_desc'
+                    | t
+                      : 'Adjust weights to reflect relative importance (must total 100%)'
+                }}
+              </p>
+            </div>
+            <button
+              appButton
+              variant="outline"
+              class="gap-3 border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 h-12 px-6 rounded-2xl transition-all shadow-sm"
+              (click)="handleAiReweight()"
+              [disabled]="isReweighting()">
+              <app-icon name="Wand2" [class]="reweightIconClass()" />
+              <span class="font-bold">
+                {{ 'analyzer.reweight_ai' | t: 'Recalculate with AI' }}
+              </span>
+            </button>
+          </div>
+
+          <div class="grid gap-10 py-4 max-w-4xl mx-auto">
+            @for (comp of selectedCompetencies(); track comp.name) {
+              <div class="space-y-5 group">
+                <div class="flex justify-between items-center">
+                  <span
+                    class="font-bold text-lg text-foreground/90 group-hover:text-primary transition-colors">
+                    {{ comp.name }}
+                  </span>
+                  <div class="flex items-center gap-4">
+                    <div class="relative">
+                      <input
+                        appInput
+                        type="number"
+                        [name]="'weight-' + comp.name"
+                        class="w-24 h-12 text-center font-bold text-lg rounded-xl border-border bg-background focus:ring-primary/20 ring-offset-0"
+                        [ngModel]="weightOf(comp.name).toFixed(1)"
+                        (ngModelChange)="
+                          handleWeightChange(comp.name, parseFloat($event) || 0)
+                        " />
+                      <span
+                        class="absolute -right-6 top-1/2 -translate-y-1/2 font-bold text-muted-foreground mr-1">
+                        %
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="px-1">
+                  <app-slider
+                    [value]="weightOf(comp.name)"
+                    [max]="100"
+                    [step]="0.1"
+                    (valueChange)="handleWeightChange(comp.name, $event)"
+                    class="py-4 cursor-pointer" />
+                </div>
+              </div>
+            }
+          </div>
+
+          <div [class]="totalBoxClass()">
+            <div class="flex items-center gap-4">
+              @if (isBalanced()) {
+                <app-icon name="CheckCircle2" class="w-8 h-8" />
+              } @else {
+                <app-icon name="AlertCircle" class="w-8 h-8" />
+              }
+              <div>
+                <span class="font-bold text-xl uppercase tracking-tight">
+                  {{ 'competencies.current_total' | t: 'Current Total' }}:
+                  {{ currentTotal().toFixed(1) }}%
+                </span>
+                <p class="text-sm font-medium opacity-80">
+                  {{
+                    'competencies.total_hint' | t: 'Total must be exactly 100%'
+                  }}
+                </p>
+              </div>
+            </div>
+            @if (!isBalanced()) {
+              <button
+                appButton
+                size="lg"
+                variant="secondary"
+                (click)="normalizeWeights()"
+                class="bg-background hover:bg-muted font-bold rounded-xl shadow-lg shadow-amber-500/10">
+                {{ 'competencies.auto_normalize' | t: 'Auto-normalize' }}
+              </button>
+            }
+          </div>
+        </div>
+      </app-tabs-content>
+    </div>
+  </app-tabs>
+
+  <div
+    appDialogFooter
+    class="p-8 border-t border-border/50 bg-background/50 backdrop-blur-md flex gap-4 items-center">
+    <button
+      appButton
+      variant="ghost"
+      (click)="closed.emit()"
+      class="px-8 h-12 font-bold text-muted-foreground hover:bg-muted rounded-2xl transition-all">
+      {{ 'common.cancel' | t }}
+    </button>
+    <button
+      appButton
+      (click)="handleConfirm()"
+      class="bg-linear-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-bold h-12 px-10 rounded-2xl gap-3 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 flex-1 sm:flex-none"
+      [disabled]="!isBalanced()">
+      <app-icon name="CheckCircle2" class="w-5 h-5 text-white" />
+      {{ 'analyzer.confirm_save' | t: 'Confirm & Save Results' }}
+    </button>
+  </div>
+</app-dialog>

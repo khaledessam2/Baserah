@@ -1,0 +1,16 @@
+<div
+  appCard
+  class="shadow-md border-indigo-50 overflow-hidden relative group">
+  <div appCardContent class="p-6">
+    <div class="flex items-center justify-between mb-2">
+      <p class="text-sm font-bold text-muted-foreground uppercase">
+        {{ title() }}
+      </p>
+      <div [class]="iconWrapClass()">
+        <app-icon [name]="icon()" class="w-6 h-6" />
+      </div>
+    </div>
+    <div class="text-3xl font-bold text-foreground">{{ value() }}</div>
+    <div [class]="underlineClass()"></div>
+  </div>
+</div>

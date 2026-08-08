@@ -1,0 +1,144 @@
+<app-dialog
+  [open]="isOpen()"
+  [contentClass]="contentClass()"
+  (openChange)="closed.emit()">
+  <div appDialogHeader>
+    <h2 appDialogTitle class="flex items-center gap-2 text-xl">
+      <div class="p-2 bg-indigo-100 rounded-lg text-indigo-600">
+        <app-icon name="Users" class="w-5 h-5" />
+      </div>
+      {{ 'employees_page.add_employee' | t: 'Add Employee' }}
+    </h2>
+  </div>
+
+  <form (ngSubmit)="handleSubmit()" class="space-y-4 py-4">
+    <div class="grid grid-cols-2 gap-4">
+      <div class="space-y-2">
+        <label appLabel for="national_id">
+          {{ 'employees_page.modal.national_id' | t: 'National ID' }}
+        </label>
+        <input
+          appInput
+          id="national_id"
+          name="national_id"
+          [(ngModel)]="nationalId"
+          placeholder="10XXXXXXXX"
+          required />
+      </div>
+      <div class="space-y-2">
+        <label appLabel for="full_name">
+          {{ 'employees_page.modal.full_name' | t: 'Full Name' }}
+        </label>
+        <input
+          appInput
+          id="full_name"
+          name="full_name"
+          [(ngModel)]="fullName"
+          placeholder="Name"
+          required />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-4">
+      <div class="space-y-2">
+        <label appLabel for="department">
+          {{ 'employees_page.modal.department' | t: 'Department' }}
+        </label>
+        <input
+          appInput
+          id="department"
+          name="department"
+          [(ngModel)]="department"
+          placeholder="IT, HR, etc."
+          required />
+      </div>
+      <div class="space-y-2">
+        <label appLabel for="job_title">
+          {{ 'employees_page.modal.job_title' | t: 'Job Title' }}
+        </label>
+        <input
+          appInput
+          id="job_title"
+          name="job_title"
+          [(ngModel)]="jobTitle"
+          placeholder="Developer, Manager..."
+          required />
+      </div>
+    </div>
+
+    <div class="space-y-2">
+      <label appLabel for="email">
+        {{ 'employees_page.modal.email' | t: 'Email' }}
+      </label>
+      <input
+        appInput
+        id="email"
+        name="email"
+        type="email"
+        [(ngModel)]="email"
+        placeholder="employee@company.com" />
+    </div>
+
+    <div class="space-y-2">
+      <label appLabel for="password">
+        {{ 'employees_page.modal.password' | t: 'Password' }}
+      </label>
+      <input
+        appInput
+        id="password"
+        name="password"
+        type="password"
+        [(ngModel)]="password"
+        placeholder="******" />
+    </div>
+
+    <div class="space-y-2">
+      <label appLabel for="manager_id">
+        {{ 'employees_page.modal.manager_name' | t: 'Direct Manager' }}
+      </label>
+      <select
+        id="manager_id"
+        name="manager_id"
+        [(ngModel)]="managerId"
+        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+        <option value="">
+          {{
+            'employees_page.modal.select_manager'
+              | t: 'Select Manager (Optional)'
+          }}
+        </option>
+        <!-- Arabic keys go through bracket access: Angular's template
+             lexer only accepts ASCII identifiers after a dot. -->
+        @for (emp of employees(); track emp['الهوية_الوطنية'] || emp.national_id) {
+          <option [value]="emp['الهوية_الوطنية'] || emp.national_id">
+            {{ emp['اسم_الموظف'] || emp.full_name }}
+          </option>
+        }
+      </select>
+    </div>
+
+    <div class="flex justify-end gap-3 pt-4">
+      <button appButton type="button" variant="outline" (click)="closed.emit()">
+        {{ 'common.cancel' | t: 'Cancel' }}
+      </button>
+      <button
+        appButton
+        type="submit"
+        [disabled]="isLoading()"
+        class="bg-indigo-600 hover:bg-indigo-700">
+        @if (isLoading()) {
+          <span class="flex items-center gap-2">
+            <div
+              class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+            Processing...
+          </span>
+        } @else {
+          <span class="flex items-center gap-2">
+            <app-icon name="Save" class="w-4 h-4" />
+            {{ 'common.save' | t: 'Save' }}
+          </span>
+        }
+      </button>
+    </div>
+  </form>
+</app-dialog>

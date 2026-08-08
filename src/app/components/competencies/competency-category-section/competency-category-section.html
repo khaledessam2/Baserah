@@ -1,0 +1,21 @@
+@if (items().length > 0) {
+  <div class="animate-in fade-in-0 duration-500">
+    <div
+      class="flex items-center gap-2 mb-4 border-b pb-2"
+      [style.border-color]="borderColor()">
+      <span [style.color]="color()">
+        <app-icon [name]="icon()" class="w-5 h-5" />
+      </span>
+      <h3 class="font-bold text-lg text-foreground">{{ title() }}</h3>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      @for (comp of items(); track $index) {
+        <app-competency-card
+          [competency]="comp"
+          [color]="color()"
+          (edit)="edit.emit($event)"
+          (delete)="delete.emit($event)" />
+      }
+    </div>
+  </div>
+}

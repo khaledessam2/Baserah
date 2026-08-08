@@ -1,0 +1,323 @@
+<div [class]="rootClass()" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+  <!-- Header -->
+  <div
+    class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-fade-up">
+    <div class="flex items-center gap-4">
+      <div
+        class="w-14 h-14 bg-gradient-to-br from-[hsl(var(--primary))] to-[hsl(var(--secondary))] rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+        <app-icon name="Briefcase" class="text-white w-7 h-7" />
+      </div>
+      <div>
+        <h1 class="text-3xl font-bold text-gradient">
+          {{ 'job_titles_page.title' | t }}
+        </h1>
+        <p class="text-muted-foreground mt-1">
+          {{ 'job_titles_page.subtitle' | t }}
+        </p>
+      </div>
+    </div>
+    <button
+      appButton
+      (click)="loadData()"
+      variant="outline"
+      class="gap-2 bg-card/50 backdrop-blur-sm border-border hover:bg-muted shadow-sm capitalize">
+      <app-icon name="RefreshCw" [class]="refreshIconClass()" />
+      {{ 'job_titles_page.refresh' | t }}
+    </button>
+  </div>
+
+  <!-- Stats Cards -->
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8"
+    data-tour="stats-grid">
+    <div appCard class="glass-card border-none border-l-4 border-l-primary">
+      <div appCardContent class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-2 rounded-lg bg-primary/10">
+            <app-icon name="Briefcase" class="w-6 h-6 text-primary" />
+          </div>
+          <span
+            class="text-xs font-semibold text-primary bg-primary/5 px-2 py-1 rounded-full">
+            {{ 'job_titles_page.stats.total' | t }}
+          </span>
+        </div>
+        <h3
+          class="text-3xl font-bold bg-clip-text text-transparent bg-linear-to-r from-primary to-secondary">
+          {{ stats().total }}
+        </h3>
+        <p class="text-primary/80 font-medium text-sm mt-1">
+          {{ 'job_titles.stats.total_desc' | t: 'Total Job Titles' }}
+        </p>
+      </div>
+    </div>
+
+    <div
+      appCard
+      class="glass-card border-none border-l-4 border-l-emerald-500">
+      <div appCardContent class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-2 rounded-lg bg-emerald-500/10">
+            <app-icon
+              name="CheckCircle2"
+              class="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+          </div>
+          <span
+            class="text-xs font-semibold text-emerald-700 bg-emerald-500/5 px-2 py-1 rounded-full dark:text-emerald-400">
+            {{ 'job_titles_page.stats.complete' | t }}
+          </span>
+        </div>
+        <h3 class="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+          {{ stats().complete }}
+        </h3>
+        <p
+          class="text-emerald-700/80 dark:text-emerald-300/80 font-medium text-sm mt-1">
+          {{ 'job_titles.stats.complete_desc' | t: 'Fully Defined' }}
+        </p>
+      </div>
+    </div>
+
+    <div appCard class="glass-card border-none border-l-4 border-l-secondary">
+      <div appCardContent class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-2 rounded-lg bg-secondary/10">
+            <app-icon name="FileText" class="w-6 h-6 text-secondary" />
+          </div>
+          <span
+            class="text-xs font-semibold text-secondary bg-secondary/5 px-2 py-1 rounded-full">
+            {{ 'job_titles_page.stats.jd_only' | t }}
+          </span>
+        </div>
+        <h3 class="text-3xl font-bold text-secondary">
+          {{ stats().jdOnly }}
+        </h3>
+        <p
+          class="text-secondary-foreground/80 dark:text-secondary/80 font-medium text-sm mt-1">
+          {{ 'job_titles.stats.jd_only_desc' | t: 'Description Only' }}
+        </p>
+      </div>
+    </div>
+
+    <div appCard class="glass-card border-none border-l-4 border-l-amber-500">
+      <div appCardContent class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="p-2 rounded-lg bg-amber-500/10">
+            <app-icon
+              name="AlertCircle"
+              class="w-6 h-6 text-amber-600 dark:text-amber-400" />
+          </div>
+          <span
+            class="text-xs font-semibold text-amber-700 bg-amber-500/5 px-2 py-1 rounded-full dark:text-amber-400">
+            {{ 'job_titles_page.stats.no_jd' | t }}
+          </span>
+        </div>
+        <h3 class="text-3xl font-bold text-amber-600 dark:text-amber-400">
+          {{ stats().noJd }}
+        </h3>
+        <p
+          class="text-amber-700/80 dark:text-amber-400/80 font-medium text-sm mt-1">
+          {{ 'job_titles.stats.no_jd_desc' | t: 'Needs Attention' }}
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div appCard class="mb-8 glass-card border-none" data-tour="filters-card">
+    <div appCardContent class="p-6">
+      <div class="flex flex-col lg:flex-row gap-4 items-end">
+        <div class="flex-1 space-y-2 w-full">
+          <label
+            class="text-sm font-medium flex items-center gap-2 text-foreground">
+            <app-icon name="Filter" class="w-4 h-4 text-primary" />
+            {{ 'job_titles_page.filters.status_label' | t }}
+          </label>
+          <app-select
+            [value]="statusFilter()"
+            (valueChange)="statusFilter.set($event)">
+            <app-select-trigger
+              class="bg-background/50 border-border focus:ring-[hsl(var(--secondary))]">
+              <app-select-value
+                [placeholder]="'job_titles_page.filters.select_status' | t" />
+            </app-select-trigger>
+            <app-select-content>
+              <app-select-item value="all">
+                {{ 'job_titles_page.filters.all_statuses' | t }}
+              </app-select-item>
+              <app-select-item value="no_jd">
+                {{ 'job_titles_page.filters.status_no_jd' | t }}
+              </app-select-item>
+              <app-select-item value="jd_only">
+                {{ 'job_titles_page.filters.status_jd_only' | t }}
+              </app-select-item>
+              <app-select-item value="jd_and_competencies">
+                {{ 'job_titles_page.filters.status_complete' | t }}
+              </app-select-item>
+            </app-select-content>
+          </app-select>
+        </div>
+
+        <div class="flex-1 space-y-2 w-full">
+          <label
+            class="text-sm font-medium flex items-center gap-2 text-foreground">
+            <app-icon name="Building2" class="w-4 h-4 text-primary" />
+            {{ 'job_titles_page.filters.org_label' | t }}
+          </label>
+          <app-select
+            [value]="orgFilter()"
+            (valueChange)="orgFilter.set($event)">
+            <app-select-trigger
+              class="bg-background/50 border-border focus:ring-[hsl(var(--secondary))]">
+              <app-select-value
+                [placeholder]="'job_titles_page.filters.select_org' | t" />
+            </app-select-trigger>
+            <app-select-content>
+              <app-select-item value="all">
+                {{ 'job_titles_page.filters.all_orgs' | t }}
+              </app-select-item>
+              @for (org of organizations(); track org) {
+                <app-select-item [value]="org || ''">{{ org }}</app-select-item>
+              }
+            </app-select-content>
+          </app-select>
+        </div>
+
+        <div class="flex-[1.5] space-y-2 w-full">
+          <label
+            class="text-sm font-medium flex items-center gap-2 text-foreground">
+            <app-icon name="Search" class="w-4 h-4 text-primary" />
+            {{ 'job_titles_page.filters.search_label' | t }}
+          </label>
+          <div class="relative">
+            <input
+              appInput
+              name="searchTerm"
+              class="bg-background/50 border-border focus:visible:ring-secondary pl-10 pr-10"
+              [placeholder]="
+                'job_titles_page.filters.search_placeholder' | t
+              "
+              [(ngModel)]="searchTerm" />
+            <app-icon
+              name="Search"
+              class="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div
+    appCard
+    class="glass-card border-none overflow-hidden"
+    data-tour="job-titles-table">
+    <div appCardContent class="p-0">
+      @if (loading()) {
+        <div
+          class="py-20 flex flex-col items-center justify-center text-muted-foreground">
+          <app-icon
+            name="Loader2"
+            class="w-10 h-10 animate-spin mb-4 text-primary" />
+          <p>{{ 'job_titles_page.table.loading' | t }}</p>
+        </div>
+      } @else if (filteredJobTitles().length === 0) {
+        <div class="py-20 text-center text-muted-foreground">
+          <app-icon
+            name="Briefcase"
+            class="w-16 h-16 mx-auto mb-4 opacity-10" />
+          <p class="text-lg font-medium">
+            {{ 'job_titles_page.table.no_matches' | t }}
+          </p>
+          <p class="text-sm opacity-70">
+            {{ 'job_titles_page.table.try_adjusting_filters' | t }}
+          </p>
+        </div>
+      } @else {
+        <div class="overflow-x-auto">
+          <table [class]="tableClass()">
+            <thead class="bg-primary/5 border-b border-primary/10">
+              <tr>
+                <th
+                  class="px-6 py-5 font-bold text-sm text-primary uppercase tracking-wider">
+                  {{ 'job_titles_page.table.job_title' | t }}
+                </th>
+                <th
+                  class="px-6 py-5 font-bold text-sm text-primary uppercase tracking-wider">
+                  {{ 'job_titles_page.table.status' | t }}
+                </th>
+                <th
+                  class="px-6 py-5 font-bold text-sm text-primary text-center uppercase tracking-wider">
+                  {{ 'job_titles_page.table.has_jd' | t }}
+                </th>
+                <th
+                  class="px-6 py-5 font-bold text-sm text-primary text-center uppercase tracking-wider">
+                  {{ 'job_titles_page.table.has_competencies' | t }}
+                </th>
+                <th
+                  class="px-6 py-5 font-bold text-sm text-primary uppercase tracking-wider"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-border/50">
+              @for (jt of filteredJobTitles(); track $index) {
+                <tr
+                  class="hover:bg-primary/5 transition-colors cursor-pointer group"
+                  (click)="openCompetencies(jt.title)">
+                  <td class="px-6 py-5">
+                    <span
+                      class="font-bold text-foreground text-base group-hover:text-primary transition-colors">
+                      {{ jt.title }}
+                    </span>
+                    @if (jt.organization) {
+                      <div
+                        class="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                        <app-icon name="Building2" class="w-3 h-3" />
+                        {{ jt.organization }}
+                      </div>
+                    }
+                  </td>
+                  <td class="px-6 py-5">
+                    <span [class]="statusBadgeClass(jt.status)">
+                      {{ statusLabel(jt.status) }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-5">
+                    <div class="flex justify-center">
+                      <div [class]="checkCircleClass(jt.has_jd)">
+                        @if (jt.has_jd) {
+                          <app-icon name="Check" class="w-5 h-5" />
+                        } @else {
+                          <app-icon name="X" class="w-5 h-5" />
+                        }
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-5">
+                    <div class="flex justify-center">
+                      <div [class]="checkCircleClass(jt.has_competencies)">
+                        @if (jt.has_competencies) {
+                          <app-icon name="Check" class="w-5 h-5" />
+                        } @else {
+                          <app-icon name="X" class="w-5 h-5" />
+                        }
+                      </div>
+                    </div>
+                  </td>
+                  <td [class]="chevronCellClass()">
+                    @if (isRtl()) {
+                      <app-icon
+                        name="ChevronLeft"
+                        class="w-5 h-5 text-muted-foreground group-hover:text-[hsl(var(--secondary))] transition-colors transform group-hover:-translate-x-1" />
+                    } @else {
+                      <app-icon
+                        name="ChevronRight"
+                        class="w-5 h-5 text-muted-foreground group-hover:text-[hsl(var(--secondary))] transition-colors transform group-hover:translate-x-1" />
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>

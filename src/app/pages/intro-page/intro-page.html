@@ -1,0 +1,181 @@
+<div
+  class="flex justify-center items-center min-h-[calc(100vh-100px)] py-6 sm:py-10 px-4">
+  <div
+    appCard
+    class="w-full max-w-3xl glass-card animate-in fade-in-0 slide-in-from-bottom-2 duration-500">
+    <div appCardHeader class="text-center space-y-4 pb-6 sm:pb-8">
+      <div
+        class="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-tertiary rounded-2xl flex items-center justify-center mb-2 shadow-lg shadow-primary/20 rotate-3 hover:rotate-0 transition-transform duration-300">
+        <app-icon
+          name="Building2"
+          class="w-8 h-8 text-primary-foreground" />
+      </div>
+      <h3 appCardTitle class="text-2xl sm:text-3xl font-bold text-gradient">
+        {{ 'intro.title' | t: 'Company Data' }}
+      </h3>
+      <p
+        appCardDescription
+        class="text-base sm:text-lg text-muted-foreground max-w-md mx-auto">
+        {{
+          'intro.subtitle'
+            | t
+              : "Let's start by analyzing your company context and analysis goals"
+        }}
+      </p>
+    </div>
+
+    <div appCardContent [class]="contentClass()">
+      <!-- Company Name Section -->
+      <div class="space-y-3">
+        <label
+          appLabel
+          for="company"
+          class="text-base font-semibold text-foreground/80">
+          {{ 'employee.organization_name' | t }}
+        </label>
+        <input
+          appInput
+          id="company"
+          name="company"
+          data-tour="company-name"
+          [placeholder]="
+            'intro.company_placeholder' | t: 'e.g. Baserah Tech Solutions'
+          "
+          [(ngModel)]="companyName"
+          class="h-12 text-lg border-border focus:ring-2 focus:ring-primary/20 transition-all bg-background/50" />
+      </div>
+
+      <div
+        data-tour="input-methods"
+        class="bg-muted/50 p-1.5 rounded-2xl flex gap-1 border border-border">
+        @for (method of methods; track method.id) {
+          <button
+            type="button"
+            (click)="inputMethod.set(method.id)"
+            [class]="methodClass(method.id)">
+            <app-icon [name]="method.icon" class="w-4 h-4" />
+            <span class="hidden sm:inline">{{
+              method.labelKey | t: method.fallback
+            }}</span>
+          </button>
+        }
+      </div>
+
+      <!-- Logic for different input methods -->
+      <div class="min-h-[220px]">
+        @if (inputMethod() === 'file') {
+          <div
+            (dragover)="handleDragOver($event)"
+            (dragleave)="isDragOver.set(false)"
+            (drop)="handleDrop($event)"
+            [class]="dropZoneClass()">
+            <input
+              type="file"
+              class="hidden"
+              id="file-upload"
+              (change)="handleFileInput($event)" />
+            <label
+              for="file-upload"
+              class="flex flex-col items-center cursor-pointer w-full text-center">
+              <div
+                class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                <app-icon name="Upload" class="w-10 h-10 text-primary" />
+              </div>
+              <h3 class="text-xl font-semibold mb-2">
+                {{
+                  file()?.name ??
+                    ('intro.file_drop_title'
+                      | t: 'Click to upload or drag file here')
+                }}
+              </h3>
+              <p class="text-muted-foreground max-w-sm text-sm">
+                {{
+                  file()
+                    ? fileSizeLabel()
+                    : ('intro.file_drop_desc'
+                      | t
+                        : 'We support PDF, DOCX, TXT files containing company profiles or job descriptions.')
+                }}
+              </p>
+            </label>
+            @if (file()) {
+              <button
+                appButton
+                variant="ghost"
+                size="sm"
+                (click)="clearFile($event)"
+                class="mt-4 text-destructive hover:text-destructive hover:bg-destructive/10 font-bold">
+                {{ 'common.delete' | t: 'Delete' }}
+              </button>
+            }
+          </div>
+        }
+
+        @if (inputMethod() === 'url') {
+          <div class="space-y-4 animate-in fade-in-0 duration-300">
+            @for (url of urls(); track $index; let index = $index) {
+              <div
+                class="flex gap-2 group animate-in slide-in-from-left-2 duration-300">
+                <input
+                  appInput
+                  placeholder="https://company.com/about"
+                  [name]="'url-' + index"
+                  [ngModel]="url"
+                  (ngModelChange)="handleUrlChange(index, $event)"
+                  class="h-11 border-border bg-background/50 focus:ring-primary/20" />
+                @if (urls().length > 1) {
+                  <button
+                    appButton
+                    variant="outline"
+                    size="icon"
+                    (click)="removeUrlField(index)"
+                    class="shrink-0 text-muted-foreground hover:text-destructive hover:border-destructive/30">
+                    <app-icon name="X" class="w-4 h-4" />
+                  </button>
+                }
+              </div>
+            }
+            <button
+              appButton
+              variant="outline"
+              (click)="addUrlField()"
+              class="w-full border-dashed border-2 hover:border-primary hover:text-primary transition-colors font-bold bg-background/50">
+              <app-icon name="Plus" class="w-4 h-4 mx-2" />
+              {{ 'intro.add_url' | t: 'Add another URL' }}
+            </button>
+          </div>
+        }
+
+        @if (inputMethod() === 'manual') {
+          <div class="relative animate-in fade-in-0 duration-300">
+            <textarea
+              class="w-full min-h-[200px] p-4 rounded-xl border border-border bg-background/50 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-y text-sm text-foreground"
+              name="manualDescription"
+              [placeholder]="
+                'intro.manual_placeholder'
+                  | t: 'Paste company profile or job descriptions here...'
+              "
+              [(ngModel)]="manualDescription"
+              dir="auto"></textarea>
+          </div>
+        }
+      </div>
+
+      <button
+        appButton
+        size="lg"
+        data-tour="start-analysis"
+        class="w-full h-12 sm:h-14 text-base sm:text-lg font-bold bg-gradient-to-r from-primary via-secondary to-tertiary hover:opacity-90 shadow-lg shadow-primary/20 transition-all duration-300 rounded-xl text-primary-foreground border-none"
+        (click)="handleSubmit()"
+        [disabled]="isSubmitting()">
+        @if (isSubmitting()) {
+          <app-icon
+            name="Loader2"
+            class="w-6 h-6 animate-spin mx-auto text-primary-foreground" />
+        } @else {
+          {{ 'intro.start_button' | t: 'Start Analysis' }}
+        }
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,91 @@
+<section
+  class="relative min-h-[90vh] flex items-center pt-32 pb-20 px-4 md:px-8 overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
+  <!-- Background Image with Overlay -->
+  <div class="absolute inset-0 z-0">
+    <img
+      [src]="
+        isDarkMode()
+          ? '/assets/hero-dashboard.png'
+          : '/assets/hero-dashboard-light.png'
+      "
+      alt=""
+      class="w-full h-full object-cover grayscale-0 transition-opacity duration-1000"
+      [style.opacity]="isDarkMode() ? 1 : 0.9" />
+    <!-- Theme-aware Gradient Overlays for Readability and Depth -->
+    <div
+      class="absolute inset-0 bg-linear-to-b from-slate-50 via-slate-50/40 to-slate-50 dark:from-slate-950 dark:via-slate-950/60 dark:to-slate-950 transition-colors duration-500"></div>
+    <div
+      class="absolute inset-0 bg-linear-to-r from-slate-50/60 via-transparent to-slate-50/60 dark:from-slate-950/80 dark:via-transparent dark:to-slate-950/80 transition-colors duration-500"></div>
+  </div>
+
+  <!-- Decorative Orbs with theme-aware opacity -->
+  <div
+    class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-500/30 dark:bg-blue-500/20 blur-[120px] rounded-full z-0 transition-colors"></div>
+  <div
+    class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-500/30 dark:bg-purple-500/20 blur-[120px] rounded-full z-0 transition-colors"></div>
+
+  <div class="max-w-7xl mx-auto text-center relative z-10">
+    <!-- Badge -->
+    <div
+      appReveal
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/5 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium text-sm mb-6 border border-blue-500/20 backdrop-blur-sm">
+      <app-icon name="Globe" class="w-4 h-4" />
+      <span>{{ 'landing.hero.badge' | t }}</span>
+    </div>
+
+    <!-- Headline -->
+    <h1
+      appReveal
+      [revealDelay]="0.2"
+      class="text-5xl md:text-7xl font-bold tracking-tight text-slate-900 dark:text-white mb-8 leading-[1.1] text-center">
+      @if (isRtl()) {
+        <span
+          class="bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+          {{ titleLead() }}
+        </span>
+        <br />
+        {{ titleRest() }}
+      } @else {
+        Transform Job Descriptions into <br class="hidden md:block" />
+        <span
+          class="bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+          Actionable Intelligence
+        </span>
+      }
+    </h1>
+
+    <!-- Subtitle -->
+    <p
+      appReveal
+      [revealDelay]="0.4"
+      class="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-10 leading-relaxed">
+      {{ 'landing.hero.subtitle' | t }}
+    </p>
+
+    <!-- CTAs -->
+    <div
+      appReveal
+      [revealDelay]="0.6"
+      class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <button
+        appButton
+        size="lg"
+        class="h-14 px-10 text-lg rounded-2xl bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-105 active:scale-95 w-full sm:w-auto"
+        (click)="router.navigate(['/auth'])">
+        {{ 'landing.hero.cta_primary' | t }}
+        @if (isRtl()) {
+          <app-icon name="ArrowRight" class="mr-2 w-5 h-5 rotate-180" />
+        } @else {
+          <app-icon name="ChevronRight" class="ml-2 w-5 h-5" />
+        }
+      </button>
+      <button
+        appButton
+        variant="outline"
+        size="lg"
+        class="h-14 px-10 text-lg rounded-2xl border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 text-slate-900 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all backdrop-blur-sm w-full sm:w-auto">
+        {{ 'landing.hero.cta_secondary' | t }}
+      </button>
+    </div>
+  </div>
+</section>

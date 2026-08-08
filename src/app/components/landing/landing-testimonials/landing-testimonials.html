@@ -1,0 +1,45 @@
+<section
+  class="py-24 px-4 md:px-8 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16">
+      <h2
+        appReveal
+        class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
+        {{ 'landing.testimonials.title' | t }}
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      @for (item of testimonials(); track item.key; let index = $index) {
+        <div
+          appReveal
+          [revealDelay]="index * 0.1"
+          class="relative p-8 rounded-[32px] bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-blue-500/5 hover:-translate-y-1.5 transition-all">
+          <app-icon
+            name="Quote"
+            class="w-10 h-10 text-blue-100 dark:text-blue-900 mb-6" />
+          <p
+            class="text-lg text-slate-700 dark:text-slate-300 mb-8 leading-relaxed font-medium">
+            "{{ item.quote }}"
+          </p>
+
+          <div class="flex items-center gap-4">
+            <div
+              class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg opacity-90"
+              [class]="item.color">
+              {{ item.initial }}
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 dark:text-white">
+                {{ item.author }}
+              </h4>
+              <p class="text-sm text-slate-500 dark:text-slate-400">
+                {{ item.role }}
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>

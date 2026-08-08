@@ -1,0 +1,300 @@
+<div class="relative w-full">
+  <!-- Header Section with Toggle -->
+  <div
+    class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6 animate-fade-in-up">
+    <div>
+      <h1
+        data-tour="dashboard-header"
+        class="text-4xl md:text-5xl font-bold tracking-tighter text-foreground flex items-center gap-4 mb-3">
+        <span
+          class="bg-clip-text text-transparent bg-linear-to-r from-primary to-violet-600">
+          {{ 'dashboard.header_title' | t }}
+        </span>
+        <div class="p-2 bg-primary/10 rounded-2xl rotate-3 shadow-inner">
+          <app-icon
+            name="Zap"
+            class="w-8 h-8 text-primary fill-current" />
+        </div>
+      </h1>
+      <p
+        class="text-muted-foreground text-lg md:text-xl font-medium max-w-2xl">
+        {{ 'dashboard.header_desc' | t }}
+      </p>
+    </div>
+
+    <div
+      data-tour="view-toggle"
+      class="flex bg-card/60 backdrop-blur-md p-1.5 rounded-2xl border border-white/10 shadow-sm self-start md:self-auto ring-1 ring-border/50">
+      <button
+        type="button"
+        (click)="view.set('analyzer')"
+        [class]="viewButtonClass('analyzer')">
+        @if (view() === 'analyzer') {
+          <div class="absolute inset-0 bg-primary opacity-100 z-0"></div>
+        }
+        <app-icon name="Play" [class]="playIconClass()" />
+        <span class="z-10 relative">{{ 'nav.analyzer' | t }}</span>
+      </button>
+
+      <button
+        type="button"
+        (click)="showHistory()"
+        [class]="viewButtonClass('history')">
+        @if (view() === 'history') {
+          <div class="absolute inset-0 bg-primary opacity-100 z-0"></div>
+        }
+        <app-icon name="History" class="w-4 h-4 z-10 relative" />
+        <span class="z-10 relative">{{ 'nav.history' | t }}</span>
+      </button>
+    </div>
+  </div>
+
+  @if (view() === 'analyzer') {
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- Left Panel: Job Form -->
+      <div
+        class="lg:col-span-4 lg:sticky lg:top-28 space-y-6 animate-fade-in-up"
+        style="animation-delay: 100ms">
+        <div class="glass-card p-1">
+          <app-job-form
+            [isAnalyzing]="isAnalyzing()"
+            [initialData]="initialFormData()"
+            (analyze)="handleAnalyze($event)" />
+        </div>
+
+        <!-- Smart Tip Card -->
+        @if (!isAnalyzing() && !analysisResult()) {
+          <div
+            class="bg-linear-to-br from-indigo-900 to-indigo-950 text-indigo-50 p-6 rounded-3xl shadow-xl relative overflow-hidden group border border-indigo-800/50">
+            <div
+              class="absolute -right-10 -bottom-10 opacity-10 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700">
+              <app-icon name="Brain" class="w-48 h-48" />
+            </div>
+            <div class="absolute top-0 right-0 p-4 opacity-50">
+              <app-icon
+                name="Sparkles"
+                class="w-5 h-5 text-indigo-300" />
+            </div>
+
+            <h4 class="font-bold mb-3 flex items-center gap-2 text-lg">
+              <app-icon
+                name="Star"
+                class="w-5 h-5 text-amber-400 fill-amber-400" />
+              {{ 'analyzer.pro_tip_title' | t: 'Smart AI Tip' }}
+            </h4>
+            <p
+              class="text-sm text-indigo-100/80 leading-relaxed font-medium">
+              {{ 'analyzer.job_desc_ai_hint' | t }}
+            </p>
+          </div>
+        }
+      </div>
+
+      <!-- Right Panel: Results -->
+      <div
+        class="lg:col-span-8 min-h-[600px] animate-fade-in-up"
+        style="animation-delay: 200ms">
+        @if (analysisResult() || isAnalyzing()) {
+          <app-results-view
+            [result]="analysisResult()"
+            [isLoading]="isAnalyzing()"
+            [progress]="progress()"
+            [isSaving]="isSaving()"
+            (save)="handleSaveResults()" />
+        } @else {
+          <div
+            class="h-full min-h-[500px] flex flex-col items-center justify-center p-12 text-center glass-card border-dashed hover:border-solid hover:border-primary/30 transition-all duration-500 group relative overflow-hidden">
+            <!-- Decorative background elements -->
+            <div
+              class="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 opacity-50"></div>
+            <div
+              class="absolute bottom-0 right-0 w-64 h-64 bg-secondary/5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2 opacity-50"></div>
+
+            <div class="relative mb-10">
+              <div
+                class="absolute inset-0 bg-primary/20 blur-3xl rounded-full group-hover:scale-150 transition-transform duration-1000 opacity-0 group-hover:opacity-100"></div>
+              <div
+                class="w-28 h-28 bg-linear-to-br from-card to-muted rounded-4xl flex items-center justify-center shadow-2xl relative z-10 group-hover:-translate-y-3 transition-all duration-500 border border-primary/10 group-hover:border-primary/30 rotate-3 group-hover:rotate-0">
+                <app-icon
+                  name="Sparkles"
+                  class="w-12 h-12 text-primary animate-pulse" />
+              </div>
+              <!-- Floating icons around the main icon -->
+              <app-icon
+                name="Brain"
+                class="absolute -top-4 -right-4 w-8 h-8 text-primary/20 animate-bounce-slow" />
+              <app-icon
+                name="Target"
+                class="absolute -bottom-2 -left-6 w-6 h-6 text-secondary/30 animate-pulse" />
+            </div>
+
+            <div class="max-w-md space-y-6 relative z-10">
+              <div class="space-y-3">
+                <h3
+                  class="text-3xl font-black text-foreground tracking-tight">
+                  {{
+                    'dashboard.ready_title' | t: 'Ready to start analysis?'
+                  }}
+                </h3>
+                <p
+                  class="text-muted-foreground font-medium text-lg leading-relaxed">
+                  {{ 'analyzer.subtitle' | t }}
+                </p>
+              </div>
+
+              <div class="flex flex-col items-center gap-4">
+                <div class="flex flex-wrap justify-center gap-3">
+                  <div
+                    appBadge
+                    variant="outline"
+                    class="bg-primary/5 text-primary border-primary/10 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider backdrop-blur-sm">
+                    <app-icon name="Zap" class="w-3 h-3 mr-1.5" />
+                    AI Powered
+                  </div>
+                  <div
+                    appBadge
+                    variant="outline"
+                    class="bg-secondary/5 text-secondary border-secondary/10 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider backdrop-blur-sm">
+                    <app-icon name="CheckCircle2" class="w-3 h-3 mr-1.5" />
+                    Instant Extraction
+                  </div>
+                </div>
+
+                <div
+                  class="pt-4 flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 px-6 py-2 rounded-full border border-border/50">
+                  <app-icon name="Info" class="w-4 h-4 text-primary" />
+                  {{ 'analyzer.select_job' | t }}
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="animate-fade-in-up">
+      <div
+        appCard
+        class="border-none shadow-xl shadow-primary/10 rounded-3xl overflow-hidden glass-card">
+        <div
+          appCardHeader
+          class="bg-card/50 backdrop-blur-sm p-8 border-b border-border/50">
+          <h3
+            appCardTitle
+            class="text-2xl font-bold text-foreground flex items-center gap-3">
+            <div class="p-2.5 bg-primary/10 text-primary rounded-xl">
+              <app-icon name="History" class="w-6 h-6" />
+            </div>
+            {{ 'history.title' | t }}
+          </h3>
+          <p class="text-muted-foreground font-medium mt-2">
+            {{ 'history.subtitle' | t }}
+          </p>
+        </div>
+        <div appCardContent class="p-8">
+          @if (isLoadingHistory()) {
+            <div class="py-24 flex flex-col items-center gap-6">
+              <div class="relative">
+                <div
+                  class="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
+                <app-icon
+                  name="Brain"
+                  class="absolute inset-0 m-auto w-6 h-6 text-primary animate-pulse" />
+              </div>
+              <p
+                class="font-medium text-muted-foreground animate-pulse">
+                {{
+                  'dashboard.loading_history'
+                    | t: 'Loading your analysis history...'
+                }}
+              </p>
+            </div>
+          } @else if (historyItems().length === 0) {
+            <div class="py-24 text-center space-y-6">
+              <div
+                class="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto">
+                <app-icon
+                  name="History"
+                  class="w-10 h-10 text-muted-foreground" />
+              </div>
+              <div class="space-y-2">
+                <p class="text-lg text-foreground font-bold">
+                  {{ 'history.no_history' | t: 'No History Yet' }}
+                </p>
+                <p class="text-muted-foreground">
+                  {{ 'history.empty_state' | t: 'No saved analyses found.' }}
+                </p>
+              </div>
+              <button
+                appButton
+                (click)="view.set('analyzer')"
+                class="bg-primary hover:bg-primary/90 text-white rounded-xl px-8 shadow-lg shadow-primary/25">
+                {{ 'history.start_first_analysis' | t: 'Start first analysis' }}
+              </button>
+            </div>
+          } @else {
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              @for (item of historyItems(); track $index) {
+                <div
+                  class="group relative flex flex-col justify-between p-6 rounded-3xl border border-border/50 bg-card shadow-sm hover:shadow-xl hover:shadow-primary/10 hover:border-primary/30 transition-all duration-300 cursor-pointer overflow-hidden"
+                  (click)="handleLoadFromHistory(item.job_title)">
+                  <div
+                    class="absolute top-0 right-0 w-24 h-24 bg-linear-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+
+                  <div class="relative space-y-4">
+                    <div class="flex justify-between items-start">
+                      <div
+                        class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
+                        <app-icon name="FileText" class="w-6 h-6" />
+                      </div>
+                      <div
+                        class="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300">
+                        <app-icon
+                          name="ArrowRight"
+                          class="w-5 h-5 text-primary rtl:rotate-180" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <h4
+                        class="font-bold text-lg text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-1">
+                        {{ item.job_title }}
+                      </h4>
+                      <p
+                        class="text-xs font-medium text-muted-foreground">
+                        {{ formatDate(item.last_updated) }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    class="mt-4 pt-4 border-t border-border/50 flex items-center justify-between">
+                    <div
+                      appBadge
+                      variant="secondary"
+                      class="bg-primary/10 text-primary border-none font-bold">
+                      {{ item.count }} {{ 'competencies.title' | t }}
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (analysisResult()) {
+    <app-competency-selector
+      [isOpen]="isRefining()"
+      [initialData]="analysisResult()"
+      [jobTitle]="tempData()?.jobTitle || ''"
+      [jobDescription]="tempData()?.jobDescription || ''"
+      [organizationName]="organizationName()"
+      [userId]="currentUserId()"
+      (closed)="isRefining.set(false)"
+      (confirmed)="handleRefinementConfirm($event)" />
+  }
+</div>

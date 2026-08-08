@@ -1,0 +1,366 @@
+<div class="container mx-auto max-w-4xl py-6 sm:py-10 px-4">
+  <!-- Loading Overlay -->
+  @if (showLoadingOverlay()) {
+    <div
+      class="fixed inset-0 bg-background/80 backdrop-blur-md z-50 flex items-center justify-center">
+      <div
+        class="bg-card border border-border rounded-2xl p-8 max-w-md w-full mx-4 shadow-2xl animate-in zoom-in-95 duration-300">
+        <div class="flex justify-center mb-6">
+          <div
+            class="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+        <h3 class="text-xl font-bold text-center mb-2 text-foreground">
+          {{ 'title_gen.loading.processing' | t: 'Processing file' }}
+        </h3>
+        <p class="text-muted-foreground text-center mb-6">
+          {{
+            'title_gen.loading.extracting' | t: 'Uploading and extracting data'
+          }}
+        </p>
+
+        <!-- Progress Steps -->
+        <div class="space-y-3">
+          @for (s of loadingSteps(); track s.id; let idx = $index) {
+            <div [class]="loadingRowClass(s)">
+              <div [class]="loadingBadgeClass(s)">
+                @if (s.status === 'completed') {
+                  <app-icon name="Check" class="w-4 h-4" />
+                } @else {
+                  {{ idx + 1 }}
+                }
+              </div>
+              <span class="text-sm">{{ s.labelKey | t: s.fallback }}</span>
+            </div>
+          }
+        </div>
+
+        @if (uploadResult(); as result) {
+          <div [class]="uploadResultClass(result.success)">
+            {{ result.message }}
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Wizard Steps Header -->
+  <div class="flex justify-center mb-12">
+    <div [class]="wizardRowClass()">
+      @for (s of steps(); track s.number; let idx = $index) {
+        <div [class]="stepWrapperClass(s.number)" (click)="goToStep(s.number)">
+          <div [class]="stepCircleClass(s.number)">
+            @if (step() > s.number) {
+              <app-icon name="CheckCircle2" class="w-6 h-6" />
+            } @else {
+              {{ s.number }}
+            }
+          </div>
+          <span [class]="stepLabelClass(s.number)">{{ s.title }}</span>
+          @if (idx < steps().length - 1) {
+            <div [class]="stepConnectorClass(s.number)"></div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <div appCard class="glass-card min-h-[500px] flex flex-col border-none">
+    <div appCardHeader class="text-center pb-2">
+      <h3
+        appCardTitle
+        class="text-2xl sm:text-3xl font-bold text-gradient">
+        @switch (step()) {
+          @case (1) {
+            {{ 'title_gen.headers.org_confirm' | t: 'Organization Confirmation' }}
+          }
+          @case (2) {
+            {{ 'title_gen.headers.method_select' | t: 'Select Generation Method' }}
+          }
+          @case (3) {
+            {{ 'title_gen.headers.data_upload' | t: 'Data Upload' }}
+          }
+        }
+      </h3>
+      <p
+        appCardDescription
+        class="text-base sm:text-lg text-muted-foreground">
+        @switch (step()) {
+          @case (1) {
+            {{
+              'title_gen.subtitles.org_confirm'
+                | t: 'Verify organization details for this analysis'
+            }}
+          }
+          @case (2) {
+            {{
+              'title_gen.subtitles.method_select'
+                | t: 'How do you want to define job titles?'
+            }}
+          }
+          @case (3) {
+            {{
+              'title_gen.subtitles.data_upload'
+                | t: 'Provide source files or manual entry'
+            }}
+          }
+        }
+      </p>
+    </div>
+
+    <div appCardContent class="flex-1 flex flex-col justify-center p-8">
+      <!-- Step 1: Organization -->
+      @if (step() === 1) {
+        <div
+          class="space-y-6 max-w-md mx-auto w-full animate-in fade-in-0 slide-in-from-right-2 duration-300">
+          <div
+            class="bg-primary/5 p-8 rounded-3xl border border-primary/10 text-center">
+            <div
+              class="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <app-icon name="Building" class="w-10 h-10 text-primary" />
+            </div>
+            <h3 class="text-2xl font-bold text-foreground mb-1">
+              {{ organization() || ('common.organization' | t) }}
+            </h3>
+            <p
+              class="text-muted-foreground text-xs uppercase tracking-[0.2em] font-bold">
+              {{ 'common.current_org' | t: 'Current Organization' }}
+            </p>
+          </div>
+
+          <div class="space-y-3">
+            <label appLabel class="text-sm font-semibold text-foreground/80">
+              {{
+                'title_gen.org_change_label'
+                  | t: 'Change Organization / Company Name'
+              }}
+            </label>
+            <input
+              appInput
+              name="organization"
+              [(ngModel)]="organization"
+              [placeholder]="'intro.company_placeholder' | t"
+              class="h-12 border-border bg-background/50 focus:ring-primary/20 transition-all text-center text-lg" />
+          </div>
+        </div>
+      }
+
+      <!-- Step 2: Method -->
+      @if (step() === 2) {
+        <div
+          class="grid md:grid-cols-2 gap-6 animate-in fade-in-0 slide-in-from-right-2 duration-300">
+          <div
+            (click)="generationMethod.set('ai')"
+            [class]="methodCardClass('ai')">
+            <div
+              class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <app-icon
+                name="FileSpreadsheet"
+                class="w-10 h-10 text-primary" />
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2 text-foreground">
+                {{ 'title_gen.methods.excel.title' | t: 'Upload Excel File' }}
+              </h3>
+              <p class="text-muted-foreground text-sm leading-relaxed">
+                {{
+                  'title_gen.methods.excel.desc'
+                    | t
+                      : 'Upload an Excel file containing employee and job data for automatic extraction.'
+                }}
+              </p>
+            </div>
+          </div>
+
+          <div
+            (click)="generationMethod.set('manual')"
+            [class]="methodCardClass('manual')">
+            <div
+              class="w-20 h-20 rounded-2xl bg-secondary/10 flex items-center justify-center">
+              <app-icon name="FileText" class="w-10 h-10 text-secondary" />
+            </div>
+            <div>
+              <h3 class="text-xl font-bold mb-2 text-foreground">
+                {{ 'title_gen.methods.manual.title' | t: 'Manual Entry' }}
+              </h3>
+              <p class="text-muted-foreground text-sm leading-relaxed">
+                {{
+                  'title_gen.methods.manual.desc'
+                    | t
+                      : 'Enter job titles directly or copy an existing list of titles.'
+                }}
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Step 3: Data -->
+      @if (step() === 3) {
+        <div
+          class="max-w-xl mx-auto w-full animate-in fade-in-0 slide-in-from-right-2 duration-300">
+          @if (generationMethod() === 'ai') {
+            <div class="space-y-6">
+              <!-- File Upload Area -->
+              <div
+                data-tour="upload-area"
+                class="border-2 border-dashed border-border rounded-3xl p-12 bg-muted/20 text-center cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-all duration-300"
+                (dragover)="$event.preventDefault()"
+                (drop)="handleDrop($event)"
+                (click)="openFilePicker()">
+                <div
+                  class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <app-icon name="Upload" class="w-10 h-10 text-primary" />
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-foreground">
+                  {{
+                    'title_gen.upload_area_title' | t: 'Upload Unified Data File'
+                  }}
+                </h3>
+                <p class="text-muted-foreground mb-4 text-sm">
+                  {{ 'intro.file_drop_title' | t }}
+                </p>
+                <div class="flex items-center justify-center gap-2">
+                  <span
+                    class="px-3 py-1 bg-background border border-border rounded-lg text-[10px] font-bold text-muted-foreground">
+                    XLSX
+                  </span>
+                  <span
+                    class="px-3 py-1 bg-background border border-border rounded-lg text-[10px] font-bold text-muted-foreground">
+                    CSV
+                  </span>
+                </div>
+
+                <input
+                  appInput
+                  type="file"
+                  class="hidden"
+                  id="file-input"
+                  accept=".xlsx,.xls,.csv"
+                  (change)="handleFileInput($event)" />
+              </div>
+
+              @if (file(); as selected) {
+                <div
+                  class="p-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 flex items-center justify-between animate-in slide-in-from-bottom-2">
+                  <div [class]="fileRowClass()">
+                    <div
+                      class="p-2.5 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/20">
+                      <app-icon
+                        name="FileSpreadsheet"
+                        class="w-5 h-5 text-white" />
+                    </div>
+                    <div [class]="isRtl() ? 'text-right' : 'text-left'">
+                      <p class="font-bold text-foreground text-sm">
+                        {{ selected.name }}
+                      </p>
+                      <p class="text-xs text-emerald-500 font-medium">
+                        {{ 'common.size' | t: 'Size' }}:
+                        {{ (selected.size / 1024).toFixed(2) }} KB
+                      </p>
+                    </div>
+                  </div>
+                  <app-icon
+                    name="CheckCircle2"
+                    class="w-6 h-6 text-emerald-500" />
+                </div>
+              }
+
+              <!-- Additional Options -->
+              <div class="bg-muted/30 rounded-2xl p-6 border border-border">
+                <h4
+                  class="font-bold text-xs mb-4 text-muted-foreground uppercase tracking-widest">
+                  {{
+                    'title_gen.advanced_options'
+                      | t: 'Advanced Processing Options'
+                  }}
+                </h4>
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-1.5">
+                    <label appLabel class="text-xs font-semibold">
+                      {{ 'title_gen.sheet_name' | t: 'Sheet Name (Excel)' }}
+                    </label>
+                    <input
+                      appInput
+                      name="sheetName"
+                      [(ngModel)]="sheetName"
+                      [placeholder]="'common.optional' | t: 'Optional'"
+                      class="h-10 text-xs bg-background/50" />
+                  </div>
+                  <div class="space-y-1.5">
+                    <label appLabel class="text-xs font-semibold">
+                      {{ 'title_gen.batch_size' | t: 'Batch Size' }}
+                    </label>
+                    <input
+                      appInput
+                      type="number"
+                      name="batchSize"
+                      [ngModel]="batchSize()"
+                      (ngModelChange)="batchSize.set(Number($event))"
+                      class="h-10 text-xs bg-background/50" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div data-tour="manual-entry" class="space-y-4">
+              <label appLabel class="font-bold text-foreground/80">
+                {{ 'title_gen.manual_titles_label' | t: 'List of Job Titles' }}
+              </label>
+              <textarea
+                class="w-full min-h-[250px] p-6 rounded-3xl border border-border bg-background/50 focus:ring-2 focus:ring-primary/20 resize-none text-sm leading-relaxed text-foreground"
+                name="manualTitles"
+                [placeholder]="
+                  'title_gen.manual_titles_placeholder'
+                    | t: 'Enter each job title on a separate line...'
+                "
+                [(ngModel)]="manualTitles"
+                dir="auto"></textarea>
+              <div [class]="manualHintClass()">
+                <app-icon name="CheckCircle2" class="w-5 h-5 shrink-0" />
+                <p [class]="manualHintTextClass()">
+                  {{
+                    'title_gen.manual_hint'
+                      | t
+                        : 'Separate job titles clearly for better results in competency extraction.'
+                  }}
+                </p>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <div [class]="footerClass()">
+      <button
+        appButton
+        variant="ghost"
+        (click)="handleBack()"
+        [disabled]="step() === 1"
+        class="w-32 font-bold hover:bg-background gap-2 rounded-xl text-muted-foreground">
+        <app-icon name="ChevronRight" [class]="backArrowClass()" />
+        {{ 'common.back' | t: 'Back' }}
+      </button>
+
+      <button
+        appButton
+        (click)="handleNext()"
+        class="w-48 bg-primary hover:opacity-90 text-primary-foreground font-bold shadow-lg shadow-primary/20 h-12 rounded-xl border-none"
+        [disabled]="nextDisabled()">
+        @if (isUploading()) {
+          <span class="flex items-center gap-2">
+            <app-icon name="Loader2" class="w-4 h-4 animate-spin" />
+            {{ 'common.processing' | t }}
+          </span>
+        } @else if (step() === 3) {
+          {{ 'title_gen.generate_button' | t: 'Generate Titles' }}
+        } @else {
+          <span class="flex items-center gap-2">
+            {{ 'common.next' | t: 'Next' }}
+            <app-icon name="ChevronLeft" [class]="nextArrowClass()" />
+          </span>
+        }
+      </button>
+    </div>
+  </div>
+</div>

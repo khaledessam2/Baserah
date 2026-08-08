@@ -1,0 +1,5 @@
+@if (select.selectedLabel()) {
+  <span class="line-clamp-1">{{ select.selectedLabel() }}</span>
+} @else {
+  <span class="line-clamp-1 text-muted-foreground">{{ placeholder() }}</span>
+}

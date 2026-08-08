@@ -1,0 +1,9 @@
+<button
+  type="button"
+  role="combobox"
+  [attr.aria-expanded]="select.open()"
+  [class]="classes()"
+  (click)="select.toggle()">
+  <ng-content />
+  <app-icon name="ChevronsUpDown" class="h-4 w-4 opacity-50" />
+</button>

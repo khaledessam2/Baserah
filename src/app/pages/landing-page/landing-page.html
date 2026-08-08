@@ -1,0 +1,135 @@
+<div
+  class="min-h-screen bg-slate-50 dark:bg-slate-950 overflow-x-hidden selection:bg-blue-500/30">
+  <nav [class]="navClass()">
+    <div
+      class="max-w-7xl mx-auto px-4 flex items-center justify-between">
+      <div
+        class="font-bold text-xl text-slate-900 dark:text-white flex items-center gap-2">
+        <img [src]="logoSrc()" [alt]="'app_title' | t" [class]="logoClass()" />
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div
+        class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-slate-300">
+        @for (item of navLinks; track item) {
+          <a
+            [href]="'#' + item"
+            class="relative hover:text-blue-600 dark:hover:text-blue-400 transition-colors group">
+            {{ 'landing.nav.' + item | t }}
+            <span
+              class="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 dark:bg-blue-400 transition-all duration-300 group-hover:w-full"></span>
+          </a>
+        }
+      </div>
+
+      <div class="hidden md:flex items-center gap-3">
+        <app-theme-toggle />
+        <app-language-selector />
+        <button
+          appButton
+          variant="default"
+          [size]="isScrolled() ? 'sm' : 'default'"
+          (click)="goToApp()"
+          class="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-6 transition-all shadow-lg hover:shadow-blue-500/25">
+          {{ ctaLabel() }}
+        </button>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <div class="md:hidden flex items-center gap-2">
+        <app-theme-toggle />
+        <app-language-selector />
+        <button
+          type="button"
+          (click)="isMobileMenuOpen.set(!isMobileMenuOpen())"
+          class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+          @if (isMobileMenuOpen()) {
+            <app-icon name="X" class="w-6 h-6" />
+          } @else {
+            <app-icon name="Menu" class="w-6 h-6" />
+          }
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div
+      class="md:hidden overflow-hidden bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 transition-all duration-300"
+      [style.max-height]="isMobileMenuOpen() ? '24rem' : '0'"
+      [style.opacity]="isMobileMenuOpen() ? '1' : '0'">
+      <div class="px-4 py-4 space-y-4">
+        @for (item of navLinks; track item) {
+          <a
+            [href]="'#' + item"
+            (click)="isMobileMenuOpen.set(false)"
+            class="block text-base font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+            {{ 'landing.nav.' + item | t }}
+          </a>
+        }
+        <div
+          class="pt-4 border-t border-slate-100 dark:border-slate-800">
+          <button
+            appButton
+            variant="default"
+            size="lg"
+            (click)="goToApp()"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl">
+            {{ ctaLabel() }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <app-landing-hero />
+    <app-landing-problem-solution />
+    <div id="features">
+      <app-landing-features />
+    </div>
+    <div id="how_it_works">
+      <app-landing-how-it-works />
+    </div>
+    <app-landing-guided-tour-section />
+    <div id="testimonials">
+      <app-landing-testimonials />
+    </div>
+    <div id="faq">
+      <app-landing-faq />
+    </div>
+
+    <!-- Final CTA -->
+    <section class="py-24 px-4 text-center">
+      <div
+        appReveal
+        class="max-w-5xl mx-auto bg-blue-600 rounded-[48px] p-12 md:p-24 text-white relative overflow-hidden shadow-2xl shadow-blue-500/30">
+        <div
+          class="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 blur-[100px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
+        <div
+          class="absolute bottom-0 left-0 w-[300px] h-[300px] bg-black/10 blur-[80px] rounded-full -translate-x-1/2 translate-y-1/2"></div>
+
+        <h2
+          class="text-4xl md:text-6xl font-bold mb-6 relative z-10 leading-tight">
+          {{ 'landing.cta.title' | t }}
+        </h2>
+        <p
+          class="text-xl text-blue-100 mb-10 max-w-2xl mx-auto relative z-10">
+          {{ 'landing.cta.subtitle' | t }}
+        </p>
+        <button
+          appButton
+          size="lg"
+          class="h-16 px-12 text-xl rounded-full bg-white text-blue-600 hover:bg-slate-50 relative z-10 transition-all hover:scale-105 shadow-xl"
+          (click)="goToApp()">
+          {{
+            auth.token()
+              ? ('nav.dashboard' | t)
+              : ('landing.cta.btn' | t)
+          }}
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <app-landing-footer />
+</div>

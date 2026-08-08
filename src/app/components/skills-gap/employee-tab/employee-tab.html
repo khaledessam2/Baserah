@@ -1,0 +1,474 @@
+<div class="space-y-6">
+  <!-- Search Bar -->
+  <div appCard class="glass-card border-none shadow-xl">
+    <div appCardContent class="p-5">
+      <div class="flex items-center gap-3">
+        <app-icon name="User" class="w-5 h-5 text-indigo-500" />
+        <label
+          class="text-sm font-bold text-slate-700 dark:text-slate-300 whitespace-nowrap">
+          {{ 'skills_gap.employee_profile.national_id_label' | t }}
+        </label>
+        <div class="flex-1 max-w-sm">
+          <input
+            appInput
+            name="nationalId"
+            [(ngModel)]="nationalId"
+            [placeholder]="
+              'skills_gap.employee_profile.national_id_placeholder' | t
+            "
+            class="bg-white/50 dark:bg-slate-800/50 rounded-xl border-slate-200/50 dark:border-slate-700/50 focus:ring-2 focus:ring-indigo-500/30"
+            (keydown.enter)="load()" />
+        </div>
+        <button
+          appButton
+          (click)="load()"
+          [disabled]="loading() || !nationalId().trim()"
+          class="gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl shadow-lg shadow-indigo-500/25 px-6">
+          @if (loading()) {
+            <app-icon name="Loader2" class="w-4 h-4 animate-spin" />
+          } @else {
+            <app-icon name="Search" class="w-4 h-4" />
+          }
+          {{ 'skills_gap.employee_profile.search' | t }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="text-center py-12 text-red-400 font-medium">
+      {{ error() }}
+    </div>
+  }
+
+  @if (data(); as d) {
+    <!-- ═══ Profile Header ═══ -->
+    <div
+      class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 p-6 shadow-2xl">
+      <div
+        class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-500/10 via-transparent to-purple-500/10"></div>
+      <div class="relative flex items-start gap-5">
+        <div
+          class="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-black text-2xl shadow-xl shadow-indigo-500/30 shrink-0">
+          {{ (d.employee_name || '?')[0] }}
+        </div>
+        <div class="flex-1">
+          <h2 class="text-xl font-black text-white">
+            {{ d.employee_name }}
+          </h2>
+          <div class="flex items-center gap-4 mt-1.5 flex-wrap">
+            <span class="text-xs text-indigo-300 flex items-center gap-1">
+              <app-icon name="Briefcase" class="w-3 h-3" />{{ d.job_title }}
+            </span>
+            <span class="text-xs text-slate-400 flex items-center gap-1">
+              <app-icon name="Building2" class="w-3 h-3" />{{ d.department }}
+            </span>
+            @if (d.section && d.section !== 'N/A') {
+              <span class="text-xs text-slate-500 flex items-center gap-1">
+                <app-icon name="Shield" class="w-3 h-3" />{{ d.section }}
+              </span>
+            }
+          </div>
+          @if (d.manager_name && d.manager_name !== 'N/A') {
+            <p class="text-[11px] text-slate-500 mt-1">
+              {{ 'skills_gap.employee_profile.direct_manager' | t }}:
+              {{ d.manager_name }}
+            </p>
+          }
+        </div>
+        <div class="text-center shrink-0">
+          <div class="relative w-20 h-20">
+            <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+              <circle
+                cx="40"
+                cy="40"
+                r="35"
+                fill="none"
+                stroke="rgba(255,255,255,0.08)"
+                stroke-width="6" />
+              <circle
+                cx="40"
+                cy="40"
+                r="35"
+                fill="none"
+                [attr.stroke]="ringColor(d.overall_score)"
+                stroke-width="6"
+                stroke-linecap="round"
+                [attr.stroke-dasharray]="ringDash(d.overall_score)"
+                class="transition-all duration-1000" />
+            </svg>
+            <span
+              class="absolute inset-0 flex items-center justify-center text-xl font-black text-white">
+              {{ d.overall_score }}%
+            </span>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1">
+            {{ 'skills_gap.employee_profile.tech_score' | t }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Summary Stats -->
+      <div
+        class="relative grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-5 border-t border-white/10">
+        <div class="text-center">
+          <p class="text-2xl font-black text-white">
+            {{ d.summary.total_tech_assessments }}
+          </p>
+          <p class="text-[10px] text-slate-400">
+            {{ 'skills_gap.employee_profile.tech_assessments' | t }}
+          </p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl font-black text-white">
+            {{ d.summary.total_mgr_assessments }}
+          </p>
+          <p class="text-[10px] text-slate-400">
+            {{ 'skills_gap.employee_profile.mgr_assessments' | t }}
+          </p>
+        </div>
+        <div class="text-center">
+          <p [class]="mgrScoreClass(d.summary.latest_mgr_score)">
+            {{
+              d.summary.latest_mgr_score !== null
+                ? d.summary.latest_mgr_score + '%'
+                : '—'
+            }}
+          </p>
+          <p class="text-[10px] text-slate-400">
+            {{ 'skills_gap.employee_profile.mgr_score' | t }}
+          </p>
+        </div>
+        <div class="text-center">
+          @if (d.summary.has_improvement !== null) {
+            <div [class]="improvementClass(d.summary.has_improvement)">
+              @if (d.summary.has_improvement) {
+                <app-icon name="TrendingUp" class="w-6 h-6 mx-auto" />
+              } @else {
+                <app-icon name="TrendingDown" class="w-6 h-6 mx-auto" />
+              }
+            </div>
+            <p class="text-[10px] text-slate-400">
+              {{
+                d.summary.has_improvement
+                  ? ('skills_gap.employee_profile.improved' | t)
+                  : ('skills_gap.employee_profile.declined' | t)
+              }}
+            </p>
+          } @else {
+            <app-icon name="Minus" class="w-6 h-6 mx-auto text-slate-500" />
+            <p class="text-[10px] text-slate-400">
+              {{ 'skills_gap.employee_profile.single_assessment' | t }}
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Radar Chart + Training Recommendations ═══ -->
+    @if (d.competency_gaps && d.competency_gaps.length > 0) {
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div appCard class="glass-card border-none shadow-xl overflow-hidden">
+          <div appCardHeader class="pb-2">
+            <h3 appCardTitle class="text-lg flex items-center gap-2">
+              <app-icon name="Target" class="w-5 h-5 text-indigo-500" />
+              {{ 'skills_gap.employee_profile.radar_title' | t }}
+            </h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              {{ 'skills_gap.employee_profile.radar_subtitle' | t }}
+            </p>
+          </div>
+          <div appCardContent>
+            <div dir="ltr" class="h-[320px] w-full">
+              <app-chart
+                type="radar"
+                [data]="radarData()"
+                [options]="radarOptions" />
+            </div>
+          </div>
+        </div>
+
+        <div appCard class="glass-card border-none shadow-xl overflow-hidden">
+          <div appCardHeader class="pb-2">
+            <h3 appCardTitle class="text-lg flex items-center gap-2">
+              <app-icon
+                name="GraduationCap"
+                class="w-5 h-5 text-amber-500" />
+              {{ 'skills_gap.employee_profile.training_title' | t }}
+            </h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400">
+              {{ 'skills_gap.employee_profile.training_subtitle' | t }}
+            </p>
+          </div>
+          <div appCardContent class="p-0">
+            <div class="divide-y divide-slate-100 dark:divide-white/5">
+              @for (g of trainingGaps(); track $index; let i = $index) {
+                <div
+                  class="px-5 py-3 flex items-center gap-3 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/10 transition-colors">
+                  <div [class]="trainingBadgeClass(g.severity)">
+                    {{ i + 1 }}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <p
+                      class="text-xs font-bold text-slate-800 dark:text-white truncate">
+                      {{ g.competency }}
+                    </p>
+                    <p class="text-[10px] text-slate-400">
+                      {{ trainingLabel(g.severity) }}
+                    </p>
+                  </div>
+                  <div class="text-end shrink-0">
+                    <span class="text-xs font-black text-red-500">
+                      {{ g.gap }}%
+                    </span>
+                    <p class="text-[9px] text-slate-400">
+                      {{ 'skills_gap.department.gap_label' | t }}
+                    </p>
+                  </div>
+                </div>
+              }
+              @if (trainingGaps().length === 0) {
+                <div class="px-5 py-8 text-center text-slate-400 text-sm">
+                  {{ 'skills_gap.employee_profile.no_training_needed' | t }}
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ═══ Comparison Section ═══ -->
+    @if (d.comparison; as comparison) {
+      <div appCard class="glass-card border-none shadow-xl overflow-hidden">
+        <div
+          appCardHeader
+          class="pb-2 bg-gradient-to-r from-indigo-500/5 to-purple-500/5">
+          <h3 appCardTitle class="text-lg flex items-center gap-2">
+            <app-icon name="BarChart3" class="w-5 h-5 text-indigo-500" />
+            {{ 'skills_gap.employee_profile.comparison_title' | t }}
+          </h3>
+        </div>
+        <div appCardContent class="pt-4">
+          <!-- Overall comparison -->
+          <div
+            class="flex items-center justify-around gap-4 mb-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">
+            <div class="text-center">
+              <p class="text-sm text-slate-400 mb-1">
+                {{ 'skills_gap.employee_profile.initial_assessment' | t }}
+              </p>
+              <p class="text-3xl font-black text-slate-600 dark:text-slate-300">
+                {{ comparison.initial_score }}%
+              </p>
+              <p class="text-[10px] text-slate-400 mt-0.5">
+                {{ fmtDate(comparison.initial_date) }}
+              </p>
+            </div>
+            <div class="flex flex-col items-center gap-1">
+              <div [class]="directionCircleClass(comparison.direction)">
+                @switch (comparison.direction) {
+                  @case ('improved') {
+                    <app-icon name="TrendingUp" class="w-6 h-6 text-white" />
+                  }
+                  @case ('declined') {
+                    <app-icon
+                      name="TrendingDown"
+                      class="w-6 h-6 text-white" />
+                  }
+                  @default {
+                    <app-icon name="Minus" class="w-6 h-6 text-white" />
+                  }
+                }
+              </div>
+              <span [class]="changeTextClass(comparison.score_change)">
+                {{ comparison.score_change > 0 ? '+' : ''
+                }}{{ comparison.score_change }}%
+              </span>
+            </div>
+            <div class="text-center">
+              <p class="text-sm text-slate-400 mb-1">
+                {{ 'skills_gap.employee_profile.reassessment' | t }}
+              </p>
+              <p
+                class="text-3xl font-black text-indigo-600 dark:text-indigo-400">
+                {{ comparison.latest_score }}%
+              </p>
+              <p class="text-[10px] text-slate-400 mt-0.5">
+                {{ fmtDate(comparison.latest_date) }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Per-competency changes -->
+          <div class="space-y-2">
+            <p
+              class="text-sm font-bold text-slate-600 dark:text-slate-300 mb-3">
+              {{ 'skills_gap.employee_profile.change_per_competency' | t }}
+            </p>
+            @for (c of comparison.competency_changes; track $index) {
+              <div
+                class="flex items-center gap-3 p-3 rounded-xl bg-white/50 dark:bg-slate-900/30 border border-white/10 dark:border-white/5">
+                <span
+                  class="text-xs font-bold text-slate-700 dark:text-slate-200 truncate flex-1">
+                  {{ c.competency }}
+                </span>
+                <div class="flex items-center gap-3 shrink-0">
+                  <span class="text-xs text-slate-400 w-10 text-center">
+                    {{ c.initial_score ?? '—' }}%
+                  </span>
+                  <div class="w-16 flex justify-center">
+                    <span [class]="changeIndicatorClass(c.change)">
+                      @if (c.change > 0) {
+                        <app-icon
+                          name="ArrowUpRight"
+                          class="w-3.5 h-3.5" />+{{ c.change }}%
+                      } @else if (c.change < 0) {
+                        <app-icon
+                          name="ArrowDownRight"
+                          class="w-3.5 h-3.5" />{{ c.change }}%
+                      } @else {
+                        <app-icon name="Minus" class="w-3.5 h-3.5" />0%
+                      }
+                    </span>
+                  </div>
+                  <span
+                    class="text-xs font-bold text-slate-700 dark:text-slate-200 w-10 text-center">
+                    {{ c.latest_score ?? '—' }}%
+                  </span>
+                  @if (c.latest_severity) {
+                    <app-gap-badge [severity]="c.latest_severity" />
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ═══ Technical Assessments ═══ -->
+    @if (d.technical_rounds.length > 0) {
+      <div appCard class="glass-card border-none shadow-xl">
+        <div appCardHeader class="pb-2">
+          <h3 appCardTitle class="text-lg flex items-center gap-2">
+            <app-icon
+              name="ClipboardCheck"
+              class="w-5 h-5 text-indigo-500" />
+            {{ 'skills_gap.employee_profile.tech_section_title' | t }} ({{
+              d.technical_rounds.length
+            }})
+          </h3>
+        </div>
+        <div appCardContent class="space-y-3">
+          @for (r of d.technical_rounds; track $index) {
+            <app-skills-gap-round-card
+              [round]="r"
+              type="tech"
+              [correctLabel]="
+                'skills_gap.employee_profile.correct_answers' | t
+              "
+              [locale]="locale()" />
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ═══ Manager Assessments ═══ -->
+    @if (d.manager_rounds.length > 0) {
+      <div appCard class="glass-card border-none shadow-xl">
+        <div appCardHeader class="pb-2">
+          <h3 appCardTitle class="text-lg flex items-center gap-2">
+            <app-icon name="UserCheck" class="w-5 h-5 text-amber-500" />
+            {{ 'skills_gap.employee_profile.mgr_section_title' | t }} ({{
+              d.manager_rounds.length
+            }})
+          </h3>
+        </div>
+        <div appCardContent class="space-y-3">
+          @for (r of d.manager_rounds; track $index) {
+            <app-skills-gap-round-card
+              [round]="r"
+              type="manager"
+              [correctLabel]="
+                'skills_gap.employee_profile.correct_answers' | t
+              "
+              [locale]="locale()" />
+          }
+        </div>
+      </div>
+    }
+
+    <!-- ═══ Historical Trend ═══ -->
+    @if (d.history && d.history.length > 1) {
+      <div appCard class="glass-card border-none shadow-xl">
+        <div appCardHeader class="pb-2">
+          <h3 appCardTitle class="text-lg flex items-center gap-2">
+            <app-icon name="BarChart3" class="w-5 h-5 text-purple-500" />
+            {{ 'skills_gap.employee_profile.history_title' | t }}
+          </h3>
+        </div>
+        <div appCardContent>
+          <div class="flex items-end gap-4 justify-center h-40 pt-4">
+            @for (h of d.history; track $index; let i = $index) {
+              <div
+                class="flex flex-col items-center gap-1.5 flex-1 max-w-[80px]">
+                <span
+                  [class]="historyScoreClass(i === d.history.length - 1)">
+                  {{ h.score }}%
+                </span>
+                <div
+                  class="w-full relative rounded-t-xl overflow-hidden bg-slate-100 dark:bg-slate-800"
+                  style="height: 100px">
+                  <div
+                    [class]="historyBarClass(i === d.history.length - 1)"
+                    [style.height.%]="h.score"></div>
+                </div>
+                <span
+                  class="text-[10px] text-slate-400 font-medium text-center leading-tight">
+                  {{ h.label }}
+                </span>
+                <span class="text-[9px] text-slate-400">
+                  {{ fmtDate(h.date) }}
+                </span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ═══ Latest Competency Details ═══ -->
+    <div appCard class="glass-card border-none shadow-xl">
+      <div appCardHeader class="pb-2">
+        <h3 appCardTitle class="text-lg">
+          {{ 'skills_gap.employee_profile.competency_details' | t }}
+        </h3>
+      </div>
+      <div appCardContent>
+        <div class="space-y-2">
+          @for (g of d.competency_gaps || []; track $index) {
+            <div
+              class="p-3 rounded-xl bg-white/40 dark:bg-slate-900/30 border border-white/10 dark:border-white/5 hover:bg-white/60 dark:hover:bg-slate-900/50 transition-colors">
+              <div class="flex items-center justify-between mb-1.5">
+                <span
+                  class="text-xs font-bold text-slate-800 dark:text-white truncate max-w-[60%]">
+                  {{ g.competency }}
+                </span>
+                <div class="flex items-center gap-2">
+                  <app-gap-badge [severity]="g.severity" />
+                  <span class="text-[10px] text-slate-400 font-medium">
+                    {{ g.correct }}/{{ g.total }}
+                  </span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs w-10 font-bold">{{ g.score }}%</span>
+                <div class="flex-1"><app-score-bar [score]="g.score" /></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,33 @@
+<section
+  class="py-24 px-4 md:px-8 bg-white dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800">
+  <div class="max-w-4xl mx-auto">
+    <div class="text-center mb-16">
+      <h2
+        appReveal
+        class="text-3xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
+        {{ 'landing.faq.title' | t }}
+      </h2>
+    </div>
+
+    <div class="grid gap-6">
+      @for (n of faqs; track n; let index = $index) {
+        <div
+          appReveal
+          [revealDelay]="index * 0.1"
+          class="p-8 rounded-[24px] bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-900/50 transition-all">
+          <h3
+            class="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-start gap-3">
+            <app-icon
+              name="HelpCircle"
+              class="w-6 h-6 text-blue-500 mt-0.5 shrink-0" />
+            {{ 'landing.faq.q' + n | t }}
+          </h3>
+          <p
+            class="text-slate-600 dark:text-slate-400 leading-relaxed ml-9 pl-0.5 text-lg">
+            {{ 'landing.faq.a' + n | t }}
+          </p>
+        </div>
+      }
+    </div>
+  </div>
+</section>

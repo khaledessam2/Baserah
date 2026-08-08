@@ -1,0 +1,484 @@
+@if (isLoading()) {
+  <div appCard class="glass-card border-none overflow-hidden h-full relative">
+    <div
+      class="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-secondary/5 -z-10"></div>
+    <div appCardContent class="py-16 px-8 flex flex-col items-center">
+      <div class="w-full max-w-lg space-y-12">
+        <div class="text-center space-y-4">
+          <div class="relative inline-block">
+            <div
+              class="absolute inset-0 bg-primary/20 blur-2xl rounded-full animate-pulse"></div>
+            <div
+              class="relative p-6 bg-card rounded-3xl border border-primary/20 shadow-xl">
+              <app-icon
+                name="Brain"
+                class="w-12 h-12 text-primary animate-bounce-slow" />
+            </div>
+          </div>
+          <div>
+            <h3 class="text-3xl font-bold tracking-tight mb-2">
+              {{ 'results.loading' | t }}
+            </h3>
+            <p class="text-muted-foreground font-medium">
+              {{ 'results.loading_subtitle' | t }}
+            </p>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="flex justify-between items-end px-1">
+            <div class="space-y-1">
+              <span class="text-sm font-bold text-primary block">
+                {{ floor(displayProgress()) }}% {{ 'results.completed' | t }}
+              </span>
+              <div class="text-xs text-muted-foreground font-medium">
+                {{ timeRemainingLabel() }}
+              </div>
+            </div>
+            <div class="p-2 bg-primary/10 rounded-lg">
+              <app-icon
+                name="Zap"
+                class="w-4 h-4 text-primary animate-pulse" />
+            </div>
+          </div>
+          <app-progress
+            [value]="displayProgress()"
+            class="h-3 bg-primary/10 shadow-inner" />
+        </div>
+
+        <div class="grid gap-3 pt-4">
+          @for (stage of stages; track stage.id) {
+            <div [class]="stageRowClass(stage.id)">
+              <div [class]="stageBadgeClass(stage.id)">
+                @if (activeStage() > stage.id) {
+                  <app-icon name="CheckCircle2" class="w-6 h-6" />
+                } @else {
+                  <app-icon [name]="stage.icon" class="w-5 h-5" />
+                }
+              </div>
+              <div class="flex-1">
+                <h4 class="font-bold text-sm tracking-wide">
+                  {{ stage.titleKey | t }}
+                </h4>
+                <p class="text-[10px] text-muted-foreground font-medium">
+                  {{ stage.descKey | t }}
+                </p>
+              </div>
+              <div>
+                @if (activeStage() > stage.id) {
+                  <div
+                    appBadge
+                    variant="outline"
+                    class="bg-emerald-500/10 text-emerald-600 border-emerald-500/10 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider backdrop-blur-sm">
+                    <app-icon name="CheckCircle2" class="w-3 h-3 mr-1.5" />
+                    {{ 'results.status_complete' | t: 'DONE' }}
+                  </div>
+                } @else if (activeStage() === stage.id) {
+                  <app-icon
+                    name="Loader2"
+                    class="w-4 h-4 animate-spin text-primary" />
+                } @else {
+                  <div
+                    class="p-1 px-2.5 bg-muted rounded-full text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                    {{ 'results.status_wait' | t: 'WAIT' }}
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+} @else if (result(); as res) {
+  <div class="space-y-8 animate-fade-up">
+    <div
+      class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div class="space-y-2">
+        <div class="flex items-center gap-3">
+          <div class="p-2.5 bg-emerald-500/10 text-emerald-500 rounded-xl">
+            <app-icon name="CheckCircle2" class="w-6 h-6" />
+          </div>
+          <h2 class="text-3xl font-bold tracking-tight text-foreground">
+            {{ res.job_title }}
+          </h2>
+        </div>
+        <p
+          class="text-muted-foreground font-medium text-lg leading-relaxed max-w-2xl px-1">
+          {{ 'results.summary_success' | t }}
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button
+          appButton
+          variant="outline"
+          size="lg"
+          class="rounded-2xl h-12 px-6 gap-3 border-border hover:bg-muted font-bold transition-all hover:scale-[1.02] active:scale-95"
+          (click)="handleExportPDF()"
+          [disabled]="isExporting()">
+          @if (isExporting()) {
+            <app-icon name="Loader2" class="w-5 h-5 animate-spin" />
+          } @else {
+            <app-icon
+              name="Download"
+              class="w-5 h-5 text-muted-foreground" />
+          }
+          {{ 'reports.actions.export_pdf' | t: 'Export PDF' }}
+        </button>
+        <button
+          appButton
+          variant="default"
+          size="lg"
+          class="rounded-2xl h-12 px-8 gap-3 bg-linear-to-r from-primary to-indigo-600 hover:from-primary/90 hover:to-indigo-500 text-white font-bold shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
+          (click)="save.emit()"
+          [disabled]="isSaving()">
+          @if (isSaving()) {
+            <app-icon name="Loader2" class="w-5 h-5 animate-spin" />
+          } @else {
+            <app-icon name="Save" class="w-5 h-5" />
+          }
+          {{
+            isSaving()
+              ? ('results.loading_saving' | t)
+              : ('analyzer.save_changes' | t)
+          }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+      @for (card of overviewCards(); track card.id) {
+        <div
+          appCard
+          class="glass-card rounded-3xl border border-transparent transition-all cursor-pointer group relative overflow-hidden hover:border-primary/30"
+          (click)="toggleSection(card.id)">
+          <div
+            class="absolute top-0 right-0 w-12 h-12 opacity-5 translate-x-4 -translate-y-4 group-hover:scale-150 transition-transform duration-500"
+            [class]="card.bgClass"></div>
+          <div appCardContent class="p-6">
+            <div class="flex items-center gap-4">
+              <div
+                class="p-3 rounded-2xl transition-all duration-300 group-hover:scale-110 shadow-sm"
+                [class]="card.bgClass + ' ' + card.colorClass">
+                <app-icon [name]="card.icon" class="w-6 h-6" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <p
+                  class="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-1 truncate">
+                  {{ card.titleKey | t }}
+                </p>
+                <div
+                  class="text-3xl font-black tracking-tight flex items-baseline gap-1">
+                  {{ card.count }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- Main Content: Competencies List -->
+      <div class="lg:col-span-8 space-y-6">
+        @for (category of overviewCards(); track category.id) {
+          @if (itemsFor(category.id).length > 0) {
+            <div
+              class="glass-card rounded-3xl border-none overflow-hidden group/cat shadow-lg shadow-black/5">
+              <button
+                type="button"
+                [class]="sectionHeaderClass(category.id)"
+                (click)="toggleSection(category.id)">
+                <div class="flex items-center gap-4">
+                  <div
+                    class="p-2.5 rounded-xl transition-all"
+                    [class]="category.bgClass + ' ' + category.colorClass">
+                    <app-icon [name]="category.icon" class="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4
+                      class="font-bold text-xl tracking-tight text-foreground group-hover/cat:text-primary transition-colors">
+                      {{ category.titleKey | t }}
+                    </h4>
+                  </div>
+                  <div
+                    appBadge
+                    class="rounded-full bg-primary/10 text-primary border-none font-bold px-3">
+                    {{ itemsFor(category.id).length }}
+                  </div>
+                </div>
+                <div [class]="chevronClass(category.id)">
+                  <app-icon name="ChevronDown" class="w-5 h-5" />
+                </div>
+              </button>
+
+              @if (isExpanded(category.id)) {
+                <div
+                  class="divide-y divide-border/50 bg-background/20 backdrop-blur-sm">
+                  @for (comp of itemsFor(category.id); track comp.name) {
+                    <div
+                      class="p-8 hover:bg-primary/5 transition-all group/item duration-300">
+                      <div
+                        class="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-6">
+                        <div class="space-y-3 flex-1">
+                          <h5
+                            class="font-bold text-xl text-foreground group-hover/item:text-primary transition-colors flex items-center gap-2">
+                            {{ comp.name }}
+                            @if (comp.priority >= 4) {
+                              <app-icon
+                                name="Sparkles"
+                                class="w-4 h-4 text-amber-500 animate-pulse" />
+                            }
+                          </h5>
+                          <p
+                            class="text-muted-foreground font-medium text-sm leading-relaxed text-start max-w-3xl">
+                            {{ comp.description }}
+                          </p>
+                        </div>
+                        <div
+                          class="shrink-0 flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 bg-primary/5 border border-primary/10 p-4 rounded-2xl min-w-[120px]">
+                          <span
+                            class="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                            {{ 'results.priority' | t }}
+                          </span>
+                          <div class="flex gap-1">
+                            @for (s of stars; track s) {
+                              <div [class]="priorityDotClass(s, comp.priority)"></div>
+                            }
+                          </div>
+                          <div class="text-3xl font-black text-primary mt-1">
+                            {{ comp.priority }}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="grid md:grid-cols-2 gap-8 mt-6">
+                        <div class="space-y-3">
+                          <div class="flex items-center gap-2 text-primary">
+                            <app-icon name="Target" class="w-4 h-4" />
+                            <h6
+                              class="text-xs font-bold uppercase tracking-widest bg-clip-text text-primary">
+                              {{ 'results.skills' | t }}
+                            </h6>
+                          </div>
+                          <div class="flex flex-wrap gap-2">
+                            @for (skill of comp.skills; track skill) {
+                              <div
+                                appBadge
+                                variant="secondary"
+                                class="rounded-lg py-1.5 px-3 text-[11px] font-bold bg-muted/40 text-foreground border-none hover:bg-primary/10 transition-colors cursor-default">
+                                {{ skill }}
+                              </div>
+                            }
+                          </div>
+                        </div>
+                        <div class="space-y-3 text-right">
+                          <div
+                            class="flex items-center gap-2 justify-end text-primary">
+                            <h6
+                              class="text-xs font-bold uppercase tracking-widest text-primary">
+                              {{ 'kpis.title' | t }}
+                            </h6>
+                            <app-icon name="CheckCircle2" class="w-4 h-4" />
+                          </div>
+                          <div class="space-y-2">
+                            @for (kpi of comp.kpis || []; track kpi) {
+                              <div
+                                class="text-xs font-medium leading-normal flex items-start gap-2 justify-end group/kpi">
+                                <span
+                                  class="text-muted-foreground group-hover/kpi:text-foreground transition-colors">
+                                  {{ kpi }}
+                                </span>
+                                <div
+                                  class="w-1.5 h-1.5 rounded-full bg-primary/40 mt-1.5 shrink-0"></div>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        }
+      </div>
+
+      <!-- Sidebar: Charts & Metadata -->
+      <div class="lg:col-span-4 space-y-8 lg:sticky lg:top-28">
+        <!-- Distribution Chart -->
+        <div
+          appCard
+          class="glass-card border-none shadow-xl shadow-primary/5 rounded-3xl overflow-hidden p-6 relative">
+          <div class="absolute top-0 right-0 p-4 opacity-5">
+            <app-icon name="Zap" class="w-12 h-12" />
+          </div>
+          <div appCardHeader class="p-0 mb-6">
+            <h3 appCardTitle class="text-lg font-bold tracking-tight">
+              {{ 'dashboard.charts.competency_distribution' | t }}
+            </h3>
+          </div>
+          <div appCardContent class="p-0">
+            <div
+              class="h-[250px] w-full flex items-center justify-center relative">
+              <app-chart
+                type="doughnut"
+                [data]="distributionData()"
+                [options]="distributionOptions" />
+              <!-- Center Content for Donut -->
+              <div
+                class="absolute flex flex-col items-center justify-center text-center pointer-events-none">
+                <span class="text-3xl font-black text-foreground">
+                  {{ totalCompetencies() }}
+                </span>
+                <span
+                  class="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                  TOTAL
+                </span>
+              </div>
+            </div>
+
+            <!-- Custom Legend -->
+            <div
+              class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-border/50">
+              @for (cat of categoryCounts(); track cat.type) {
+                <div class="flex items-center gap-2.5 group">
+                  <div
+                    class="w-3 h-3 rounded-full shrink-0 shadow-sm"
+                    [style.background-color]="cat.color"></div>
+                  <div class="min-w-0 pr-2">
+                    <p
+                      class="text-[10px] font-bold truncate group-hover:text-primary transition-colors uppercase tracking-tight">
+                      {{ cat.name }}
+                    </p>
+                    <p class="text-xs font-black">{{ cat.count }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Rankings -->
+        <div
+          appCard
+          class="glass-card border-none shadow-xl shadow-primary/5 rounded-3xl p-6">
+          <div
+            appCardHeader
+            class="p-0 mb-6 flex flex-row items-center justify-between">
+            <h3 appCardTitle class="text-lg font-bold tracking-tight">
+              {{ 'dashboard.charts.top_competencies' | t }}
+            </h3>
+            <div class="p-2 bg-amber-500/10 rounded-lg text-amber-500">
+              <app-icon name="Trophy" class="w-4 h-4" />
+            </div>
+          </div>
+          <div appCardContent class="p-0 space-y-6">
+            @for (item of priorityData(); track item.name; let i = $index) {
+              <div class="group relative space-y-2">
+                <div class="flex justify-between items-end mb-1">
+                  <div class="flex-1 min-w-0 pr-4">
+                    <span
+                      class="text-xs font-bold text-foreground group-hover:text-primary transition-colors block leading-snug">
+                      {{ item.name }}
+                    </span>
+                  </div>
+                  <span
+                    class="text-xs font-black text-primary bg-primary/5 px-2 py-0.5 rounded-md">
+                    {{ item.priority }}/5
+                  </span>
+                </div>
+                <div
+                  class="h-2 w-full bg-primary/5 rounded-full overflow-hidden shadow-inner p-px border border-border/5">
+                  <div
+                    class="h-full rounded-full bg-linear-to-r from-primary via-indigo-500 to-indigo-400 shadow-xs shadow-primary/20 transition-all duration-1000 origin-left"
+                    [style.width.%]="(item.priority / 5) * 100"
+                    [style.transition-delay.ms]="i * 100"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Detail Stats -->
+        <div
+          appCard
+          class="bg-primary/5 border-none rounded-3xl overflow-hidden relative group">
+          <div
+            class="absolute bottom-0 right-0 p-8 rotate-12 opacity-5 translate-x-4 translate-y-4 group-hover:scale-125 transition-transform duration-700">
+            <app-icon name="Brain" class="w-32 h-32" />
+          </div>
+          <div appCardContent class="p-8 space-y-6 relative">
+            <div class="flex items-center justify-between px-1">
+              <div class="flex flex-col items-center gap-1">
+                <div
+                  class="w-12 h-12 bg-card rounded-2xl flex items-center justify-center shadow-lg border border-border/50">
+                  <span class="text-xl font-black text-primary">
+                    {{ res.stats.words_analyzed }}
+                  </span>
+                </div>
+                <span
+                  class="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                  {{ 'results.stats_words' | t }}
+                </span>
+              </div>
+              <div class="w-px h-10 bg-border/20 mx-2"></div>
+              <div class="flex flex-col items-center gap-1">
+                <div
+                  class="w-12 h-12 bg-card rounded-2xl flex items-center justify-center shadow-lg border border-border/50">
+                  <span class="text-xl font-black text-secondary">
+                    {{ res.stats.skills_identified }}
+                  </span>
+                </div>
+                <span
+                  class="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                  {{ 'results.stats_skills' | t }}
+                </span>
+              </div>
+              <div class="w-px h-10 bg-border/20 mx-2"></div>
+              <div class="flex flex-col items-center gap-1">
+                <div
+                  class="w-12 h-12 bg-card rounded-2xl flex items-center justify-center shadow-lg border border-border/50">
+                  <span class="text-xl font-black text-tertiary">
+                    {{ res.stats.sections_analyzed }}
+                  </span>
+                </div>
+                <span
+                  class="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                  {{ 'results.stats_sections' | t }}
+                </span>
+              </div>
+            </div>
+
+            <div class="pt-6 border-t border-border/50">
+              <div class="flex justify-between items-end mb-3">
+                <div class="space-y-1">
+                  <span class="text-sm font-bold text-foreground">
+                    {{ 'results.confidence' | t }}
+                  </span>
+                  <div
+                    class="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">
+                    {{ 'results.title' | t }} accuracy
+                  </div>
+                </div>
+                <div
+                  appBadge
+                  class="bg-emerald-500/10 text-emerald-600 border-none font-black text-lg p-0">
+                  {{ res.stats.confidence_score }}%
+                </div>
+              </div>
+              <div
+                class="h-3 w-full bg-background/50 rounded-full shadow-inner overflow-hidden border border-border/20 p-0.5">
+                <div
+                  class="h-full rounded-full bg-linear-to-r from-emerald-500 via-emerald-400 to-teal-300 shadow-sm shadow-emerald-500/20"
+                  [style.width.%]="res.stats.confidence_score"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+}

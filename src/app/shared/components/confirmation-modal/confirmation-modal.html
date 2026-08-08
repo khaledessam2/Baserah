@@ -1,0 +1,25 @@
+<app-dialog
+  [open]="isOpen()"
+  contentClass="sm:max-w-[425px]"
+  (openChange)="closed.emit()">
+  <div appDialogHeader>
+    <h2 appDialogTitle class="flex items-center gap-2">
+      @if (variant() === 'danger') {
+        <app-icon name="AlertTriangle" class="w-5 h-5 text-red-500" />
+      }
+      {{ title() }}
+    </h2>
+    <p appDialogDescription class="pt-2">{{ description() }}</p>
+  </div>
+  <div appDialogFooter class="gap-2 sm:justify-start">
+    <button
+      appButton
+      [variant]="variant() === 'danger' ? 'destructive' : 'default'"
+      (click)="confirm()">
+      {{ confirmText() }}
+    </button>
+    <button appButton variant="outline" (click)="closed.emit()">
+      {{ cancelText() }}
+    </button>
+  </div>
+</app-dialog>

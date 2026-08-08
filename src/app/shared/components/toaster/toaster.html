@@ -1,0 +1,29 @@
+<div
+  class="fixed bottom-4 left-4 z-[100] flex flex-col gap-2 pointer-events-none">
+  @for (t of toasts.toasts(); track t.id) {
+    <div
+      class="pointer-events-auto flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg text-white min-w-[300px] animate-in slide-in-from-bottom-5 fade-in-0 duration-300"
+      [class.bg-green-600]="t.type === 'success'"
+      [class.bg-red-600]="t.type === 'error'"
+      [class.bg-slate-800]="t.type === 'info'">
+      @switch (t.type) {
+        @case ('success') {
+          <app-icon name="CheckCircle" class="w-5 h-5" />
+        }
+        @case ('error') {
+          <app-icon name="AlertCircle" class="w-5 h-5" />
+        }
+        @case ('info') {
+          <app-icon name="Info" class="w-5 h-5" />
+        }
+      }
+      <p class="flex-1 text-sm font-medium">{{ t.message }}</p>
+      <button
+        type="button"
+        class="hover:opacity-80"
+        (click)="toasts.remove(t.id)">
+        <app-icon name="X" class="w-4 h-4" />
+      </button>
+    </div>
+  }
+</div>

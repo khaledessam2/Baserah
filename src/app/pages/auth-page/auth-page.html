@@ -1,0 +1,181 @@
+<div
+  class="min-h-[calc(100vh-100px)] flex items-center justify-center py-8 sm:py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden bg-background">
+  <!-- Dynamic Background Gradient -->
+  <div
+    class="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-950 dark:via-blue-950/20 dark:to-indigo-950/30 -z-10"></div>
+
+  <div class="absolute top-4 right-4 z-50 flex gap-2">
+    <button
+      appButton
+      variant="ghost"
+      size="icon"
+      (click)="router.navigate(['/'])"
+      class="rounded-full bg-white/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-800 backdrop-blur-sm shadow-sm"
+      [title]="'nav.home' | t: 'Home'">
+      <app-icon name="Home" class="w-5 h-5" />
+    </button>
+    <app-theme-toggle />
+    <app-language-selector />
+  </div>
+
+  <!-- Decorative Floating Shapes -->
+  <div
+    class="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+    <div
+      class="absolute top-10 left-10 w-72 h-72 bg-indigo-200/30 dark:bg-indigo-500/10 rounded-full blur-3xl animate-float"></div>
+    <div
+      class="absolute bottom-10 right-10 w-96 h-96 bg-purple-200/30 dark:bg-purple-500/10 rounded-full blur-3xl animate-float"
+      style="animation-delay: 1s"></div>
+    <div
+      class="absolute top-1/2 left-1/4 w-48 h-48 bg-blue-200/20 dark:bg-blue-500/5 rounded-full blur-2xl animate-pulse-soft"></div>
+  </div>
+
+  <div
+    appCard
+    class="max-w-md w-full shadow-2xl border-none animate-in fade-in-0 zoom-in-95 duration-500 relative z-10 bg-white/80 dark:bg-slate-900/40 backdrop-blur-xl border border-white/20 dark:border-white/5">
+    <div appCardHeader class="text-center space-y-2 pb-6">
+      <div
+        class="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-purple-600 rounded-2xl flex items-center justify-center mb-4 rotate-3 hover:rotate-0 transition-all duration-300 shadow-lg shadow-primary/20">
+        <app-icon name="Briefcase" class="w-8 h-8 text-white" />
+      </div>
+      <h3
+        appCardTitle
+        class="text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+        {{
+          isLogin()
+            ? ('auth.login_title' | t: 'Login')
+            : ('auth.register_title' | t: 'Create New Account')
+        }}
+      </h3>
+      <p
+        appCardDescription
+        class="text-muted-foreground text-sm sm:text-base">
+        {{
+          isLogin()
+            ? ('auth.login_subtitle' | t: 'Welcome back! Login to continue')
+            : ('auth.register_subtitle'
+              | t
+                : 'Join us to start your smart competency analysis journey')
+        }}
+      </p>
+    </div>
+
+    <div appCardContent class="px-4 sm:px-6">
+      <form (ngSubmit)="handleSubmit()" class="space-y-4">
+        @if (!isLogin()) {
+          <div [class]="fieldClass('animate-in slide-in-from-top-2 duration-300')">
+            <label
+              appLabel
+              for="fullName"
+              class="text-sm font-medium text-foreground/80">
+              {{ 'auth.full_name' | t: 'Full Name' }}
+            </label>
+            <div class="relative group">
+              <app-icon name="User" [class]="iconClass()" />
+              <input
+                appInput
+                id="fullName"
+                name="fullName"
+                type="text"
+                [placeholder]="'auth.full_name_placeholder' | t: 'Belal Mohamed'"
+                required
+                [(ngModel)]="fullName"
+                [class]="inputClass()" />
+            </div>
+          </div>
+        }
+
+        <div [class]="fieldClass()">
+          <label
+            appLabel
+            for="email"
+            class="text-sm font-medium text-foreground/80">
+            {{ 'auth.email_label' | t: 'Email or ID Number' }}
+          </label>
+          <div class="relative group">
+            <app-icon name="Mail" [class]="iconClass()" />
+            <input
+              appInput
+              id="email"
+              name="email"
+              type="text"
+              [placeholder]="'auth.email_placeholder' | t: 'Email or ID'"
+              required
+              [ngModel]="email()"
+              (ngModelChange)="email.set($event.toLowerCase())"
+              [class]="inputClass()" />
+          </div>
+        </div>
+
+        <div [class]="fieldClass()">
+          <label
+            appLabel
+            for="password"
+            class="text-sm font-medium text-foreground/80">
+            {{ 'auth.password' | t: 'Password' }}
+          </label>
+          <div class="relative group">
+            <app-icon name="Lock" [class]="iconClass()" />
+            <input
+              appInput
+              id="password"
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              required
+              [(ngModel)]="password"
+              [class]="inputClass()" />
+          </div>
+        </div>
+
+        @if (error()) {
+          <div
+            class="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-xl animate-in slide-in-from-top-2 duration-300 flex items-center gap-2">
+            <div class="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0"></div>
+            {{ error() }}
+          </div>
+        }
+
+        <button
+          appButton
+          type="submit"
+          class="w-full h-12 text-base sm:text-lg font-semibold bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-700 transition-all duration-300 shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 rounded-xl text-white"
+          [disabled]="isLoading()">
+          @if (isLoading()) {
+            <app-icon name="Loader2" class="w-5 h-5 animate-spin mx-auto" />
+          } @else {
+            <span class="flex items-center justify-center gap-2">
+              {{
+                isLogin()
+                  ? ('auth.login_button' | t: 'Login')
+                  : ('auth.register_button' | t: 'Create Account')
+              }}
+              <app-icon name="ArrowRight" [class]="submitArrowClass()" />
+            </span>
+          }
+        </button>
+      </form>
+
+      <div
+        class="mt-8 pt-6 border-t border-gray-100 dark:border-white/10 text-center">
+        <p class="text-sm text-muted-foreground">
+          {{
+            isLogin()
+              ? ('auth.no_account' | t: "Don't have an account?")
+              : ('auth.have_account' | t: 'Already have an account?')
+          }}
+          <button
+            type="button"
+            (click)="isLogin.set(!isLogin())"
+            class="mx-1 font-semibold text-primary hover:text-primary/80 transition-colors underline-offset-4 hover:underline cursor-pointer">
+            {{
+              isLogin()
+                ? ('auth.register_now' | t: 'Register now')
+                : ('auth.login_now' | t: 'Login now')
+            }}
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

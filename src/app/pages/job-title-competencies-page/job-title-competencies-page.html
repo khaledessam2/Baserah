@@ -1,0 +1,825 @@
+@if (!jobTitle()) {
+  <div class="p-10 text-center">
+    {{ 'job_title_competencies.no_job_title' | t }}
+  </div>
+} @else {
+  <div [class]="rootClass()" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+    <!-- Top Decoration Line -->
+    <div
+      class="h-1 bg-linear-to-r from-primary via-secondary to-tertiary w-full absolute top-0 left-0"></div>
+
+    <div class="w-full px-4 md:px-12 py-8 relative">
+      <!-- Header -->
+      <div
+        class="text-center mb-10 relative animate-in slide-in-from-top-2 duration-700">
+        <h1
+          class="text-4xl md:text-5xl font-extrabold mb-4 text-gradient">
+          <app-icon name="Brain" [class]="brainIconClass()" />
+          {{ 'job_title_competencies.header_title' | t }}
+        </h1>
+        <p class="text-primary font-medium text-xl">
+          {{ 'job_title_competencies.header_subtitle' | t }}
+          <span
+            class="font-bold underline decoration-wavy decoration-secondary/30 underline-offset-4">
+            {{ jobTitle() }}
+          </span>
+        </p>
+
+        <button
+          appButton
+          variant="ghost"
+          (click)="router.navigate(['/app/job-titles'])"
+          [class]="backButtonClass()">
+          <app-icon name="ArrowRight" [class]="backArrowClass()" />
+          {{ 'job_title_competencies.back' | t }}
+        </button>
+      </div>
+
+      <!-- Job Info Card -->
+      <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <div
+          appCard
+          class="md:col-span-3 border-none glass-card overflow-hidden group">
+          <div
+            class="bg-linear-to-br from-primary to-secondary p-6 text-white relative overflow-hidden">
+            <div
+              class="absolute -top-1/2 -right-10 w-64 h-64 bg-white/10 rounded-full blur-2xl group-hover:-top-1/3 transition-all duration-500"></div>
+            <h3
+              class="text-xl font-bold flex items-center gap-2 relative z-10">
+              <app-icon name="Briefcase" class="w-6 h-6" />
+              {{ 'job_title_competencies.job_info_title' | t }}
+            </h3>
+          </div>
+          <div appCardContent class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div
+                class="p-4 bg-background/50 backdrop-blur-sm rounded-xl border border-border border-l-4 border-l-primary shadow-sm hover:translate-x-[-4px] transition-transform">
+                <label class="text-primary font-bold block mb-2 text-sm">
+                  {{ 'job_title_competencies.job_title_label' | t }}
+                </label>
+                <p class="text-foreground font-bold text-lg">
+                  {{ jobTitle() }}
+                </p>
+              </div>
+              <div
+                class="p-4 bg-background/50 backdrop-blur-sm rounded-xl border border-border border-l-4 border-l-primary shadow-sm hover:translate-x-[-4px] transition-transform">
+                <label class="text-primary font-bold block mb-2 text-sm">
+                  {{ 'job_title_competencies.competencies_count' | t }}
+                </label>
+                <p class="text-foreground font-bold text-lg">
+                  {{ allCompetencies().length }}
+                </p>
+              </div>
+              <div
+                class="p-4 bg-background/50 backdrop-blur-sm rounded-xl border border-border border-l-4 border-l-primary shadow-sm hover:translate-x-[-4px] transition-transform">
+                <label class="text-primary font-bold block mb-2 text-sm">
+                  {{ 'job_title_competencies.status' | t }}
+                </label>
+                <p
+                  class="text-emerald-500 font-bold text-lg flex items-center gap-2">
+                  <app-icon name="CheckCircle2" class="w-5 h-5" />
+                  {{ 'job_title_competencies.status_saved' | t }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs Layout -->
+      <app-tabs
+        [value]="activeTab()"
+        (valueChange)="activeTab.set($any($event))"
+        class="w-full space-y-8 animate-in fade-in-0 duration-500 block">
+        <div
+          appTabsList
+          class="flex w-full overflow-x-auto justify-start bg-muted/50 p-1 mb-6 h-auto min-h-12 border border-border/50"
+          data-tour="competencies-tabs">
+          <button
+            appTabsTrigger
+            value="jd"
+            class="flex-1 min-w-[124px] h-10 gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
+            data-tour="tab-jd">
+            <app-icon name="FileText" class="w-4 h-4" />
+            {{ 'job_setup.jd_label' | t }}
+            @if (jd().length > 0) {
+              <app-icon
+                name="CheckCircle2"
+                class="w-3.5 h-3.5 text-emerald-500 animate-in zoom-in-95 duration-300" />
+            }
+          </button>
+          <button
+            appTabsTrigger
+            value="competencies"
+            class="flex-1 min-w-[124px] h-10 gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
+            data-tour="tab-competencies">
+            <app-icon name="Trophy" class="w-4 h-4" />
+            {{ 'nav.competencies' | t }}
+            @if (allCompetencies().length > 0) {
+              <app-icon
+                name="CheckCircle2"
+                class="w-3.5 h-3.5 text-emerald-500 animate-in zoom-in-95 duration-300" />
+            }
+          </button>
+          <button
+            appTabsTrigger
+            value="kpis"
+            class="flex-1 min-w-[124px] h-10 gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
+            data-tour="tab-kpis">
+            <app-icon name="BarChart3" class="w-4 h-4" />
+            {{ 'nav.kpis' | t }}
+            @if (savedKpis().length > 0) {
+              <app-icon
+                name="CheckCircle2"
+                class="w-3.5 h-3.5 text-emerald-500 animate-in zoom-in-95 duration-300" />
+            }
+          </button>
+          <button
+            appTabsTrigger
+            value="assessments"
+            class="flex-1 min-w-[124px] h-10 gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm rounded-md"
+            data-tour="tab-assessments">
+            <app-icon name="ClipboardCheck" class="w-4 h-4" />
+            {{ 'employee_dashboard.assessments' | t }}
+            @if (hasAssessment()) {
+              <app-icon
+                name="CheckCircle2"
+                class="w-3.5 h-3.5 text-emerald-500 animate-in zoom-in-95 duration-300" />
+            }
+          </button>
+        </div>
+
+        @if (loading()) {
+          <div
+            class="w-full h-96 flex flex-col items-center justify-center space-y-6 animate-in fade-in-0 duration-700">
+            <div class="relative">
+              <div
+                class="w-20 h-20 border-4 border-primary/10 border-t-primary rounded-full animate-spin"></div>
+              <app-icon
+                name="Brain"
+                class="w-8 h-8 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+            </div>
+            <div class="text-center space-y-2">
+              <h3 class="text-xl font-bold text-foreground">
+                {{
+                  'job_title_competencies.loading_data' | t: 'Fetching Job Data'
+                }}
+              </h3>
+              <p class="text-muted-foreground animate-pulse">
+                {{ 'common.loading' | t }}
+              </p>
+            </div>
+          </div>
+        } @else {
+          <!-- -- TAB: JOB DESCRIPTION -- -->
+          <app-tabs-content value="jd" class="focus-visible:outline-none block">
+            <div
+              appCard
+              class="shadow-lg border-none glass-card overflow-hidden group">
+              <div
+                class="bg-linear-to-br from-primary to-secondary p-4 px-6 text-white flex justify-between items-center relative overflow-hidden">
+                <div
+                  class="absolute -top-1/2 -right-10 w-64 h-64 bg-white/10 rounded-full blur-2xl"></div>
+                <h3 class="text-xl font-bold flex items-center gap-2 z-10">
+                  <app-icon name="Edit" class="w-5 h-5" />
+                  {{ 'job_title_competencies.jd_title' | t }}
+                </h3>
+                <button
+                  appButton
+                  size="sm"
+                  (click)="isEditJdOpen.set(true)"
+                  class="bg-white/20 hover:bg-white/30 text-white border border-white/40 backdrop-blur-md z-10">
+                  <app-icon name="Edit" [class]="smallIconClass()" />
+                  {{ 'job_title_competencies.jd_edit' | t }}
+                </button>
+              </div>
+              <div appCardContent [class]="jdContentClass()">
+                <div
+                  class="prose max-w-none text-foreground/80 leading-relaxed whitespace-pre-wrap text-start">
+                  {{ jd() || ('job_title_competencies.jd_empty' | t) }}
+                </div>
+              </div>
+            </div>
+          </app-tabs-content>
+
+          <!-- -- TAB: COMPETENCIES -- -->
+          <app-tabs-content
+            value="competencies"
+            class="focus-visible:outline-none space-y-8 block">
+            <!-- Quick Actions -->
+            <div class="flex justify-end gap-3">
+              <button
+                appButton
+                (click)="isAddCompetencyOpen.set(true)"
+                class="bg-linear-to-r from-secondary to-primary hover:opacity-90 shadow-lg shadow-primary/20 text-white border-0 h-10">
+                <app-icon name="PlusCircle" [class]="mdIconClass()" />
+                {{ 'job_title_competencies.add_competency' | t }}
+              </button>
+              <button
+                appButton
+                variant="outline"
+                (click)="handleExport()"
+                class="border-primary text-primary hover:bg-primary/5">
+                <app-icon name="Download" [class]="mdIconClass()" />
+                {{ 'job_title_competencies.export' | t }}
+              </button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <app-competency-stats-card
+                [label]="'job_title_competencies.stats.core' | t"
+                [count]="stats().core"
+                colorClass="bg-linear-to-br from-primary to-primary/80" />
+              <app-competency-stats-card
+                [label]="'job_title_competencies.stats.behavioral' | t"
+                [count]="stats().behavioral"
+                colorClass="bg-linear-to-br from-emerald-500 to-emerald-600" />
+              <app-competency-stats-card
+                [label]="'job_title_competencies.stats.leadership' | t"
+                [count]="stats().leadership"
+                colorClass="bg-linear-to-br from-secondary to-secondary/80" />
+              <app-competency-stats-card
+                [label]="'job_title_competencies.stats.technical' | t"
+                [count]="stats().technical"
+                colorClass="bg-linear-to-br from-tertiary to-tertiary/80" />
+            </div>
+
+            <!-- Weights Section (Interactive & Styled) -->
+            @if (allCompetencies().length > 0) {
+              <div appCard class="border-t-0 shadow-sm glass-card">
+                <div
+                  appCardHeader
+                  class="border-b border-border flex flex-row items-center justify-between pb-4">
+                  <h3
+                    appCardTitle
+                    class="text-lg flex items-center gap-2 text-foreground">
+                    <app-icon name="Activity" class="w-5 h-5 text-primary" />
+                    {{ 'job_title_competencies.weights_title' | t }}
+                  </h3>
+                  <div class="flex gap-2">
+                    <button
+                      appButton
+                      (click)="handleReweightAI()"
+                      [disabled]="isReweighting()"
+                      class="bg-tertiary hover:bg-tertiary/90 text-white h-9 px-4 text-xs font-medium shadow-sm transition-all border-none">
+                      @if (isReweighting()) {
+                        <app-icon
+                          name="Loader2"
+                          [class]="tinySpinnerClass()" />
+                      } @else {
+                        <app-icon
+                          name="BrainCircuit"
+                          [class]="tinyIconClass()" />
+                      }
+                      {{ 'job_title_competencies.reweight_ai' | t }}
+                    </button>
+                    <button
+                      appButton
+                      (click)="handleSaveWeights()"
+                      [disabled]="isSavingWeights()"
+                      variant="outline"
+                      class="h-9 px-4 text-xs border-emerald-600 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 font-medium transition-all">
+                      @if (isSavingWeights()) {
+                        <app-icon
+                          name="Loader2"
+                          [class]="tinySpinnerClass()" />
+                      } @else {
+                        <app-icon name="Save" [class]="tinyIconClass()" />
+                      }
+                      {{ 'job_title_competencies.save_weights' | t }}
+                    </button>
+                  </div>
+                </div>
+                <div appCardContent class="p-6">
+                  <div class="space-y-3">
+                    @for (comp of allCompetencies(); track $index) {
+                      <div [class]="weightRowClass()">
+                        <!-- Text Section (Right in RTL) -->
+                        <div
+                          [class]="weightLabelClass()"
+                          [title]="comp.competency_name">
+                          {{ comp.competency_name }}
+                        </div>
+
+                        <!-- Slider Section (Middle) -->
+                        <div class="flex-1 mx-4">
+                          <app-slider
+                            [value]="weightPercent(comp)"
+                            [max]="100"
+                            [step]="1"
+                            trackClass="h-1.5 bg-primary/20"
+                            thumbClass="h-4 w-4 hover:bg-primary/10 hover:scale-110 duration-200 shadow-sm"
+                            (valueChange)="
+                              updateWeight(comp.competency_name, $event)
+                            " />
+                        </div>
+
+                        <!-- Percent Section (Left in RTL) -->
+                        <div class="w-20 text-center">
+                          <span
+                            class="inline-block px-3 py-1 bg-tertiary/10 text-tertiary font-bold text-sm rounded-lg min-w-[3.5rem] border border-tertiary/20">
+                            {{ weightPercent(comp) }}%
+                          </span>
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Total Weight Indicator -->
+                    <div [class]="totalWeightRowClass()">
+                      <span [class]="totalWeightLabelClass()">
+                        {{ 'job_title_competencies.total_weight' | t }}
+                      </span>
+                      <span [class]="totalWeightBadgeClass()">
+                        {{ totalWeightPercent() }}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Competencies Categories Lists -->
+            <div class="space-y-8">
+              <app-competency-category-section
+                [title]="'job_title_competencies.categories.core' | t"
+                icon="Award"
+                [items]="grouped()['core_competency'] || []"
+                borderColor="var(--primary)"
+                color="hsl(var(--primary))"
+                (edit)="editingCompetency.set($event)"
+                (delete)="handleDeleteClick($event)" />
+
+              <app-competency-category-section
+                [title]="'job_title_competencies.categories.behavioral' | t"
+                icon="Share2"
+                [items]="grouped()['general_behavioural_competency'] || []"
+                borderColor="#10b981"
+                color="#10b981"
+                (edit)="editingCompetency.set($event)"
+                (delete)="handleDeleteClick($event)" />
+
+              <app-competency-category-section
+                [title]="'job_title_competencies.categories.leadership' | t"
+                icon="Award"
+                [items]="
+                  grouped()['leadership_behavioural_competency'] || []
+                "
+                borderColor="var(--secondary)"
+                color="hsl(var(--secondary))"
+                (edit)="editingCompetency.set($event)"
+                (delete)="handleDeleteClick($event)" />
+
+              <app-competency-category-section
+                [title]="'job_title_competencies.categories.technical' | t"
+                icon="Brain"
+                [items]="grouped()['technical_competency'] || []"
+                borderColor="var(--tertiary)"
+                color="hsl(var(--tertiary))"
+                (edit)="editingCompetency.set($event)"
+                (delete)="handleDeleteClick($event)" />
+            </div>
+          </app-tabs-content>
+
+          <!-- -- TAB: KPIS -- -->
+          <app-tabs-content
+            value="kpis"
+            class="focus-visible:outline-none block">
+            <div
+              appCard
+              class="shadow-md glass-card border-none overflow-hidden">
+              <div
+                appCardHeader
+                class="bg-primary/5 border-b border-primary/10 flex flex-row items-center justify-between">
+                <h3
+                  appCardTitle
+                  class="flex items-center gap-2 text-lg text-foreground">
+                  <app-icon name="Target" class="w-5 h-5 text-primary" />
+                  {{ 'job_title_competencies.kpis.saved_title' | t }}
+                </h3>
+                <div class="flex gap-2">
+                  <button
+                    appButton
+                    variant="outline"
+                    size="sm"
+                    class="border-primary/30 text-primary hover:bg-primary/5"
+                    (click)="isAddKpiModalOpen.set(true)">
+                    <app-icon name="PlusCircle" [class]="smallIconClass()" />
+                    {{ 'job_title_competencies.kpis.add' | t }}
+                  </button>
+                  <button
+                    appButton
+                    variant="secondary"
+                    size="sm"
+                    class="bg-primary hover:bg-primary/90 text-white border-none"
+                    (click)="handleGenerateKpis()"
+                    [disabled]="isGeneratingKpis()">
+                    @if (isGeneratingKpis()) {
+                      <app-icon name="Loader2" class="w-4 h-4 animate-spin" />
+                    } @else {
+                      <app-icon name="Wand2" [class]="smallIconClass()" />
+                    }
+                    {{ 'job_title_competencies.kpis.generate' | t }}
+                  </button>
+                </div>
+              </div>
+              <div appCardContent class="p-6">
+                <!-- Generated KPIs (Pending Save) -->
+                @if (generatedKpis().length > 0) {
+                  <div
+                    class="mb-6 p-4 bg-indigo-50 dark:bg-indigo-950/30 rounded-xl border border-indigo-100 dark:border-indigo-900/30">
+                    <div class="flex justify-between items-center mb-3">
+                      <h4
+                        class="font-bold text-indigo-800 dark:text-indigo-300">
+                        {{
+                          'job_title_competencies.kpis.generated_pending_title'
+                            | t
+                        }}
+                      </h4>
+                      <button
+                        appButton
+                        size="sm"
+                        (click)="handleSaveKpis()"
+                        [disabled]="isSavingKpis()">
+                        <app-icon name="Save" [class]="mdIconClass()" />
+                        {{ 'job_title_competencies.kpis.save_all' | t }}
+                      </button>
+                    </div>
+                    <div class="space-y-2">
+                      @for (kpi of generatedKpis(); track $index; let i = $index) {
+                        <div
+                          class="bg-white dark:bg-card p-3 rounded border border-indigo-100 dark:border-indigo-900/30 text-sm flex justify-between items-start gap-2">
+                          <div class="flex-1">
+                            <p
+                              class="font-medium text-slate-700 dark:text-slate-300">
+                              {{ kpi.kpi || kpi.kpi_text || kpi }}
+                            </p>
+                            @if (kpi.competency) {
+                              <p class="text-xs text-indigo-500 mt-1">
+                                {{
+                                  'job_title_competencies.kpis.competency_label'
+                                    | t
+                                }}
+                                {{ kpi.competency }}
+                              </p>
+                            }
+                          </div>
+                          <button
+                            type="button"
+                            (click)="handleDeleteGeneratedKpi(i)"
+                            class="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded"
+                            [title]="'common.delete' | t">
+                            <app-icon name="Trash2" class="w-4 h-4" />
+                          </button>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+
+                <!-- Saved KPIs grouped by type -->
+                @if (savedKpis().length === 0 && generatedKpis().length === 0) {
+                  <div class="flex flex-col items-center py-6 text-slate-400">
+                    <app-icon
+                      name="Target"
+                      class="w-12 h-12 mb-4 opacity-20" />
+                    <p>{{ 'job_title_competencies.kpis.no_saved' | t }}</p>
+                  </div>
+                } @else {
+                  <div class="space-y-6">
+                    <app-kpi-category-section
+                      [title]="'job_title_competencies.categories.core' | t"
+                      icon="Award"
+                      color="#667eea"
+                      [kpis]="groupedKpis()['core_competency']"
+                      (edit)="editingKpi.set($event)"
+                      (delete)="handleDeleteKpiClick($event)" />
+                    <app-kpi-category-section
+                      [title]="
+                        'job_title_competencies.categories.behavioral' | t
+                      "
+                      icon="Share2"
+                      color="#10b981"
+                      [kpis]="groupedKpis()['general_behavioural_competency']"
+                      (edit)="editingKpi.set($event)"
+                      (delete)="handleDeleteKpiClick($event)" />
+                    <app-kpi-category-section
+                      [title]="
+                        'job_title_competencies.categories.leadership' | t
+                      "
+                      icon="Award"
+                      color="#f59e0b"
+                      [kpis]="
+                        groupedKpis()['leadership_behavioural_competency']
+                      "
+                      (edit)="editingKpi.set($event)"
+                      (delete)="handleDeleteKpiClick($event)" />
+                    <app-kpi-category-section
+                      [title]="
+                        'job_title_competencies.categories.technical' | t
+                      "
+                      icon="Brain"
+                      color="#ef4444"
+                      [kpis]="groupedKpis()['technical_competency']"
+                      (edit)="editingKpi.set($event)"
+                      (delete)="handleDeleteKpiClick($event)" />
+                  </div>
+                }
+              </div>
+            </div>
+          </app-tabs-content>
+
+          <!-- -- TAB: ASSESSMENTS -- -->
+          <app-tabs-content
+            value="assessments"
+            class="focus-visible:outline-none block">
+            <div appCard class="shadow-lg border-none glass-card">
+              <div
+                appCardHeader
+                class="bg-linear-to-r from-rose-500/10 to-rose-600/10 border-b border-rose-100 dark:border-rose-900/20 flex flex-row items-center justify-between">
+                <h3
+                  appCardTitle
+                  class="flex items-center gap-2 text-rose-700 dark:text-rose-400 text-start">
+                  <app-icon name="Wand2" class="w-5 h-5" />
+                  {{
+                    'job_title_competencies.assessments_title'
+                      | t: 'Assessments Setup'
+                  }}
+                </h3>
+                @if (hasAssessment()) {
+                  <button
+                    appButton
+                    variant="outline"
+                    size="sm"
+                    (click)="handleGenerateAssessment()"
+                    [disabled]="isGeneratingAssessment()"
+                    class="hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200">
+                    @if (isGeneratingAssessment()) {
+                      <app-icon name="Loader2" [class]="mdSpinnerClass()" />
+                    } @else {
+                      <app-icon name="Wand2" [class]="mdIconClass()" />
+                    }
+                    {{
+                      'job_title_competencies.regenerate_assessments'
+                        | t: 'Regenerate'
+                    }}
+                  </button>
+                }
+              </div>
+              <div appCardContent [class]="assessmentContentClass()">
+                @if (hasAssessment()) {
+                  <div class="space-y-8 animate-in fade-in-0 duration-500">
+                    <!-- Stats Summary -->
+                    <div
+                      class="flex items-center gap-4 justify-center flex-wrap">
+                      <div
+                        appBadge
+                        variant="secondary"
+                        class="px-4 py-2 text-sm bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                        <app-icon
+                          name="CheckCircle2"
+                          [class]="mdIconClass()" />
+                        {{
+                          'job_title_competencies.assessments_ready'
+                            | t: 'Assessments Generated'
+                        }}
+                      </div>
+                      <div appBadge variant="outline" class="px-3 py-1.5">
+                        {{
+                          'job_title_competencies.technical_questions_count'
+                            | t: 'Technical'
+                        }}: {{ technicalQuestions().length }}
+                      </div>
+                      <div appBadge variant="outline" class="px-3 py-1.5">
+                        {{
+                          'job_title_competencies.manager_questions_count'
+                            | t: 'Manager'
+                        }}: {{ managerQuestions().length }}
+                      </div>
+                    </div>
+
+                    <!-- Technical Assessment Questions -->
+                    @if (technicalQuestions().length > 0) {
+                      <div class="space-y-4">
+                        <h4 [class]="techHeadingClass()">
+                          <app-icon name="Brain" class="w-5 h-5" />
+                          {{
+                            'job_title_competencies.technical_assessment_title'
+                              | t: 'Technical Assessment Questions'
+                          }}
+                          <span appBadge variant="secondary" class="text-xs">
+                            {{ technicalQuestions().length }}
+                          </span>
+                        </h4>
+                        <div class="grid gap-3">
+                          @for (q of technicalQuestions(); track $index; let idx = $index) {
+                            <div [class]="questionCardClass('primary')">
+                              <div class="flex items-start gap-3">
+                                <span
+                                  class="flex-shrink-0 w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center text-sm font-bold">
+                                  {{ idx + 1 }}
+                                </span>
+                                <div class="flex-1 space-y-3">
+                                  <p class="font-medium text-foreground">
+                                    {{ q.question }}
+                                  </p>
+                                  @if (q.choices && q.choices.length > 0) {
+                                    <div class="grid gap-2">
+                                      @for (choice of q.choices; track $index) {
+                                        <div
+                                          [class]="
+                                            choiceClass(q, choice, 'emerald')
+                                          ">
+                                          {{ choice }}
+                                          @if (isCorrectChoice(q, choice)) {
+                                            <app-icon
+                                              name="CheckCircle2"
+                                              [class]="inlineCheckClass()" />
+                                          }
+                                        </div>
+                                      }
+                                    </div>
+                                  }
+                                  @if (
+                                    q.reflected_competencies &&
+                                    q.reflected_competencies.length > 0
+                                  ) {
+                                    <div class="flex flex-wrap gap-1 pt-2">
+                                      @for (comp of q.reflected_competencies; track $index) {
+                                        <span
+                                          appBadge
+                                          variant="outline"
+                                          class="text-xs">
+                                          {{ comp }}
+                                        </span>
+                                      }
+                                    </div>
+                                  }
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+
+                    <!-- Manager Assessment Questions -->
+                    @if (managerQuestions().length > 0) {
+                      <div class="space-y-4">
+                        <h4 [class]="mgrHeadingClass()">
+                          <app-icon name="Award" class="w-5 h-5" />
+                          {{
+                            'job_title_competencies.manager_assessment_title'
+                              | t: 'Manager Assessment Questions'
+                          }}
+                          <span appBadge variant="secondary" class="text-xs">
+                            {{ managerQuestions().length }}
+                          </span>
+                        </h4>
+                        <div class="grid gap-3">
+                          @for (q of managerQuestions(); track $index; let idx = $index) {
+                            <div [class]="questionCardClass('secondary')">
+                              <div class="flex items-start gap-3">
+                                <span
+                                  class="flex-shrink-0 w-8 h-8 bg-secondary/10 text-secondary rounded-full flex items-center justify-center text-sm font-bold">
+                                  {{ idx + 1 }}
+                                </span>
+                                <div class="flex-1 space-y-3">
+                                  <p class="font-medium text-foreground">
+                                    {{ q.question }}
+                                  </p>
+                                  @if (q.choices && q.choices.length > 0) {
+                                    <div class="grid gap-2">
+                                      @for (choice of q.choices; track $index) {
+                                        <div
+                                          [class]="
+                                            choiceClass(q, choice, 'amber')
+                                          ">
+                                          {{ choice }}
+                                          @if (isCorrectChoice(q, choice)) {
+                                            <app-icon
+                                              name="CheckCircle2"
+                                              [class]="inlineCheckClass()" />
+                                          }
+                                        </div>
+                                      }
+                                    </div>
+                                  }
+                                  @if (
+                                    q.reflected_competencies &&
+                                    q.reflected_competencies.length > 0
+                                  ) {
+                                    <div class="flex flex-wrap gap-1 pt-2">
+                                      @for (comp of q.reflected_competencies; track $index) {
+                                        <span
+                                          appBadge
+                                          variant="outline"
+                                          class="text-xs">
+                                          {{ comp }}
+                                        </span>
+                                      }
+                                    </div>
+                                  }
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <div class="max-w-md space-y-6">
+                    <div
+                      class="w-20 h-20 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                      <app-icon name="Target" class="w-10 h-10" />
+                    </div>
+                    <div class="space-y-2">
+                      <h3 class="text-2xl font-bold">
+                        {{
+                          'job_title_competencies.generate_assessments_title'
+                            | t: 'Generate Assessments'
+                        }}
+                      </h3>
+                      <p class="text-muted-foreground">
+                        {{
+                          'job_title_competencies.generate_assessments_desc'
+                            | t
+                              : 'Create tailored technical and behavioral assessment questions based on the job description and competencies.'
+                        }}
+                      </p>
+                    </div>
+                    <button
+                      appButton
+                      (click)="handleGenerateAssessment()"
+                      [disabled]="isGeneratingAssessment()"
+                      size="lg"
+                      class="bg-linear-to-r from-rose-500 to-rose-600 text-white shadow-lg shadow-rose-500/25 px-8 rounded-full h-12 text-lg">
+                      @if (isGeneratingAssessment()) {
+                        <app-icon name="Loader2" [class]="lgSpinnerClass()" />
+                      } @else {
+                        <app-icon name="Wand2" [class]="lgIconClass()" />
+                      }
+                      {{ 'job_title_competencies.generate_assessments' | t }}
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+          </app-tabs-content>
+        }
+      </app-tabs>
+
+      <!-- KPI Modals -->
+      <app-add-kpi-modal
+        [isOpen]="isAddKpiModalOpen()"
+        [competencies]="allCompetencies()"
+        (closed)="isAddKpiModalOpen.set(false)"
+        (added)="handleAddKpi($event)" />
+
+      <app-edit-kpi-modal
+        [isOpen]="!!editingKpi()"
+        [kpi]="editingKpi()"
+        (closed)="editingKpi.set(null)"
+        (saved)="handleEditKpi($event)" />
+
+      <app-confirmation-modal
+        [isOpen]="isKpiDeleteModalOpen()"
+        [title]="'job_title_competencies.kpis.confirm_delete_title' | t"
+        [description]="kpiDeleteDescription()"
+        variant="danger"
+        [confirmText]="'common.delete' | t"
+        [cancelText]="'common.cancel' | t"
+        (closed)="isKpiDeleteModalOpen.set(false)"
+        (confirmed)="handleConfirmDeleteKpi()" />
+
+      <!-- Modals -->
+      <app-edit-job-description-modal
+        [isOpen]="isEditJdOpen()"
+        [currentDescription]="jd()"
+        (closed)="isEditJdOpen.set(false)"
+        (saved)="handleSaveJd($event)" />
+
+      <app-add-competency-modal
+        [isOpen]="isAddCompetencyOpen()"
+        (closed)="isAddCompetencyOpen.set(false)"
+        (added)="handleAddCompetency($event)" />
+
+      <app-edit-competency-modal
+        [isOpen]="!!editingCompetency()"
+        [competency]="editingCompetencyData()"
+        (closed)="editingCompetency.set(null)"
+        (saved)="handleEditCompetency($event)" />
+
+      <app-confirmation-modal
+        [isOpen]="isDeleteModalOpen()"
+        [title]="'common.confirm' | t"
+        [description]="deleteDescription()"
+        variant="danger"
+        [confirmText]="'common.delete' | t"
+        [cancelText]="'common.cancel' | t"
+        (closed)="isDeleteModalOpen.set(false)"
+        (confirmed)="handleConfirmDelete()" />
+    </div>
+  </div>
+}
