@@ -318,6 +318,16 @@ app-icon {
     @apply bg-white/80 dark:bg-slate-900/60 border-white/60 dark:border-white/10 shadow-2xl shadow-indigo-500/10 -translate-y-1;
   }
 
+  /* backdrop-filter makes .glass-card a stacking context, which traps the
+     z-index of an open <app-select> menu inside it — later sibling cards then
+     paint over the menu. Raise the whole card while a menu is open. */
+  .glass,
+  .glass-card {
+    &:has(app-select-content:not([hidden])) {
+      @apply relative z-50 overflow-visible;
+    }
+  }
+
   .text-gradient {
     @apply bg-linear-to-br from-[hsl(var(--primary))] via-[hsl(var(--secondary))] to-[hsl(var(--tertiary))] bg-clip-text text-transparent;
   }

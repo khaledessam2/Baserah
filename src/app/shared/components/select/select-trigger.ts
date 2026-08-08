@@ -14,7 +14,15 @@ import { Select } from './select';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Icon],
-  host: { class: 'block' },
+  // `display: block` lives in styles, not a host `class`. A static host class is
+  // on the element before `authoredClasses()` reads it, so `block` would be
+  // swept into the authored string and `cn()` would drop the button's `flex`
+  // as a conflicting display utility — stacking the chevron under the label.
+  styles: `
+    :host {
+      display: block;
+    }
+  `,
   templateUrl: './select-trigger.html',
 })
 export class SelectTrigger {
