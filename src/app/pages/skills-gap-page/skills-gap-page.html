@@ -30,7 +30,7 @@
     (valueChange)="activeTab.set($event)"
     [attr.dir]="isRtl() ? 'rtl' : 'ltr'"
     class="space-y-6 block">
-    <div class="sticky top-[72px] z-30 -mx-4 px-4 py-2">
+    <div class="sticky top-[var(--nav-stuck)] z-30 -mx-4 px-4 py-2">
       <div appTabsList [class]="tabsListClass()">
         @for (tab of tabs; track tab.value) {
           <button appTabsTrigger [value]="tab.value" [class]="triggerClass">

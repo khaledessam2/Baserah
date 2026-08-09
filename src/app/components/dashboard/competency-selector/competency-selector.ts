@@ -8,6 +8,7 @@ import {
   input,
   output,
   signal,
+  untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -181,15 +182,15 @@ export class CompetencySelector {
 
     // ✨ Auto-normalize weights when selection changes
     effect(() => {
-      // Track only the selection pattern, matching the React dependency array.
-      const selectionKey = this.competencies()
-        .map((c) => c.selected)
-        .join(',');
-      void selectionKey;
       const selectedCount = this.competencies().filter((c) => c.selected).length;
-      if (selectedCount > 0) {
-        this.normalizeWeights();
-      }
+      if (selectedCount === 0) return;
+
+      // `normalizeWeights` both reads and writes `weights`, and it always
+      // stores a fresh object — so a tracked read would make this effect
+      // retrigger itself forever and lock the tab. `competencies` above is the
+      // only intended dependency; React's dependency array made that explicit,
+      // `untracked` is how it is spelled with signals.
+      untracked(() => this.normalizeWeights());
     });
   }
 

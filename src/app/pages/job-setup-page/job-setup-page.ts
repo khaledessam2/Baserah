@@ -174,9 +174,13 @@ export class JobSetupPage implements OnDestroy {
 
   handleSelectTitle(title: string): void {
     this.jobTitle.set(title);
+    // Picking a title starts from a blank description. Titles without a stored
+    // JD used to leave the previous selection's text sitting in the textarea,
+    // which then got analysed — and saved — against the wrong job.
+    this.jobDescription.set('');
 
     // If this title has an existing JD, fetch and populate it
-    if (!this.titlesInfo()[title] || !this.organizationName()) return;
+    if (!this.hasJd(title) || !this.organizationName()) return;
 
     this.analysisService
       .getExistingJobDescription(
@@ -187,6 +191,9 @@ export class JobSetupPage implements OnDestroy {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
+          // A slow response for a title the user has already moved off must
+          // not land on top of the current selection.
+          if (this.jobTitle() !== title) return;
           if (response.success && response.data.job_description) {
             this.jobDescription.set(response.data.job_description);
           }

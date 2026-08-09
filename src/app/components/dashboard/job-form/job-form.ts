@@ -103,6 +103,16 @@ export class JobForm {
     return !!this.titlesInfo()[title.trim()];
   }
 
+  /**
+   * Clearing lives here rather than in the `jobTitle` effect: only a user pick
+   * should wipe the description. Restoring `initialData` also writes the title,
+   * and an effect would race that and blank the description it just set.
+   */
+  handleSelectTitle(title: string): void {
+    this.jobTitle.set(title);
+    this.jobDescription.set('');
+  }
+
   fetchJobTitles(): void {
     this.isLoadingTitles.set(true);
     const companyName =
@@ -145,6 +155,9 @@ export class JobForm {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
+          // A slow response for a title the user has already moved off must
+          // not land on top of the current selection.
+          if (this.jobTitle() !== title) return;
           if (response.success && response.data.job_description) {
             this.jobDescription.set(response.data.job_description);
           }

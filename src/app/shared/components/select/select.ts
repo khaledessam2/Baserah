@@ -15,9 +15,10 @@ import {
  * the value/label registry.
  *
  * The item list stays mounted and is toggled with `hidden` rather than being
- * created on open. Items register their own label with the root on init, and
- * `<app-select-value>` needs those labels to render the closed state — keeping
- * them mounted is what makes the trigger show a label before first open.
+ * created on open. Items register their own label with the root after each
+ * render, and `<app-select-value>` needs those labels to render the closed
+ * state — keeping them mounted is what makes the trigger show a label before
+ * first open.
  */
 @Component({
   selector: 'app-select',

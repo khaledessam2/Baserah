@@ -49,6 +49,13 @@
 
 @layer base {
   :root {
+    /* Floating-navbar metrics. `--nav-offset` is the bar's full height at rest
+       (what page content must clear); `--nav-stuck` is its height once it
+       shrinks on scroll (what `sticky` elements should sit below). Both are
+       derived from `Navbar`'s padding + row height — keep them in sync. */
+    --nav-offset: 8.25rem;
+    --nav-stuck: 7.25rem;
+
     /* Premium Light Theme */
     --background: 210 40% 98%; /* Smooth very light blue-hued gray */
     --foreground: 222 47% 11%; /* Deep navy/slate for text */
@@ -129,6 +136,14 @@
 }
 
 @layer base {
+  /* The navbar row collapses from h-20 to h-14 at `md`. */
+  @media (min-width: 768px) {
+    :root {
+      --nav-offset: 6.75rem;
+      --nav-stuck: 5.75rem;
+    }
+  }
+
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
@@ -153,7 +168,11 @@
         transparent 25%
       );
     background-attachment: fixed;
-    overflow-x: hidden;
+    /* `clip`, not `hidden`: `overflow-x: hidden` turns <body> into a scroll
+       container, which silently breaks every `position: sticky` descendant
+       (they resolve against a scrollport that never scrolls). `clip` suppresses
+       the horizontal overflow without creating one. */
+    overflow-x: clip;
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 

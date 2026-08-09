@@ -49,7 +49,7 @@
             </div>
             <app-select
               [value]="jobTitle()"
-              (valueChange)="jobTitle.set($event)">
+              (valueChange)="handleSelectTitle($event)">
               <app-select-trigger>
                 <app-select-value [placeholder]="titlePlaceholder()" />
               </app-select-trigger>
