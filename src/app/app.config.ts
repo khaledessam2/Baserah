@@ -15,7 +15,14 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(
       routes,
-      withInMemoryScrolling({ scrollPositionRestoration: 'top' })
+      // `anchorScrolling` is off by default, and without it the router treats a
+      // fragment navigation as an ordinary one and applies
+      // `scrollPositionRestoration` instead — so the landing page's `#features`
+      // style links scrolled back to the top rather than to the section.
+      withInMemoryScrolling({
+        scrollPositionRestoration: 'top',
+        anchorScrolling: 'enabled',
+      })
     ),
     provideHttpClient(withInterceptors([apiInterceptor])),
   ],

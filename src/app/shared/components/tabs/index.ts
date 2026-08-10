@@ -1,12 +1,12 @@
 import { Tabs } from './tabs';
-import { TabsTrigger } from './tabs-trigger';
-import { TabsContent } from './tabs-content';
-import { TabsListDirective } from './tabs.directive';
+import { TabsTrigger } from './tabs-trigger/tabs-trigger';
+import { TabsContent } from './tabs-content/tabs-content';
+import { TabsListDirective } from '@/shared/directives/tabs.directive';
 
 export { Tabs } from './tabs';
-export { TabsTrigger } from './tabs-trigger';
-export { TabsContent } from './tabs-content';
-export { TabsListDirective } from './tabs.directive';
+export { TabsTrigger } from './tabs-trigger/tabs-trigger';
+export { TabsContent } from './tabs-content/tabs-content';
+export { TabsListDirective } from '@/shared/directives/tabs.directive';
 
 export const TABS_DIRECTIVES = [
   Tabs,

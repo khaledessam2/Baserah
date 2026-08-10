@@ -7,7 +7,7 @@ import {
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@/services/auth.service';
 import { I18nService } from '@/services/i18n.service';
 import { ThemeService } from '@/services/theme.service';
@@ -33,6 +33,7 @@ import { TranslatePipe } from '@/shared/pipes/translate.pipe';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    RouterLink,
     ButtonDirective,
     Icon,
     RevealDirective,

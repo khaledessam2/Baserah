@@ -28,7 +28,7 @@ import {
     class: 'relative block',
     '(keydown.escape)': 'close()',
   },
-  templateUrl: './select.html',
+  template: '<ng-content />',
 })
 export class Select implements OnDestroy {
   readonly value = input<string>('');

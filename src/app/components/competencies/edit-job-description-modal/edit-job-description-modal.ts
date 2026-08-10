@@ -14,14 +14,8 @@ import {
   DialogHeaderDirective,
   DialogTitleDirective,
 } from '@/shared/components/dialog';
-import {
-  BadgeDirective,
-  InputDirective,
-  LabelDirective,
-  TextareaDirective,
-} from '@/shared/directives/form-controls.directive';
+import { TextareaDirective } from '@/shared/directives/form-controls.directive';
 import { Icon } from '@/shared/components/icon/icon';
-import { SELECT_DIRECTIVES } from '@/shared/components/select';
 
 /** Port of `EditJobDescriptionModal` in `competencies/CompetencyModals.tsx`. */
 @Component({

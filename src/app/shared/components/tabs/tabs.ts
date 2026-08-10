@@ -20,7 +20,7 @@ import { authoredClasses } from '@/shared/utils/host-class';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { '[class]': 'classes()' },
-  templateUrl: './tabs.html',
+  template: '<ng-content />',
 })
 export class Tabs {
   readonly value = input<string>('');

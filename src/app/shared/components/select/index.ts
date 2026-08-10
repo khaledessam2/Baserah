@@ -1,22 +1,22 @@
 import { Select } from './select';
-import { SelectTrigger } from './select-trigger';
-import { SelectValue } from './select-value';
-import { SelectContent } from './select-content';
-import { SelectItem } from './select-item';
+import { SelectTrigger } from './select-trigger/select-trigger';
+import { SelectValue } from './select-value/select-value';
+import { SelectContent } from './select-content/select-content';
+import { SelectItem } from './select-item/select-item';
 import {
   SelectLabelDirective,
   SelectSeparatorDirective,
-} from './select.directive';
+} from '@/shared/directives/select.directive';
 
 export { Select } from './select';
-export { SelectTrigger } from './select-trigger';
-export { SelectValue } from './select-value';
-export { SelectContent } from './select-content';
-export { SelectItem } from './select-item';
+export { SelectTrigger } from './select-trigger/select-trigger';
+export { SelectValue } from './select-value/select-value';
+export { SelectContent } from './select-content/select-content';
+export { SelectItem } from './select-item/select-item';
 export {
   SelectLabelDirective,
   SelectSeparatorDirective,
-} from './select.directive';
+} from '@/shared/directives/select.directive';
 
 export const SELECT_DIRECTIVES = [
   Select,

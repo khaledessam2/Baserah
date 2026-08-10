@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { cn } from '@/shared/utils/utils';
 import { authoredClasses } from '@/shared/utils/host-class';
-import { Tabs } from './tabs';
+import { Tabs } from '../tabs';
 
 @Component({
   selector: 'button[appTabsTrigger]',

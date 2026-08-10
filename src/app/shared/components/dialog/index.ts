@@ -4,7 +4,7 @@ import {
   DialogFooterDirective,
   DialogTitleDirective,
   DialogDescriptionDirective,
-} from './dialog.directive';
+} from '@/shared/directives/dialog.directive';
 
 export { Dialog } from './dialog';
 export {
@@ -12,7 +12,7 @@ export {
   DialogFooterDirective,
   DialogTitleDirective,
   DialogDescriptionDirective,
-} from './dialog.directive';
+} from '@/shared/directives/dialog.directive';
 
 export const DIALOG_DIRECTIVES = [
   Dialog,

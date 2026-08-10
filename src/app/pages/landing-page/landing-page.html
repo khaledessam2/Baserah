@@ -13,7 +13,8 @@
         class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-slate-300">
         @for (item of navLinks; track item) {
           <a
-            [href]="'#' + item"
+            routerLink="/"
+            [fragment]="item"
             class="relative hover:text-blue-600 dark:hover:text-blue-400 transition-colors group">
             {{ 'landing.nav.' + item | t }}
             <span
@@ -60,7 +61,8 @@
       <div class="px-4 py-4 space-y-4">
         @for (item of navLinks; track item) {
           <a
-            [href]="'#' + item"
+            routerLink="/"
+            [fragment]="item"
             (click)="isMobileMenuOpen.set(false)"
             class="block text-base font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             {{ 'landing.nav.' + item | t }}
@@ -84,17 +86,18 @@
   <main>
     <app-landing-hero />
     <app-landing-problem-solution />
-    <div id="features">
+    <!-- `scroll-mt-20` keeps the anchor target clear of the fixed nav. -->
+    <div id="features" class="scroll-mt-20">
       <app-landing-features />
     </div>
-    <div id="how_it_works">
+    <div id="how_it_works" class="scroll-mt-20">
       <app-landing-how-it-works />
     </div>
     <app-landing-guided-tour-section />
-    <div id="testimonials">
+    <div id="testimonials" class="scroll-mt-20">
       <app-landing-testimonials />
     </div>
-    <div id="faq">
+    <div id="faq" class="scroll-mt-20">
       <app-landing-faq />
     </div>
 

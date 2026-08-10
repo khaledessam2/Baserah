@@ -150,7 +150,7 @@ export class Navbar implements OnDestroy {
 
   readonly wrapperClass = computed(() =>
     cn(
-      'fixed top-0 left-0 right-0 z-50 flex justify-center py-4 transition-all duration-300',
+      'fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-300',
       // Once stuck, the strip around the pill needs its own backdrop — without
       // it the page scrolls visibly through the gap above the rounded bar.
       this.scrolled()

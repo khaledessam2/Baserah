@@ -18,7 +18,6 @@ import {
   BadgeDirective,
   InputDirective,
   LabelDirective,
-  TextareaDirective,
 } from '@/shared/directives/form-controls.directive';
 import { Icon } from '@/shared/components/icon/icon';
 import { SELECT_DIRECTIVES } from '@/shared/components/select';

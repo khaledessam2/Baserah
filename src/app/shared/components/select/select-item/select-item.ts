@@ -11,7 +11,7 @@ import {
 import { cn } from '@/shared/utils/utils';
 import { authoredClasses } from '@/shared/utils/host-class';
 import { Icon } from '@/shared/components/icon/icon';
-import { Select } from './select';
+import { Select } from '../select';
 
 @Component({
   selector: 'app-select-item',

@@ -8,8 +8,6 @@ import {
 } from '@angular/core';
 import { I18nService } from '@/services/i18n.service';
 import { cn } from '@/shared/utils/utils';
-import { ButtonDirective } from '@/shared/directives/button.directive';
-import { BadgeDirective } from '@/shared/directives/form-controls.directive';
 import { Icon } from '@/shared/components/icon/icon';
 import type { IconName } from '@/shared/icons/icons';
 import { TranslatePipe } from '@/shared/pipes/translate.pipe';

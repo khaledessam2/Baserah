@@ -4,7 +4,7 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { Select } from './select';
+import { Select } from '../select';
 
 @Component({
   selector: 'app-select-value',
