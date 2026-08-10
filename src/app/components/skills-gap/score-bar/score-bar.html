@@ -1,3 +1,9 @@
-<div dir="ltr" [class]="trackClasses()">
-  <div [class]="fillClasses()" [style.width.%]="width()"></div>
+<div
+  dir="ltr"
+  class="w-full rounded-full bg-slate-200/60 dark:bg-slate-700/50 overflow-hidden"
+  [class]="height()">
+  <div
+    class="rounded-full transition-all duration-700 ease-out"
+    [class]="fillClasses()"
+    [style.width.%]="width()"></div>
 </div>

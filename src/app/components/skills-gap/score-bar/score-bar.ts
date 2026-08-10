@@ -4,7 +4,6 @@ import {
   computed,
   input,
 } from '@angular/core';
-import { cn } from '@/shared/utils/utils';
 
 /** Port of the score bar in `skills-gap/GapBadge.tsx`. */
 @Component({
@@ -30,14 +29,7 @@ export class ScoreBar {
       : 'bg-gradient-to-r from-red-500 to-rose-400';
   });
 
-  readonly trackClasses = computed(() =>
-    cn(
-      'w-full rounded-full bg-slate-200/60 dark:bg-slate-700/50 overflow-hidden',
-      this.height()
-    )
-  );
-
-  readonly fillClasses = computed(() =>
-    cn('rounded-full transition-all duration-700 ease-out', this.height(), this.color())
+  readonly fillClasses = computed(
+    () => this.height() + ' ' + this.color()
   );
 }

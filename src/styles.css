@@ -176,6 +176,16 @@
     font-feature-settings: 'rlig' 1, 'calt' 1;
   }
 
+  /* Tailwind v4 dropped `cursor: pointer` on buttons in favour of the CSS
+     default, so every button in the app rendered an arrow. Put it back once here
+     rather than hanging `cursor-pointer` on each control. `:not(:disabled)`
+     keeps disabled buttons on the default arrow, and any explicit
+     `cursor-not-allowed` utility still outranks this from the utilities layer. */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
   h1,
   h2,
   h3,
@@ -225,6 +235,171 @@
    to any `fill-*` utility class (0,1,0) put on an <app-icon>. */
 app-icon {
   fill: none;
+}
+
+/* ---------------------------------------------------------------------------
+   UI primitives.
+
+   These live in `@layer components` deliberately. Tailwind emits
+   `@layer theme, base, components, utilities`, so a utility a caller writes in
+   its own `class` attribute always outranks the base look defined here —
+   `<div appCard class="rounded-3xl p-0">` just works. That layer ordering is
+   what replaced the `cn()` / tailwind-merge class-merging helper: the cascade
+   resolves the conflict instead of JavaScript rewriting the class string.
+
+   Consequence to keep in mind: overriding one of these needs a real utility,
+   not another component class from this block — two rules in the same layer
+   fall back to source order.
+   --------------------------------------------------------------------------- */
+@layer components {
+  /* button — `ui/button.tsx` */
+  .btn {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-default {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90;
+  }
+  .btn-destructive {
+    @apply bg-destructive text-destructive-foreground hover:bg-destructive/90;
+  }
+  .btn-outline {
+    @apply border border-input bg-background hover:bg-accent hover:text-accent-foreground;
+  }
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+  .btn-ghost {
+    @apply hover:bg-accent hover:text-accent-foreground;
+  }
+  .btn-link {
+    @apply text-primary underline-offset-4 hover:underline;
+  }
+  .btn-gradient {
+    @apply bg-linear-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5;
+  }
+  .btn-size-default {
+    @apply h-10 px-4 py-2;
+  }
+  .btn-size-sm {
+    @apply h-9 rounded-md px-3;
+  }
+  .btn-size-lg {
+    @apply h-11 rounded-md px-8;
+  }
+  .btn-size-icon {
+    @apply h-10 w-10;
+  }
+
+  /* card — `ui/card.tsx` */
+  .card {
+    @apply rounded-xl border bg-card text-card-foreground shadow-sm;
+  }
+  .card-header {
+    @apply flex flex-col space-y-1.5 p-6;
+  }
+  .card-title {
+    @apply text-2xl font-semibold leading-none tracking-tight;
+  }
+  .card-description {
+    @apply text-sm text-muted-foreground;
+  }
+  .card-content {
+    @apply p-6 pt-0;
+  }
+  .card-footer {
+    @apply flex items-center p-6 pt-0;
+  }
+
+  /* form controls — `ui/input.tsx`, `ui/textarea.tsx`, `ui/label.tsx` */
+  .input {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .textarea {
+    @apply flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .label {
+    @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
+  }
+
+  /* badge — `ui/badge.tsx`. The `.rtl .badge` rule below depends on this name. */
+  .badge {
+    @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+  .badge-default {
+    @apply border-transparent bg-primary text-primary-foreground hover:bg-primary/80;
+  }
+  .badge-secondary {
+    @apply border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+  .badge-destructive {
+    @apply border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80;
+  }
+  .badge-outline {
+    @apply text-foreground;
+  }
+
+  /* dialog — `ui/dialog.tsx`.
+
+     The panel keeps `max-w-lg` as its default width and callers override it via
+     `[contentClass]`, which only works from a lower layer. As a plain static
+     class it silently beat every caller: Tailwind emits `.max-w-lg` *after*
+     `.max-w-3xl`, `.max-w-5xl` and `.max-w-[1500px]`, so each of those lost on
+     source order and every dialog rendered at 512px. */
+  .dialog-content {
+    @apply fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg max-h-[90vh] translate-x-[-50%] translate-y-[-50%] gap-4 overflow-y-auto border bg-background p-6 shadow-lg duration-200 sm:rounded-lg;
+  }
+  .dialog-overlay {
+    @apply fixed inset-0 z-50 bg-black/80;
+  }
+  .dialog-header {
+    @apply flex flex-col space-y-1.5 text-center sm:text-left;
+  }
+  .dialog-footer {
+    @apply flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2;
+  }
+  .dialog-title {
+    @apply text-lg font-semibold leading-none tracking-tight;
+  }
+  .dialog-description {
+    @apply text-sm text-muted-foreground;
+  }
+
+  /* select — `ui/select.tsx` */
+  .select-trigger {
+    @apply flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1;
+  }
+  .select-content {
+    @apply absolute z-50 mt-1 max-h-96 min-w-[8rem] w-full overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md;
+  }
+  .select-item {
+    @apply relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50;
+  }
+  .select-label {
+    @apply px-2 py-1.5 text-sm font-semibold;
+  }
+  .select-separator {
+    @apply -mx-1 my-1 h-px bg-muted;
+  }
+
+  /* tabs — `ui/tabs.tsx` */
+  .tabs-list {
+    @apply inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground;
+  }
+  .tabs-trigger {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow;
+  }
+  .tabs-content {
+    @apply mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+
+  /* progress + slider — the `.rtl [role='progressbar']` and
+     `[data-orientation]` rules below key off attributes, not these classes. */
+  .progress {
+    @apply relative h-2 w-full overflow-hidden rounded-full bg-primary/20;
+  }
+  .slider {
+    @apply relative flex w-full touch-none select-none items-center;
+  }
 }
 
 /* RTL Support */

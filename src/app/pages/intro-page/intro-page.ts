@@ -18,7 +18,6 @@ import { AuthService } from '@/services/auth.service';
 import { I18nService } from '@/services/i18n.service';
 import { TourService } from '@/services/tour.service';
 import { getTourSteps } from '@/shared/config/tour-config';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { InputDirective, LabelDirective } from '@/shared/directives/form-controls.directive';
@@ -131,14 +130,7 @@ export class IntroPage implements OnInit, OnDestroy {
     if (this.tourTimer) clearTimeout(this.tourTimer);
   }
 
-  private readonly isRtl = computed(() => this.i18n.language() === 'ar');
-
-  readonly contentClass = computed(() =>
-    cn(
-      'space-y-6 sm:space-y-8 px-4 sm:px-8',
-      this.isRtl() ? 'text-right' : 'text-left'
-    )
-  );
+  readonly isRtl = computed(() => this.i18n.language() === 'ar');
 
   readonly fileSizeLabel = computed(() => {
     const f = this.file();
@@ -146,21 +138,15 @@ export class IntroPage implements OnInit, OnDestroy {
   });
 
   methodClass(id: InputMethod): string {
-    return cn(
-      'flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-medium transition-all duration-300',
-      this.inputMethod() === id
-        ? 'bg-card text-primary shadow-md ring-1 ring-border'
-        : 'text-muted-foreground hover:bg-card/50 hover:text-foreground'
-    );
+    return this.inputMethod() === id
+      ? 'bg-card text-primary shadow-md ring-1 ring-border'
+      : 'text-muted-foreground hover:bg-card/50 hover:text-foreground';
   }
 
   readonly dropZoneClass = computed(() =>
-    cn(
-      'border-2 border-dashed rounded-2xl p-10 flex flex-col items-center justify-center cursor-pointer transition-all duration-200 group bg-muted/20',
-      this.isDragOver()
-        ? 'border-primary bg-primary/5 scale-[1.01]'
-        : 'border-border hover:border-primary/50 hover:bg-muted/30'
-    )
+    this.isDragOver()
+      ? 'border-primary bg-primary/5 scale-[1.01]'
+      : 'border-border hover:border-primary/50 hover:bg-muted/30'
   );
 
   handleUrlChange(index: number, value: string): void {

@@ -25,7 +25,6 @@ import { I18nService } from '@/services/i18n.service';
 import { TourService } from '@/services/tour.service';
 import { AnalysisService } from '@/services/analysis.service';
 import { getTourSteps } from '@/shared/config/tour-config';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { InputDirective, LabelDirective } from '@/shared/directives/form-controls.directive';
@@ -344,128 +343,25 @@ export class JobSetupPage implements OnDestroy {
       .subscribe(() => proceed());
   }
 
-  readonly rootClass = computed(() =>
-    cn(
-      'w-full px-6 py-8 md:px-8 lg:px-12 min-h-[calc(100vh-100px)]',
-      this.isRtl() && 'rtl'
-    )
-  );
-
-  readonly columnsClass = computed(() =>
-    cn(
-      'flex flex-col lg:flex-row gap-8 items-stretch',
-      this.isRtl() && 'lg:flex-row-reverse'
-    )
-  );
-
-  readonly panelHeaderClass = computed(() =>
-    cn('pb-4 bg-primary/5', this.isRtl() ? 'text-right' : 'text-left')
-  );
-
-  readonly panelTitleClass = computed(() =>
-    cn(
-      'flex items-center gap-2 text-xl font-bold',
-      this.isRtl() && 'flex-row-reverse'
-    )
-  );
-
-  readonly configTitleClass = computed(() =>
-    cn(
-      'flex items-center gap-3 text-xl font-bold',
-      this.isRtl() && 'flex-row-reverse'
-    )
-  );
-
-  readonly configContentClass = computed(() =>
-    cn('space-y-8 p-8', this.isRtl() ? 'text-right' : 'text-left')
-  );
-
-  readonly inlineRowClass = computed(() =>
-    cn('flex items-center gap-1.5', this.isRtl() ? 'flex-row-reverse' : 'flex-row')
-  );
+  isSelected(title: string): boolean {
+    return this.jobTitle() === title;
+  }
 
   titleRowClass(title: string): string {
-    return cn(
-      'group flex items-center justify-between p-4 rounded-2xl border transition-all cursor-pointer relative overflow-hidden',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row',
-      this.jobTitle() === title
-        ? 'bg-primary/10 border-primary ring-1 ring-primary/20'
-        : 'hover:bg-card border-border bg-muted/20'
-    );
+    return this.isSelected(title)
+      ? 'bg-primary/10 border-primary ring-1 ring-primary/20'
+      : 'hover:bg-card border-border bg-muted/20';
   }
-
-  readonly titleLabelWrapClass = computed(() =>
-    cn(
-      'flex items-center gap-3 truncate flex-1',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row'
-    )
-  );
-
-  titleTextClass(title: string): string {
-    return cn(
-      'text-sm font-bold truncate transition-colors',
-      this.jobTitle() === title ? 'text-primary' : 'text-foreground/80'
-    );
-  }
-
-  readonly titleInputClass = computed(() =>
-    cn(
-      'h-12 bg-muted/20 border-border focus:ring-primary/20 transition-all rounded-xl text-lg font-medium',
-      this.isRtl() ? 'pr-12' : 'pl-12'
-    )
-  );
-
-  readonly searchIconClass = computed(() =>
-    cn(
-      'w-5 h-5 absolute top-3.5 text-muted-foreground transition-colors group-focus-within:text-primary',
-      this.isRtl() ? 'right-4' : 'left-4'
-    )
-  );
-
-  readonly jdHeaderClass = computed(() =>
-    cn(
-      'flex justify-between items-center',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row'
-    )
-  );
-
-  readonly levelRowClass = computed(() =>
-    cn('flex items-center gap-3', this.isRtl() ? 'flex-row-reverse' : 'flex-row')
-  );
 
   levelButtonClass(l: number): string {
-    return cn(
-      'w-11 h-11 rounded-xl flex items-center justify-center border-2 font-black transition-all text-lg',
-      this.level() === l
-        ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-110'
-        : 'bg-muted/20 text-muted-foreground border-border hover:border-primary/50'
-    );
+    return this.level() === l
+      ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-110'
+      : 'bg-muted/20 text-muted-foreground border-border hover:border-primary/50';
   }
-
-  readonly modeRowClass = computed(() =>
-    cn(
-      'flex items-center gap-2 bg-muted/30 p-1.5 rounded-xl border border-border shadow-inner',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row'
-    )
-  );
 
   modeButtonClass(mode: 'ai' | 'standard'): string {
-    return cn(
-      'flex-1 py-2.5 text-xs font-black uppercase tracking-widest rounded-lg transition-all',
-      this.competencyMode() === mode
-        ? 'bg-card shadow-md text-primary'
-        : 'text-muted-foreground hover:bg-card/40'
-    );
+    return this.competencyMode() === mode
+      ? 'bg-card shadow-md text-primary'
+      : 'text-muted-foreground hover:bg-card/40';
   }
-
-  readonly analyzeRowClass = computed(() =>
-    cn('flex items-center gap-3', this.isRtl() ? 'flex-row-reverse' : 'flex-row')
-  );
-
-  readonly playIconClass = computed(() =>
-    cn(
-      'w-6 h-6 fill-current transition-transform group-hover:scale-110',
-      this.isRtl() && 'rotate-180'
-    )
-  );
 }

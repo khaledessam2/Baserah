@@ -18,7 +18,6 @@ import { TourService } from '@/services/tour.service';
 import { AnalysisService } from '@/services/analysis.service';
 import { AssessmentService } from '@/services/assessment.service';
 import { getTourSteps } from '@/shared/config/tour-config';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { ConfirmationModal } from '@/shared/components/confirmation-modal/confirmation-modal';
@@ -857,137 +856,55 @@ export class JobTitleCompetenciesPage implements OnInit, OnDestroy {
   }
 
   choiceClass(q: any, choice: string, tone: 'emerald' | 'amber'): string {
-    const correct = this.isCorrectChoice(q, choice);
-    const correctTone =
-      tone === 'emerald'
-        ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400'
-        : 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-900/20 dark:border-amber-800 dark:text-amber-400';
-    return cn(
-      'px-3 py-2 text-sm rounded-lg border',
-      correct ? correctTone : 'bg-muted/50 border-border text-muted-foreground'
-    );
+    if (!this.isCorrectChoice(q, choice)) {
+      return 'bg-muted/50 border-border text-muted-foreground';
+    }
+    return tone === 'emerald'
+      ? 'bg-emerald-50 border-emerald-200 text-emerald-700 dark:bg-emerald-900/20 dark:border-emerald-800 dark:text-emerald-400'
+      : 'bg-amber-50 border-amber-200 text-amber-700 dark:bg-amber-900/20 dark:border-amber-800 dark:text-amber-400';
   }
 
   questionCardClass(tone: 'primary' | 'secondary'): string {
-    return cn(
-      'p-4 bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all',
-      tone === 'primary'
-        ? 'hover:border-primary/20'
-        : 'hover:border-secondary/20',
-      this.isRtl() && 'text-right'
-    );
+    return tone === 'primary'
+      ? 'hover:border-primary/20'
+      : 'hover:border-secondary/20';
   }
 
-  readonly rootClass = computed(() =>
-    cn(
-      'min-h-screen bg-background pb-20 font-sans transition-colors duration-500',
-      this.isRtl() && 'rtl'
-    )
+  readonly isBalancedWeight = computed(
+    () => Math.abs(this.totalWeight() - 1) < 0.01
   );
 
-  readonly brainIconClass = computed(() =>
-    cn('inline-block w-10 h-10 text-primary', this.isRtl() ? 'ml-3' : 'mr-3')
+  // Each of these is shared by several call sites, so it stays one computed
+  // instead of being duplicated across the template.
+  readonly smallIconClass = computed(
+    () => 'w-4 h-4 ' + (this.isRtl() ? 'ml-1' : 'mr-1')
   );
 
-  readonly backButtonClass = computed(() =>
-    cn(
-      'absolute top-0 gap-2 hover:bg-muted hidden md:flex text-muted-foreground hover:text-foreground',
-      this.isRtl() ? 'right-0' : 'left-0'
-    )
+  readonly mdIconClass = computed(
+    () => 'w-4 h-4 ' + (this.isRtl() ? 'ml-2' : 'mr-2')
   );
 
-  readonly backArrowClass = computed(() =>
-    cn('w-4 h-4', !this.isRtl() && 'rotate-180')
+  readonly mdSpinnerClass = computed(
+    () => 'w-4 h-4 animate-spin ' + (this.isRtl() ? 'ml-2' : 'mr-2')
   );
 
-  readonly smallIconClass = computed(() =>
-    cn('w-4 h-4', this.isRtl() ? 'ml-1' : 'mr-1')
+  readonly lgIconClass = computed(
+    () => 'w-5 h-5 ' + (this.isRtl() ? 'ml-2' : 'mr-2')
   );
 
-  readonly mdIconClass = computed(() =>
-    cn('w-4 h-4', this.isRtl() ? 'ml-2' : 'mr-2')
+  readonly lgSpinnerClass = computed(
+    () => 'w-5 h-5 animate-spin ' + (this.isRtl() ? 'ml-2' : 'mr-2')
   );
 
-  readonly mdSpinnerClass = computed(() =>
-    cn('w-4 h-4 animate-spin', this.isRtl() ? 'ml-2' : 'mr-2')
+  readonly tinyIconClass = computed(
+    () => 'w-3 h-3 ' + (this.isRtl() ? 'ml-1' : 'mr-1')
   );
 
-  readonly lgIconClass = computed(() =>
-    cn('w-5 h-5', this.isRtl() ? 'ml-2' : 'mr-2')
+  readonly tinySpinnerClass = computed(
+    () => 'w-3 h-3 animate-spin ' + (this.isRtl() ? 'ml-1' : 'mr-1')
   );
 
-  readonly lgSpinnerClass = computed(() =>
-    cn('w-5 h-5 animate-spin', this.isRtl() ? 'ml-2' : 'mr-2')
-  );
-
-  readonly tinyIconClass = computed(() =>
-    cn('w-3 h-3', this.isRtl() ? 'ml-1' : 'mr-1')
-  );
-
-  readonly tinySpinnerClass = computed(() =>
-    cn('w-3 h-3 animate-spin', this.isRtl() ? 'ml-1' : 'mr-1')
-  );
-
-  readonly inlineCheckClass = computed(() =>
-    cn('w-4 h-4 inline', this.isRtl() ? 'mr-2' : 'ml-2')
-  );
-
-  readonly jdContentClass = computed(() =>
-    cn('p-8', this.isRtl() && 'text-right')
-  );
-
-  readonly assessmentContentClass = computed(() =>
-    cn(
-      'p-6',
-      !this.hasAssessment() && 'p-12 flex flex-col items-center text-center'
-    )
-  );
-
-  readonly weightRowClass = computed(() =>
-    cn(
-      'group flex items-center justify-between gap-6 p-4 bg-card rounded-xl border border-border shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200',
-      this.isRtl() && 'flex-row-reverse'
-    )
-  );
-
-  readonly weightLabelClass = computed(() =>
-    cn(
-      'w-1/3 text-sm font-medium text-foreground truncate',
-      this.isRtl() ? 'text-right' : 'text-left'
-    )
-  );
-
-  readonly totalWeightRowClass = computed(() =>
-    cn(
-      'mt-6 pt-4 border-t flex justify-between items-center px-2',
-      this.isRtl() && 'flex-row-reverse'
-    )
-  );
-
-  readonly totalWeightLabelClass = computed(() =>
-    cn('text-sm font-bold text-slate-700', this.isRtl() && 'text-right')
-  );
-
-  readonly totalWeightBadgeClass = computed(() =>
-    cn(
-      'px-4 py-1.5 rounded-full text-sm font-bold shadow-sm',
-      Math.abs(this.totalWeight() - 1) < 0.01
-        ? 'bg-green-100 text-green-700 border border-green-200'
-        : 'bg-amber-100 text-amber-700 border border-amber-200'
-    )
-  );
-
-  readonly techHeadingClass = computed(() =>
-    cn(
-      'text-lg font-bold text-primary flex items-center gap-2',
-      this.isRtl() && 'flex-row-reverse'
-    )
-  );
-
-  readonly mgrHeadingClass = computed(() =>
-    cn(
-      'text-lg font-bold text-secondary flex items-center gap-2',
-      this.isRtl() && 'flex-row-reverse'
-    )
+  readonly inlineCheckClass = computed(
+    () => 'w-4 h-4 inline ' + (this.isRtl() ? 'mr-2' : 'ml-2')
   );
 }

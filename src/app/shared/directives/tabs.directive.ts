@@ -1,18 +1,8 @@
-import { Directive, computed } from '@angular/core';
-import { cn } from '@/shared/utils/utils';
-import { authoredClasses } from '@/shared/utils/host-class';
+import { Directive } from '@angular/core';
 
 @Directive({
   selector: '[appTabsList]',
   standalone: true,
-  host: { role: 'tablist', '[class]': 'classes()' },
+  host: { role: 'tablist', class: 'tabs-list' },
 })
-export class TabsListDirective {
-  private readonly authored = authoredClasses();
-  readonly classes = computed(() =>
-    cn(
-      'inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground',
-      this.authored
-    )
-  );
-}
+export class TabsListDirective {}

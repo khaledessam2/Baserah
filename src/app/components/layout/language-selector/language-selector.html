@@ -3,7 +3,8 @@
   variant="ghost"
   size="sm"
   (click)="toggleLanguage()"
-  [class]="classes()">
+  class="flex items-center gap-2 px-3 h-10 rounded-full border border-white/60 dark:border-white/10 bg-white/40 dark:bg-slate-900/40 backdrop-blur-md hover:bg-white/60 dark:hover:bg-slate-800 transition-all shadow-sm font-sans"
+  [class.flex-row-reverse]="isRtl()">
   <app-icon
     name="Languages"
     class="w-4 h-4 text-indigo-600 dark:text-indigo-400" />

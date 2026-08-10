@@ -13,7 +13,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18nService } from '@/services/i18n.service';
 import { AssessmentService } from '@/services/assessment.service';
 import type { DetailedAnswer, DetailedAssessmentResult } from '@/models/api.model';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { Icon } from '@/shared/components/icon/icon';
@@ -175,29 +174,24 @@ export class AssessmentResultsPage implements OnInit {
   }
 
   statIconClass(color: StatColor): string {
-    return cn('p-4 rounded-2xl shadow-lg shadow-opacity-20', STAT_COLORS[color]);
+    return STAT_COLORS[color];
   }
 
   optionClass(answer: DetailedAnswer, idx: number): string {
     const selected = this.isSelected(answer, idx);
     const correct = this.isCorrect(answer, idx);
     const wrong = this.isWrong(answer, idx);
-    return cn(
-      'p-4 rounded-xl border-2 transition-all flex items-center justify-between',
-      selected && !wrong && !correct && 'bg-primary/5 border-primary/20 text-primary',
-      correct &&
-        'bg-emerald-500/10 border-emerald-500/50 text-emerald-600 shadow-sm',
-      wrong && 'bg-rose-500/10 border-rose-500/50 text-rose-600',
-      !selected && !correct && 'bg-muted/30 border-border text-muted-foreground'
-    );
+    if (!selected && !correct) return 'bg-muted/30 border-border text-muted-foreground';
+    if (wrong) return 'bg-rose-500/10 border-rose-500/50 text-rose-600';
+    if (correct) {
+      return 'bg-emerald-500/10 border-emerald-500/50 text-emerald-600 shadow-sm';
+    }
+    return 'bg-primary/5 border-primary/20 text-primary';
   }
 
   feedbackClass(answer: DetailedAnswer): string {
-    return cn(
-      'p-4 rounded-xl flex items-center gap-3 text-sm font-bold',
-      answer.is_correct
-        ? 'bg-emerald-500/10 text-emerald-600'
-        : 'bg-rose-500/10 text-rose-500'
-    );
+    return answer.is_correct
+      ? 'bg-emerald-500/10 text-emerald-600'
+      : 'bg-rose-500/10 text-rose-500';
   }
 }

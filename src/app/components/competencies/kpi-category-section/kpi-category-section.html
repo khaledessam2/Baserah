@@ -1,6 +1,9 @@
 @if (kpis().length > 0) {
   <div class="animate-in fade-in-0 duration-300">
-    <div [class]="headerClass()" [style.border-color]="color()">
+    <div
+      class="flex items-center gap-2 mb-3 border-b pb-2"
+      [class.flex-row-reverse]="isRtl()"
+      [style.border-color]="color()">
       <span [style.color]="color()">
         <app-icon [name]="icon()" class="w-4 h-4" />
       </span>
@@ -10,10 +13,19 @@
       @for (kpi of kpis(); track $index) {
         <div
           class="bg-card p-4 rounded-lg border border-border shadow-sm hover:shadow-md transition-shadow group">
-          <div [class]="rowClass()">
+          <div
+            class="flex justify-between items-start gap-3"
+            [class.flex-row-reverse]="isRtl()">
             <div class="flex-1">
-              <p [class]="kpiTextClass()">{{ kpi.kpi || kpi.kpi_text }}</p>
-              <div [class]="tagRowClass()">
+              <p
+                class="font-medium text-foreground mb-2"
+                [class.text-right]="isRtl()">
+                {{ kpi.kpi || kpi.kpi_text }}
+              </p>
+              <div
+                class="flex flex-wrap gap-2 text-xs"
+                [class.flex-row-reverse]="isRtl()"
+                [class.justify-end]="isRtl()">
                 @if (kpi.performance_dimension) {
                   <span
                     class="px-2 py-1 bg-tertiary/10 text-tertiary rounded border border-tertiary/20">
@@ -40,7 +52,9 @@
                 }
               </div>
             </div>
-            <div [class]="actionsClass()">
+            <div
+              class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+              [class.flex-row-reverse]="isRtl()">
               <button
                 type="button"
                 (click)="edit.emit(kpi)"

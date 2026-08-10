@@ -11,7 +11,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { I18nService } from '@/services/i18n.service';
 import { SkillsGapService } from '@/services/skills-gap.service';
-import { cn } from '@/shared/utils/utils';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { Icon } from '@/shared/components/icon/icon';
 import { SELECT_DIRECTIVES } from '@/shared/components/select';
@@ -162,8 +161,7 @@ export class SkillsGapHeatmapTab {
   }
 
   overallScoreClass(score: number): string {
-    return cn(
-      'text-xs font-black px-2 py-0.5 rounded-lg inline-block',
+    return (
       score >= 70
         ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
         : score >= 50
@@ -172,30 +170,4 @@ export class SkillsGapHeatmapTab {
     );
   }
 
-  readonly stickyHeaderClass = computed(() =>
-    cn(
-      'px-3 py-3 text-xs font-bold text-start min-w-[180px] border-b border-r border-indigo-500/50 z-10',
-      this.isRtl()
-        ? 'sticky right-0 bg-indigo-600'
-        : 'sticky left-0 bg-indigo-600'
-    )
-  );
-
-  readonly stickyCellClass = computed(() =>
-    cn(
-      'px-3 py-2 z-10 border-r border-slate-100/40 dark:border-white/5',
-      this.isRtl()
-        ? 'sticky right-0 bg-white/95 dark:bg-slate-950/95'
-        : 'sticky left-0 bg-white/95 dark:bg-slate-950/95'
-    )
-  );
-
-  readonly stickySummaryCellClass = computed(() =>
-    cn(
-      'px-3 py-2.5 z-10 border-r border-slate-200/50 dark:border-white/5',
-      this.isRtl()
-        ? 'sticky right-0 bg-slate-100/95 dark:bg-slate-800/95'
-        : 'sticky left-0 bg-slate-100/95 dark:bg-slate-800/95'
-    )
-  );
 }

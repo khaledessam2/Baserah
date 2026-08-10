@@ -255,7 +255,9 @@
                       {{ emp.department }}
                     </td>
                     <td class="px-5 py-3.5 text-center">
-                      <span [class]="riskScoreClass(emp.overall_score)">
+                      <span
+                      class="text-sm font-black"
+                      [class]="riskScoreClass(emp.overall_score)">
                         {{ emp.overall_score }}%
                       </span>
                     </td>

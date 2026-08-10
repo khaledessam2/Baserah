@@ -7,7 +7,6 @@ import {
   output,
 } from '@angular/core';
 import { I18nService } from '@/services/i18n.service';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { BadgeDirective } from '@/shared/directives/form-controls.directive';
 import { Icon } from '@/shared/components/icon/icon';
@@ -50,9 +49,7 @@ export class CompetencyCard {
     return length > 3 ? length - 3 : 0;
   });
 
-  readonly editIconClass = computed(() =>
-    cn('w-3 h-3', this.i18n.language() === 'ar' ? 'ml-2' : 'mr-2')
-  );
+  readonly isRtl = computed(() => this.i18n.language() === 'ar');
 
   onDelete(event: Event): void {
     event.stopPropagation();

@@ -1,78 +1,55 @@
-import { Directive, computed } from '@angular/core';
-import { cn } from '@/shared/utils/utils';
-import { authoredClasses } from '@/shared/utils/host-class';
+import { Directive } from '@angular/core';
 
-/** Port of `components/ui/card.tsx` — all six parts are class-only. */
+/**
+ * Port of `components/ui/card.tsx` — all six parts are class-only.
+ *
+ * Each part contributes one static host class and nothing else. Angular merges
+ * a static host class with whatever the element was authored with, and the
+ * classes live in `@layer components`, so a caller's `class="rounded-3xl p-0"`
+ * outranks the base look on cascade order alone.
+ */
 
 @Directive({
   selector: '[appCard]',
   standalone: true,
-  host: { '[class]': 'classes()' },
+  host: { class: 'card' },
 })
-export class CardDirective {
-  private readonly authored = authoredClasses();
-  readonly classes = computed(() =>
-    cn('rounded-xl border bg-card text-card-foreground shadow-sm', this.authored)
-  );
-}
+export class CardDirective {}
 
 @Directive({
   selector: '[appCardHeader]',
   standalone: true,
-  host: { '[class]': 'classes()' },
+  host: { class: 'card-header' },
 })
-export class CardHeaderDirective {
-  private readonly authored = authoredClasses();
-  readonly classes = computed(() =>
-    cn('flex flex-col space-y-1.5 p-6', this.authored)
-  );
-}
+export class CardHeaderDirective {}
 
 @Directive({
   selector: '[appCardTitle]',
   standalone: true,
-  host: { '[class]': 'classes()' },
+  host: { class: 'card-title' },
 })
-export class CardTitleDirective {
-  private readonly authored = authoredClasses();
-  readonly classes = computed(() =>
-    cn('text-2xl font-semibold leading-none tracking-tight', this.authored)
-  );
-}
+export class CardTitleDirective {}
 
 @Directive({
   selector: '[appCardDescription]',
   standalone: true,
-  host: { '[class]': 'classes()' },
+  host: { class: 'card-description' },
 })
-export class CardDescriptionDirective {
-  private readonly authored = authoredClasses();
-  readonly classes = computed(() =>
-    cn('text-sm text-muted-foreground', this.authored)
-  );
-}
+export class CardDescriptionDirective {}
 
 @Directive({
   selector: '[appCardContent]',
   standalone: true,
-  host: { '[class]': 'classes()' },
+  host: { class: 'card-content' },
 })
-export class CardContentDirective {
-  private readonly authored = authoredClasses();
-  readonly classes = computed(() => cn('p-6 pt-0', this.authored));
-}
+export class CardContentDirective {}
 
 @Directive({
   selector: '[appCardFooter]',
   standalone: true,
-  host: { '[class]': 'classes()' },
+  host: { class: 'card-footer' },
 })
-export class CardFooterDirective {
-  private readonly authored = authoredClasses();
-  readonly classes = computed(() =>
-    cn('flex items-center p-6 pt-0', this.authored)
-  );
-}
+export class CardFooterDirective {}
 
 export const CARD_DIRECTIVES = [
   CardDirective,

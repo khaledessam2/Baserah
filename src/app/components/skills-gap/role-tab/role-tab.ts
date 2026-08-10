@@ -11,7 +11,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { I18nService } from '@/services/i18n.service';
 import { SkillsGapService } from '@/services/skills-gap.service';
-import { cn } from '@/shared/utils/utils';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { ChartComponent } from '@/shared/components/chart/chart';
 import { Icon } from '@/shared/components/icon/icon';
@@ -206,40 +205,23 @@ export class SkillsGapRoleTab {
   };
 
   avgScoreClass(score: number): string {
-    return cn(
-      'text-2xl font-black',
-      score >= 60
-        ? 'text-emerald-500'
-        : score >= 40
-        ? 'text-amber-500'
-        : 'text-red-500'
-    );
+    if (score >= 60) return 'text-emerald-500';
+    return score >= 40 ? 'text-amber-500' : 'text-red-500';
   }
 
   benchIconClass(bench: number): string {
-    return cn(
-      'w-10 h-10 rounded-xl bg-gradient-to-br flex items-center justify-center text-white shadow-lg',
-      bench >= 50
-        ? 'from-emerald-500 to-green-600 shadow-emerald-500/25'
-        : 'from-amber-500 to-orange-600 shadow-amber-500/25'
-    );
+    return bench >= 50
+      ? 'from-emerald-500 to-green-600 shadow-emerald-500/25'
+      : 'from-amber-500 to-orange-600 shadow-amber-500/25';
   }
 
   benchValueClass(bench: number): string {
-    return cn(
-      'text-2xl font-black',
-      bench >= 50 ? 'text-emerald-500' : 'text-amber-500'
-    );
+    return bench >= 50 ? 'text-emerald-500' : 'text-amber-500';
   }
 
   scoreCellClass(score: number): string {
-    return cn(
-      'text-sm font-black px-2.5 py-1 rounded-lg',
-      score >= 60
-        ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20'
-        : score >= 40
-        ? 'text-amber-600 bg-amber-50 dark:bg-amber-950/20'
-        : 'text-red-600 bg-red-50 dark:bg-red-950/20'
-    );
+    if (score >= 60) return 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20';
+    if (score >= 40) return 'text-amber-600 bg-amber-50 dark:bg-amber-950/20';
+    return 'text-red-600 bg-red-50 dark:bg-red-950/20';
   }
 }

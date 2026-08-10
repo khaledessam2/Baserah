@@ -186,6 +186,7 @@
     @for (dept of filteredDepts(); track dept.department) {
       <div
         appCard
+        class="glass-card border-none cursor-pointer transition-all duration-300 overflow-hidden"
         [class]="deptCardClass(dept.department)"
         (click)="toggleExpanded(dept.department)">
         <div appCardContent class="p-0">
@@ -225,7 +226,9 @@
               <div class="flex-1">
                 <app-score-bar [score]="dept.avg_score" height="h-2.5" />
               </div>
-              <span [class]="deptScoreClass(dept.avg_score)">
+              <span
+                class="text-sm font-black shrink-0"
+                [class]="deptScoreClass(dept.avg_score)">
                 {{ dept.avg_score }}%
               </span>
               <span
@@ -270,7 +273,9 @@
                       class="text-[10px] text-slate-400 truncate max-w-[150px]">
                       {{ e.job_title }}
                     </span>
-                    <span [class]="employeeScoreClass(e.overall_score)">
+                    <span
+                      class="text-xs font-black px-2 py-0.5 rounded-lg"
+                      [class]="employeeScoreClass(e.overall_score)">
                       {{ e.overall_score }}%
                     </span>
                     <app-gap-badge [severity]="severityFor(e.overall_gap)" />

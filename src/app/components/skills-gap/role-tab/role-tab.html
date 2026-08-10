@@ -72,7 +72,9 @@
             <p class="text-xs text-slate-400 font-medium">
               {{ 'skills_gap.role.avg_score' | t }}
             </p>
-            <p [class]="avgScoreClass(d.avg_score)">{{ d.avg_score }}%</p>
+            <p class="text-2xl font-black" [class]="avgScoreClass(d.avg_score)">
+              {{ d.avg_score }}%
+            </p>
           </div>
         </div>
       </div>
@@ -96,14 +98,18 @@
       <!-- Bench Strength Card -->
       <div class="glass-card p-5 rounded-2xl shadow-lg">
         <div class="flex items-center gap-3">
-          <div [class]="benchIconClass(d.bench_strength || 0)">
+          <div
+            class="w-10 h-10 rounded-xl bg-linear-to-br flex items-center justify-center text-white shadow-lg"
+            [class]="benchIconClass(d.bench_strength || 0)">
             <app-icon name="UserCheck" class="w-5 h-5" />
           </div>
           <div>
             <p class="text-xs text-slate-400 font-medium">
               {{ 'skills_gap.role.bench_strength' | t }}
             </p>
-            <p [class]="benchValueClass(d.bench_strength || 0)">
+            <p
+              class="text-2xl font-black"
+              [class]="benchValueClass(d.bench_strength || 0)">
               {{ d.bench_strength || 0 }}%
             </p>
             <p class="text-[10px] text-slate-400">
@@ -213,7 +219,9 @@
                     </span>
                   </td>
                   <td class="px-5 py-3 text-center">
-                    <span [class]="scoreCellClass(c.avg_score)">
+                    <span
+                      class="text-sm font-black px-2.5 py-1 rounded-lg"
+                      [class]="scoreCellClass(c.avg_score)">
                       {{ c.avg_score }}%
                     </span>
                   </td>

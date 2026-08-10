@@ -13,7 +13,6 @@ import { AuthService } from '@/services/auth.service';
 import { I18nService } from '@/services/i18n.service';
 import { TourService } from '@/services/tour.service';
 import { getTourSteps } from '@/shared/config/tour-config';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { Icon } from '@/shared/components/icon/icon';
 import type { IconName } from '@/shared/icons/icons';
@@ -148,87 +147,48 @@ export class Navbar implements OnDestroy {
     this.showUserMenu.set(false);
   }
 
+  /**
+   * Once stuck, the strip around the pill needs its own backdrop — without it
+   * the page scrolls visibly through the gap above the rounded bar.
+   */
   readonly wrapperClass = computed(() =>
-    cn(
-      'fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-300',
-      // Once stuck, the strip around the pill needs its own backdrop — without
-      // it the page scrolls visibly through the gap above the rounded bar.
-      this.scrolled()
-        ? 'pt-2 pb-2 bg-background/80 backdrop-blur-xl'
-        : 'pt-6 pb-4'
-    )
+    this.scrolled() ? 'pt-2 pb-2 bg-background/80 backdrop-blur-xl' : 'pt-6 pb-4'
   );
 
   readonly navClass = computed(() =>
-    cn(
-      'w-full max-w-[1400px] mx-4 sm:mx-6 rounded-2xl transition-all duration-500 ease-out',
-      this.scrolled()
-        ? 'bg-white/90 dark:bg-slate-900/95 backdrop-blur-2xl shadow-2xl py-2 px-6 border border-white/30 dark:border-white/10'
-        : 'bg-white/40 dark:bg-slate-900/50 backdrop-blur-xl py-3 px-6 border border-white/40 dark:border-white/10 shadow-lg'
-    )
+    this.scrolled()
+      ? 'bg-white/90 dark:bg-slate-900/95 backdrop-blur-2xl shadow-2xl py-2 px-6 border border-white/30 dark:border-white/10'
+      : 'bg-white/40 dark:bg-slate-900/50 backdrop-blur-xl py-3 px-6 border border-white/40 dark:border-white/10 shadow-lg'
   );
 
   navItemClass(path: string): string {
-    return cn(
-      'gap-2 px-5 h-10 rounded-full transition-all duration-300 font-semibold',
-      this.isActive(path)
-        ? 'bg-white dark:bg-indigo-600 text-primary dark:text-white shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/30'
-        : 'text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-white/70 dark:hover:bg-slate-800/70'
-    );
+    return this.isActive(path)
+      ? 'bg-white dark:bg-indigo-600 text-primary dark:text-white shadow-md shadow-indigo-200/50 dark:shadow-indigo-900/30'
+      : 'text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-white hover:bg-white/70 dark:hover:bg-slate-800/70';
   }
 
   readonly userButtonClass = computed(() =>
-    cn(
-      'flex items-center gap-3 pl-1 pr-3 py-1 rounded-full transition-all duration-300 border border-transparent',
-      this.showUserMenu()
-        ? 'bg-white dark:bg-slate-800 shadow-xl ring-2 ring-primary/20 dark:ring-primary/40'
-        : 'hover:bg-white/80 dark:hover:bg-white/10 hover:border-white/80 dark:hover:border-white/10'
-    )
+    this.showUserMenu()
+      ? 'bg-white dark:bg-slate-800 shadow-xl ring-2 ring-primary/20 dark:ring-primary/40'
+      : 'hover:bg-white/80 dark:hover:bg-white/10 hover:border-white/80 dark:hover:border-white/10'
   );
 
+  /** Carries the resting text colour too — the open state overrides it. */
   readonly chevronClass = computed(() =>
-    cn(
-      'w-4 h-4 text-slate-400 dark:text-slate-500 transition-transform duration-300 ml-1',
-      this.showUserMenu() && 'rotate-180 text-primary dark:text-indigo-400'
-    )
-  );
-
-  readonly dropdownClass = computed(() =>
-    cn(
-      'absolute mt-4 w-72 glass-card p-2 animate-fade-in-up origin-top-right',
-      this.isRtl() ? 'left-0' : 'right-0'
-    )
-  );
-
-  readonly menuItemClass = computed(() =>
-    cn(
-      'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-primary dark:hover:text-white hover:shadow-sm transition-all group',
-      this.isRtl() && 'flex-row-reverse text-right'
-    )
-  );
-
-  readonly logoutItemClass = computed(() =>
-    cn(
-      'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 hover:shadow-sm transition-all group',
-      this.isRtl() && 'flex-row-reverse text-right'
-    )
+    this.showUserMenu()
+      ? 'rotate-180 text-primary dark:text-indigo-400'
+      : 'text-slate-400 dark:text-slate-500'
   );
 
   mobileItemClass(path: string): string {
-    return cn(
-      'flex items-center gap-4 p-3 rounded-xl mb-1 transition-all',
-      this.isActive(path)
-        ? 'bg-indigo-50/80 dark:bg-indigo-900/30 text-primary dark:text-indigo-300 font-bold'
-        : 'text-slate-600 dark:text-slate-300 hover:bg-white/50 dark:hover:bg-slate-800/50'
-    );
+    return this.isActive(path)
+      ? 'bg-indigo-50/80 dark:bg-indigo-900/30 text-primary dark:text-indigo-300 font-bold'
+      : 'text-slate-600 dark:text-slate-300 hover:bg-white/50 dark:hover:bg-slate-800/50';
   }
 
   mobileIconClass(path: string): string {
-    return cn(
-      'p-2 rounded-lg',
-      this.isActive(path)
-        ? 'bg-white dark:bg-slate-800 shadow-sm'
-        : 'bg-slate-100 dark:bg-slate-800/50'
-    );
+    return this.isActive(path)
+      ? 'bg-white dark:bg-slate-800 shadow-sm'
+      : 'bg-slate-100 dark:bg-slate-800/50';
   }
 }

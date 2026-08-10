@@ -14,7 +14,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { I18nService } from '@/services/i18n.service';
 import { AnalysisService } from '@/services/analysis.service';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import {
   Dialog,
@@ -339,42 +338,26 @@ export class CompetencySelector {
     });
   }
 
+  /** Border colour only — `border-transparent` is the inactive state. */
   tabTriggerClass(cat: CategoryTab): string {
-    return cn(
-      'relative data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent rounded-none h-full px-4 gap-3 transition-all duration-300',
-      'hover:text-primary/80 opacity-60 data-[state=active]:opacity-100',
-      cat.id === this.activeTab() && cat.activeBorder
-    );
+    return cat.id === this.activeTab() ? cat.activeBorder : 'border-transparent';
   }
 
   competencyRowClass(comp: Competency): string {
-    return cn(
-      'group flex items-center justify-between p-6 rounded-2xl border transition-all duration-300',
-      comp.selected
-        ? 'glass-card border-primary/20 bg-primary/5 shadow-primary/5'
-        : 'bg-muted/40 border-border opacity-60'
-    );
+    return comp.selected
+      ? 'glass-card border-primary/20 bg-primary/5 shadow-primary/5'
+      : 'bg-muted/40 border-border opacity-60';
   }
 
   starClass(star: number, priority: number): string {
-    return cn(
-      'w-5 h-5 cursor-pointer transition-all duration-200 hover:scale-110',
-      star <= priority
-        ? 'fill-amber-400 text-amber-400 drop-shadow-sm'
-        : 'text-border hover:text-amber-200'
-    );
+    return star <= priority
+      ? 'fill-amber-400 text-amber-400 drop-shadow-sm'
+      : 'text-border hover:text-amber-200';
   }
 
-  readonly reweightIconClass = computed(() =>
-    cn('w-5 h-5', this.isReweighting() && 'animate-spin')
-  );
-
   readonly totalBoxClass = computed(() =>
-    cn(
-      'p-6 rounded-2xl border-2 flex items-center justify-between backdrop-blur-md transition-all duration-500',
-      this.isBalanced()
-        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400'
-        : 'bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400'
-    )
+    this.isBalanced()
+      ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 dark:text-emerald-400'
+      : 'bg-amber-500/10 border-amber-500/20 text-amber-600 dark:text-amber-400'
   );
 }

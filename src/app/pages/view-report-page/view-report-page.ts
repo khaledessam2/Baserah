@@ -19,7 +19,6 @@ import { DevelopmentService } from '@/services/development.service';
 import type { CourseSuggestion } from '@/models/development.model';
 import { ReportService } from '@/services/report.service';
 import type { Report } from '@/models/api.model';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import {
@@ -346,41 +345,20 @@ export class ViewReportPage implements OnInit {
       : 'N/A';
   });
 
-  readonly rootClass = computed(() =>
-    cn('min-h-screen bg-background pb-20', this.isRtl() && 'rtl')
-  );
-
   readonly headerBlobTopClass = computed(() =>
-    cn(
-      'absolute top-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 blur-3xl',
-      this.isRtl() ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'
-    )
+    this.isRtl() ? 'right-0 translate-x-1/2' : 'left-0 -translate-x-1/2'
   );
 
   readonly headerBlobBottomClass = computed(() =>
-    cn(
-      'absolute bottom-0 w-96 h-96 bg-purple-500/10 rounded-full translate-y-1/2 blur-3xl',
-      this.isRtl() ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
-    )
-  );
-
-  readonly fieldClass = computed(() =>
-    cn('space-y-2', this.isRtl() ? 'text-right' : 'text-left')
-  );
-
-  readonly labelClass = computed(() =>
-    cn('flex items-center gap-2', this.isRtl() ? 'font-cairo' : '')
+    this.isRtl() ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
   );
 
   suggestionClass(s: CourseSuggestion): string {
-    const already = this.isAlreadyAssigned(s.course_name);
-    return cn(
-      'w-full p-3 rounded-xl border text-sm transition-all duration-200 text-right',
-      already
-        ? 'border-green-200 bg-green-50/50 dark:bg-green-900/10 opacity-60 cursor-not-allowed'
-        : this.courseName() === s.course_name
-        ? 'border-primary bg-primary/5 shadow-sm'
-        : 'border-border hover:border-primary/30 hover:bg-muted/30'
-    );
+    if (this.isAlreadyAssigned(s.course_name)) {
+      return 'border-green-200 bg-green-50/50 dark:bg-green-900/10 opacity-60 cursor-not-allowed';
+    }
+    return this.courseName() === s.course_name
+      ? 'border-primary bg-primary/5 shadow-sm'
+      : 'border-border hover:border-primary/30 hover:bg-muted/30';
   }
 }

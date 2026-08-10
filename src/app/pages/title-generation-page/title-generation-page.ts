@@ -28,7 +28,6 @@ import { I18nService } from '@/services/i18n.service';
 import { TourService } from '@/services/tour.service';
 import { AnalysisService } from '@/services/analysis.service';
 import { getTourSteps } from '@/shared/config/tour-config';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { InputDirective, LabelDirective } from '@/shared/directives/form-controls.directive';
@@ -454,114 +453,51 @@ export class TitleGenerationPage implements OnDestroy {
   );
 
   loadingRowClass(s: LoadingStep): string {
-    return cn(
-      'flex items-center gap-3 p-3 rounded-xl transition-all',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row',
-      s.status === 'active' &&
-        'bg-primary/10 text-primary font-semibold ring-1 ring-primary/20',
-      s.status === 'completed' && 'text-emerald-500 bg-emerald-500/5',
-      s.status === 'pending' && 'text-muted-foreground'
-    );
+    if (s.status === 'active') {
+      return 'bg-primary/10 text-primary font-semibold ring-1 ring-primary/20';
+    }
+    if (s.status === 'completed') return 'text-emerald-500 bg-emerald-500/5';
+    return 'text-muted-foreground';
   }
 
   loadingBadgeClass(s: LoadingStep): string {
-    return cn(
-      'w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-colors',
-      s.status === 'active' && 'bg-primary text-primary-foreground animate-pulse',
-      s.status === 'completed' && 'bg-emerald-500 text-white',
-      s.status === 'pending' && 'bg-muted text-muted-foreground'
-    );
+    if (s.status === 'active') {
+      return 'bg-primary text-primary-foreground animate-pulse';
+    }
+    return s.status === 'completed'
+      ? 'bg-emerald-500 text-white'
+      : 'bg-muted text-muted-foreground';
   }
 
   uploadResultClass(success: boolean): string {
-    return cn(
-      'mt-6 p-4 rounded-xl text-sm whitespace-pre-wrap ring-1',
-      this.isRtl() ? 'text-right' : 'text-left',
-      success
-        ? 'bg-emerald-500/10 text-emerald-500 ring-emerald-500/20'
-        : 'bg-destructive/10 text-destructive ring-destructive/20'
-    );
+    return success
+      ? 'bg-emerald-500/10 text-emerald-500 ring-emerald-500/20'
+      : 'bg-destructive/10 text-destructive ring-destructive/20';
   }
 
-  readonly wizardRowClass = computed(() =>
-    cn('flex items-center gap-4', this.isRtl() ? 'flex-row-reverse' : 'flex-row')
-  );
+  isReachable(number: number): boolean {
+    return number <= this.maxStep();
+  }
 
-  stepWrapperClass(number: number): string {
-    return cn(
-      'flex items-center',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row',
-      number <= this.maxStep() ? 'cursor-pointer' : 'cursor-not-allowed opacity-60'
-    );
+  isStepDone(number: number): boolean {
+    return this.step() >= number;
   }
 
   stepCircleClass(number: number): string {
-    return cn(
-      'flex items-center justify-center w-10 h-10 rounded-full font-bold border-2 transition-all duration-300',
-      this.step() >= number
-        ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-110'
-        : 'bg-background text-muted-foreground border-border',
-      number <= this.maxStep() && 'hover:border-primary/50'
-    );
-  }
-
-  stepLabelClass(number: number): string {
-    return cn(
-      'text-sm font-semibold hidden sm:block',
-      this.isRtl() ? 'mr-3' : 'ml-3',
-      this.step() >= number ? 'text-foreground' : 'text-muted-foreground'
-    );
-  }
-
-  stepConnectorClass(number: number): string {
-    return cn(
-      'w-12 h-0.5 rounded-full',
-      this.isRtl() ? 'mr-4' : 'ml-4',
-      this.step() > number ? 'bg-primary' : 'bg-border'
-    );
+    return this.isStepDone(number)
+      ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-110'
+      : 'bg-background text-muted-foreground border-border';
   }
 
   methodCardClass(method: 'ai' | 'manual'): string {
     const selected = this.generationMethod() === method;
-    return cn(
-      'cursor-pointer rounded-4xl border-2 p-8 transition-all duration-300 flex flex-col items-center text-center gap-4 hover:-translate-y-1',
-      method === 'ai'
-        ? selected
-          ? 'border-primary bg-primary/5 shadow-xl shadow-primary/10'
-          : 'border-border bg-card/50 hover:border-primary/30'
-        : selected
-        ? 'border-secondary bg-secondary/5 shadow-xl shadow-secondary/10'
-        : 'border-border bg-card/50 hover:border-secondary/30'
-    );
+    if (!selected) {
+      return method === 'ai'
+        ? 'border-border bg-card/50 hover:border-primary/30'
+        : 'border-border bg-card/50 hover:border-secondary/30';
+    }
+    return method === 'ai'
+      ? 'border-primary bg-primary/5 shadow-xl shadow-primary/10'
+      : 'border-secondary bg-secondary/5 shadow-xl shadow-secondary/10';
   }
-
-  readonly fileRowClass = computed(() =>
-    cn('flex items-center gap-3', this.isRtl() ? 'flex-row-reverse' : 'flex-row')
-  );
-
-  readonly manualHintClass = computed(() =>
-    cn(
-      'flex items-center gap-3 p-4 bg-primary/5 text-primary rounded-2xl text-xs ring-1 ring-primary/10',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row'
-    )
-  );
-
-  readonly manualHintTextClass = computed(() =>
-    cn('leading-relaxed', this.isRtl() ? 'text-right' : 'text-left')
-  );
-
-  readonly footerClass = computed(() =>
-    cn(
-      'p-8 border-t border-border bg-muted/20 flex justify-between rounded-b-4xl',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row'
-    )
-  );
-
-  readonly backArrowClass = computed(() =>
-    cn('w-4 h-4', this.isRtl() && 'rotate-180')
-  );
-
-  readonly nextArrowClass = computed(() =>
-    cn('w-4 h-4', this.isRtl() && 'rotate-180')
-  );
 }

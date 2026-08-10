@@ -16,7 +16,6 @@ import { I18nService } from '@/services/i18n.service';
 import { ToastService } from '@/services/toast.service';
 import { AssessmentService } from '@/services/assessment.service';
 import type { Assessment, AssessmentQuestion } from '@/models/api.model';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { ConfirmationModal } from '@/shared/components/confirmation-modal/confirmation-modal';
@@ -270,74 +269,41 @@ export class TakeAssessmentPage implements OnInit {
       : this.i18n.t('take_assessment.submit_finish');
   });
 
-  readonly rootClass = computed(() =>
-    cn(
-      'min-h-screen bg-background py-12 px-4 transition-all duration-500',
-      this.isRtl() && 'rtl'
-    )
-  );
-
-  readonly progressWrapClass = computed(() =>
-    cn(
-      'w-full md:w-auto space-y-1',
-      this.isRtl() ? 'text-right md:text-left' : 'text-left md:text-right'
-    )
-  );
+  isChosen(idx: number): boolean {
+    return this.currentAnswer() === idx;
+  }
 
   optionButtonClass(idx: number): string {
-    const isSelected = this.currentAnswer() === idx;
-    return cn(
-      'group flex items-center p-5 rounded-2xl border-2 transition-all duration-300',
-      this.isRtl() ? 'text-right' : 'text-left',
-      isSelected
-        ? 'bg-primary/5 border-primary shadow-lg shadow-primary/10'
-        : 'bg-background border-border hover:border-primary/20 hover:bg-muted/50 shadow-sm'
-    );
+    return this.isChosen(idx)
+      ? 'bg-primary/5 border-primary shadow-lg shadow-primary/10'
+      : 'bg-background border-border hover:border-primary/20 hover:bg-muted/50 shadow-sm';
   }
 
   optionBadgeClass(idx: number): string {
-    const isSelected = this.currentAnswer() === idx;
-    return cn(
-      'w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors',
-      this.isRtl() ? 'ml-4' : 'mr-4',
-      isSelected
-        ? 'bg-primary border-primary text-primary-foreground'
-        : 'bg-background border-border text-muted-foreground group-hover:border-primary/30'
-    );
+    return this.isChosen(idx)
+      ? 'bg-primary border-primary text-primary-foreground'
+      : 'bg-background border-border text-muted-foreground group-hover:border-primary/30';
   }
 
   optionTextClass(idx: number): string {
-    const isSelected = this.currentAnswer() === idx;
-    return cn(
-      'text-lg font-bold transition-colors',
-      isSelected
-        ? 'text-foreground'
-        : 'text-foreground/80 group-hover:text-primary'
-    );
+    return this.isChosen(idx)
+      ? 'text-foreground'
+      : 'text-foreground/80 group-hover:text-primary';
   }
 
   likertButtonClass(val: number): string {
-    const isSelected = this.currentAnswer() === val;
-    return cn(
-      'flex flex-col items-center gap-2 md:gap-4 flex-1 p-3 sm:p-4 md:p-6 rounded-xl md:rounded-2xl border-2 transition-all duration-300',
-      isSelected
-        ? 'bg-primary border-primary text-primary-foreground shadow-xl shadow-primary/20 scale-105'
-        : 'bg-background border-border text-muted-foreground hover:border-primary/20 hover:bg-muted/50'
-    );
+    return this.isChosen(val)
+      ? 'bg-primary border-primary text-primary-foreground shadow-xl shadow-primary/20 scale-105'
+      : 'bg-background border-border text-muted-foreground hover:border-primary/20 hover:bg-muted/50';
   }
 
-  readonly primaryButtonClass = computed(() =>
-    cn(
-      'px-10 py-6 h-auto text-lg font-bold',
-      this.isLastQuestion() && !this.isReadOnly()
-        ? 'bg-green-600 hover:bg-green-700 text-white border-none shadow-lg shadow-green-100'
-        : '',
-      this.isLastQuestion() && this.isReadOnly()
-        ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-100'
-        : '',
-      !this.isReadOnly() && !this.hasAnswered()
-        ? 'opacity-50 cursor-not-allowed'
-        : ''
-    )
-  );
+  /** Empty on every step but the last — the disabled look is a separate toggle. */
+  readonly primaryButtonClass = computed(() => {
+    if (!this.isLastQuestion()) return '';
+    return this.isReadOnly()
+      ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-100'
+      : 'bg-green-600 hover:bg-green-700 text-white border-none shadow-lg shadow-green-100';
+  });
+
+  readonly isBlocked = computed(() => !this.isReadOnly() && !this.hasAnswered());
 }

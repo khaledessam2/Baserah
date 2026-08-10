@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 import { EMPTY, Subject, catchError, switchMap } from 'rxjs';
 import { I18nService } from '@/services/i18n.service';
 import { SkillsGapService } from '@/services/skills-gap.service';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { ChartComponent } from '@/shared/components/chart/chart';
@@ -186,32 +185,17 @@ export class SkillsGapEmployeeTab {
   }
 
   mgrScoreClass(score: number | null): string {
-    return cn(
-      'text-2xl font-black',
-      score !== null
-        ? score >= 60
-          ? 'text-emerald-400'
-          : 'text-amber-400'
-        : 'text-slate-500'
-    );
+    if (score === null) return 'text-slate-500';
+    return score >= 60 ? 'text-emerald-400' : 'text-amber-400';
   }
 
   improvementClass(improved: boolean): string {
-    return cn(
-      'text-2xl font-black',
-      improved ? 'text-emerald-400' : 'text-red-400'
-    );
+    return improved ? 'text-emerald-400' : 'text-red-400';
   }
 
   trainingBadgeClass(severity: string): string {
-    return cn(
-      'w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black shrink-0',
-      severity === 'critical'
-        ? 'bg-red-500'
-        : severity === 'medium'
-        ? 'bg-amber-500'
-        : 'bg-blue-500'
-    );
+    if (severity === 'critical') return 'bg-red-500';
+    return severity === 'medium' ? 'bg-amber-500' : 'bg-blue-500';
   }
 
   trainingLabel(severity: string): string {
@@ -225,51 +209,23 @@ export class SkillsGapEmployeeTab {
   }
 
   directionCircleClass(direction: string): string {
-    return cn(
-      'w-14 h-14 rounded-full flex items-center justify-center shadow-lg',
-      direction === 'improved'
-        ? 'bg-emerald-500 shadow-emerald-500/30'
-        : direction === 'declined'
-        ? 'bg-red-500 shadow-red-500/30'
-        : 'bg-slate-400'
-    );
+    if (direction === 'improved') return 'bg-emerald-500 shadow-emerald-500/30';
+    return direction === 'declined' ? 'bg-red-500 shadow-red-500/30' : 'bg-slate-400';
   }
 
-  changeTextClass(change: number): string {
-    return cn(
-      'text-sm font-black',
-      change > 0
-        ? 'text-emerald-500'
-        : change < 0
-        ? 'text-red-500'
-        : 'text-slate-400'
-    );
-  }
-
-  changeIndicatorClass(change: number): string {
-    return cn(
-      'inline-flex items-center gap-0.5 font-bold text-sm',
-      change > 0
-        ? 'text-emerald-500'
-        : change < 0
-        ? 'text-red-500'
-        : 'text-slate-400'
-    );
+  /** Shared by the change text and the inline indicator. */
+  changeToneClass(change: number): string {
+    if (change > 0) return 'text-emerald-500';
+    return change < 0 ? 'text-red-500' : 'text-slate-400';
   }
 
   historyScoreClass(isLatest: boolean): string {
-    return cn(
-      'text-sm font-black',
-      isLatest ? 'text-indigo-500' : 'text-slate-600 dark:text-slate-300'
-    );
+    return isLatest ? 'text-indigo-500' : 'text-slate-600 dark:text-slate-300';
   }
 
   historyBarClass(isLatest: boolean): string {
-    return cn(
-      'absolute bottom-0 w-full rounded-t-xl transition-all duration-700',
-      isLatest
-        ? 'bg-gradient-to-t from-indigo-600 to-purple-500'
-        : 'bg-gradient-to-t from-slate-400 to-slate-300 dark:from-slate-600 dark:to-slate-500'
-    );
+    return isLatest
+      ? 'from-indigo-600 to-purple-500'
+      : 'from-slate-400 to-slate-300 dark:from-slate-600 dark:to-slate-500';
   }
 }

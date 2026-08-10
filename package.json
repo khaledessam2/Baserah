@@ -18,13 +18,10 @@
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
     "chart.js": "^4.5.1",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.8",
     "lucide": "^1.30.0",
     "rxjs": "~7.8.0",
-    "tailwind-merge": "^3.6.0",
     "tslib": "^2.3.0"
   },
   "devDependencies": {

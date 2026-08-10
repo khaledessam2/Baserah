@@ -11,7 +11,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { I18nService } from '@/services/i18n.service';
 import { SkillsGapService } from '@/services/skills-gap.service';
-import { cn } from '@/shared/utils/utils';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { ChartComponent } from '@/shared/components/chart/chart';
 import { Icon } from '@/shared/components/icon/icon';
@@ -264,30 +263,19 @@ export class SkillsGapDepartmentTab {
   }
 
   deptCardClass(department: string): string {
-    return cn(
-      'glass-card border-none cursor-pointer transition-all duration-300 shadow-lg overflow-hidden',
-      this.expanded() === department &&
-        'ring-2 ring-indigo-500/20 shadow-xl shadow-indigo-500/5'
-    );
+    return this.expanded() === department
+      ? 'ring-2 ring-indigo-500/20 shadow-xl shadow-indigo-500/5'
+      : 'shadow-lg';
   }
 
   deptScoreClass(score: number): string {
-    return cn(
-      'text-sm font-black shrink-0',
-      score >= 60
-        ? 'text-emerald-500'
-        : score >= 40
-        ? 'text-amber-500'
-        : 'text-red-500'
-    );
+    if (score >= 60) return 'text-emerald-500';
+    return score >= 40 ? 'text-amber-500' : 'text-red-500';
   }
 
   employeeScoreClass(score: number): string {
-    return cn(
-      'text-xs font-black px-2 py-0.5 rounded-lg',
-      score >= 60
-        ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400'
-        : 'text-red-600 bg-red-50 dark:bg-red-950/30 dark:text-red-400'
-    );
+    return score >= 60
+      ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400'
+      : 'text-red-600 bg-red-50 dark:bg-red-950/30 dark:text-red-400';
   }
 }

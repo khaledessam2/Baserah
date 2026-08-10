@@ -14,7 +14,6 @@ import { Subscription, filter } from 'rxjs';
 import { AuthService } from '@/services/auth.service';
 import { I18nService } from '@/services/i18n.service';
 import { AuthApi } from '@/services/auth.api';
-import { cn } from '@/shared/utils/utils';
 import { Icon } from '@/shared/components/icon/icon';
 import type { IconName } from '@/shared/icons/icons';
 
@@ -135,37 +134,20 @@ export class GlobalWizard implements OnDestroy {
   }
 
   markerClass(index: number): string {
-    const active = this.isActive(index);
-    const completed = this.isCompleted(index);
-    return cn(
-      'relative flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl transition-all duration-500 z-10 cursor-pointer',
-      active
-        ? 'bg-card text-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] scale-110 ring-4 ring-primary/5'
-        : completed
-        ? 'bg-linear-to-br from-primary to-secondary text-primary-foreground shadow-md shadow-primary/20'
-        : 'bg-card text-muted-foreground/30 border-2 border-border',
-      this.isPast(index) &&
-        !active &&
-        !completed &&
-        'border-primary/20 text-primary/30 hover:border-primary/30 hover:text-primary/40'
-    );
-  }
-
-  stepIconClass(index: number): string {
-    return cn(
-      'w-4 h-4 md:w-5 md:h-5 transition-transform duration-500',
-      this.isActive(index) ? 'scale-110' : ''
-    );
+    if (this.isActive(index)) {
+      return 'bg-card text-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] scale-110 ring-4 ring-primary/5';
+    }
+    if (this.isCompleted(index)) {
+      return 'bg-linear-to-br from-primary to-secondary text-primary-foreground shadow-md shadow-primary/20';
+    }
+    if (this.isPast(index)) {
+      return 'bg-card border-2 border-primary/20 text-primary/30 hover:border-primary/30 hover:text-primary/40';
+    }
+    return 'bg-card text-muted-foreground/30 border-2 border-border';
   }
 
   labelClass(index: number): string {
-    return cn(
-      'absolute -bottom-8 text-xs font-bold whitespace-nowrap transition-all duration-300 hidden md:block',
-      this.isActive(index)
-        ? 'text-primary translate-y-0 opacity-100'
-        : this.isCompleted(index)
-        ? 'text-primary/80'
-        : 'text-muted-foreground'
-    );
+    if (this.isActive(index)) return 'text-primary translate-y-0 opacity-100';
+    return this.isCompleted(index) ? 'text-primary/80' : 'text-muted-foreground';
   }
 }

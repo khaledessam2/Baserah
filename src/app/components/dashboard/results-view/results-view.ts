@@ -13,7 +13,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, switchMap } from 'rxjs';
 import { I18nService } from '@/services/i18n.service';
-import { cn } from '@/shared/utils/utils';
 import { afterPaint } from '@/shared/utils/after-paint';
 import { exportAnalysisToPDF } from '@/shared/utils/pdf-export';
 import { ButtonDirective } from '@/shared/directives/button.directive';
@@ -392,48 +391,28 @@ export class ResultsView implements OnDestroy {
   }
 
   stageRowClass(id: number): string {
-    const isActive = this.activeStage() === id;
-    return cn(
-      'flex items-center gap-4 p-4 rounded-2xl border transition-all duration-500',
-      isActive
-        ? 'bg-primary/5 border-primary shadow-lg shadow-primary/10 -translate-y-1'
-        : 'bg-muted/30 border-transparent opacity-60'
-    );
+    return this.activeStage() === id
+      ? 'bg-primary/5 border-primary shadow-lg shadow-primary/10 -translate-y-1'
+      : 'bg-muted/30 border-transparent opacity-60';
   }
 
   stageBadgeClass(id: number): string {
-    const isCompleted = this.activeStage() > id;
-    const isActive = this.activeStage() === id;
-    return cn(
-      'w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-500',
-      isCompleted
-        ? 'bg-emerald-500 text-white'
-        : isActive
-        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 transform'
-        : 'bg-muted text-muted-foreground'
-    );
-  }
-
-  sectionHeaderClass(id: string): string {
-    return cn(
-      'w-full p-6 flex items-center justify-between transition-all duration-300 hover:bg-muted/30 focus:outline-hidden',
-      this.isExpanded(id) && 'bg-muted/20 border-b border-border/50'
-    );
+    if (this.activeStage() > id) return 'bg-emerald-500 text-white';
+    if (this.activeStage() === id) {
+      return 'bg-primary text-primary-foreground shadow-lg shadow-primary/20';
+    }
+    return 'bg-muted text-muted-foreground';
   }
 
   chevronClass(id: string): string {
-    return cn(
-      'p-2 bg-muted/50 rounded-lg transition-transform duration-300',
-      this.isExpanded(id) ? 'rotate-180 text-primary' : 'text-muted-foreground'
-    );
+    return this.isExpanded(id)
+      ? 'rotate-180 text-primary'
+      : 'text-muted-foreground';
   }
 
   priorityDotClass(s: number, priority: number): string {
-    return cn(
-      'w-2 h-2 rounded-full transition-all duration-300',
-      s <= priority
-        ? 'bg-amber-400 scale-110 shadow-xs shadow-amber-400/50'
-        : 'bg-border'
-    );
+    return s <= priority
+      ? 'bg-amber-400 scale-110 shadow-xs shadow-amber-400/50'
+      : 'bg-border';
   }
 }

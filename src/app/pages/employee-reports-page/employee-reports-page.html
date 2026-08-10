@@ -1,7 +1,13 @@
 <div class="container mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
   <!-- Header -->
-  <div [class]="headerClass()">
-    <div [class]="headerRowClass()">
+  <div
+    class="bg-linear-to-r from-primary to-secondary rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-primary-foreground shadow-2xl shadow-primary/20 animate-in fade-in-0 slide-in-from-top-2 duration-500"
+    [class.text-right]="isRtl()"
+    [class.text-left]="!isRtl()">
+    <div
+      class="flex items-center gap-4 sm:gap-6"
+      [class.flex-row-reverse]="isRtl()"
+      [class.flex-row]="!isRtl()">
       <div
         class="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center shrink-0">
         <app-icon
@@ -40,14 +46,21 @@
             class="group hover:shadow-2xl transition-all duration-300 border-none bg-card overflow-hidden animate-in fade-in-0 zoom-in-95 h-full flex flex-col"
             [style.animation-delay.ms]="index * 50">
             <div class="p-4 relative">
-              <span [class]="statusBadgeClass(report)">
+              <span
+                class="absolute top-4 px-3 py-1 rounded-full text-xs font-bold shadow-sm"
+                [class.left-4]="isRtl()"
+                [class.right-4]="!isRtl()"
+                [class]="statusBadgeClass(report)">
                 {{ report.viewed_by_employee ? 'تمت المشاهدة' : 'جديد' }}
               </span>
               <div
                 class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-primary-foreground mb-4 shadow-lg shadow-primary/10">
                 <app-icon name="FileCheck" class="w-8 h-8" />
               </div>
-              <h3 appCardTitle [class]="cardTitleClass()">
+              <h3
+                appCardTitle
+                class="text-xl font-bold text-foreground mb-1"
+                [class.text-right]="isRtl()">
                 تقرير تقييم الأداء
               </h3>
             </div>
@@ -55,9 +68,11 @@
             <div
               appCardContent
               class="p-6 flex-grow flex flex-col justify-between space-y-6">
-              <div [class]="infoListClass()">
+              <div class="space-y-4" [class.text-right]="isRtl()">
                 @for (info of reportInfo(report); track info.label) {
-                  <div [class]="infoRowClass()">
+                  <div
+                    class="flex items-start gap-3 text-sm"
+                    [class.flex-row-reverse]="isRtl()">
                     <div class="mt-1 p-1 rounded-md bg-primary/10">
                       <app-icon
                         [name]="info.icon"
@@ -80,7 +95,11 @@
                 appButton
                 (click)="openReport(report)"
                 class="w-full bg-card hover:bg-muted text-primary border-2 border-primary/20 py-6 text-lg font-bold transition-all duration-300 group">
-                <app-icon name="Eye" [class]="eyeIconClass()" />
+                <app-icon
+                  name="Eye"
+                  class="w-5 h-5 group-hover:scale-110 transition-transform"
+                  [class.ml-2]="isRtl()"
+                  [class.mr-2]="!isRtl()" />
                 <span>عرض التقرير</span>
               </button>
             </div>

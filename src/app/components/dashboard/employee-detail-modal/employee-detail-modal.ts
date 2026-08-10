@@ -13,7 +13,6 @@ import { I18nService } from '@/services/i18n.service';
 import { ToastService } from '@/services/toast.service';
 import { EmployeeService } from '@/services/employee.service';
 import type { Employee } from '@/models/employee.model';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { Icon } from '@/shared/components/icon/icon';
 import { TranslatePipe } from '@/shared/pipes/translate.pipe';
@@ -47,14 +46,8 @@ export class EmployeeDetailModal {
 
   readonly isSending = signal<string | null>(null);
 
-  private readonly isRtl = computed(() => this.i18n.language() === 'ar');
+  readonly isRtl = computed(() => this.i18n.language() === 'ar');
 
-  readonly contentClass = computed(() =>
-    cn(
-      'p-8 grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-12 max-h-[70vh] overflow-y-auto custom-scrollbar',
-      this.isRtl() ? 'text-right' : 'text-left'
-    )
-  );
 
   // ✨ Find manager record to show "real" name if possible
   private readonly managerId = computed(

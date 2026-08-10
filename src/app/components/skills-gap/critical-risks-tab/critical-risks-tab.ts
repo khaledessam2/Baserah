@@ -11,7 +11,6 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { I18nService } from '@/services/i18n.service';
 import { SkillsGapService } from '@/services/skills-gap.service';
-import { cn } from '@/shared/utils/utils';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { ChartComponent } from '@/shared/components/chart/chart';
 import { Icon } from '@/shared/components/icon/icon';
@@ -162,9 +161,6 @@ export class SkillsGapCriticalRisksTab {
   };
 
   riskScoreClass(score: number): string {
-    return cn(
-      'text-sm font-black',
-      score >= 40 ? 'text-amber-500' : 'text-red-500'
-    );
+    return score >= 40 ? 'text-amber-500' : 'text-red-500';
   }
 }

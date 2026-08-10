@@ -14,7 +14,6 @@ import { TourService } from '@/services/tour.service';
 import { ReportService } from '@/services/report.service';
 import type { Report } from '@/models/api.model';
 import { getTourSteps } from '@/shared/config/tour-config';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { Icon } from '@/shared/components/icon/icon';
@@ -116,46 +115,8 @@ export class EmployeeReportsPage implements OnInit, OnDestroy {
   }
 
   statusBadgeClass(report: Report): string {
-    const isNew = !report.viewed_by_employee;
-    return cn(
-      'absolute top-4 px-3 py-1 rounded-full text-xs font-bold shadow-sm',
-      isNew
-        ? 'bg-amber-500/10 text-amber-600'
-        : 'bg-green-500/10 text-green-600',
-      this.isRtl() ? 'left-4' : 'right-4'
-    );
+    return report.viewed_by_employee
+      ? 'bg-green-500/10 text-green-600'
+      : 'bg-amber-500/10 text-amber-600';
   }
-
-  readonly headerClass = computed(() =>
-    cn(
-      'bg-gradient-to-r from-primary to-secondary rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-primary-foreground shadow-2xl shadow-primary/20 animate-in fade-in-0 slide-in-from-top-2 duration-500',
-      this.isRtl() ? 'text-right' : 'text-left'
-    )
-  );
-
-  readonly headerRowClass = computed(() =>
-    cn(
-      'flex items-center gap-4 sm:gap-6',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row'
-    )
-  );
-
-  readonly cardTitleClass = computed(() =>
-    cn('text-xl font-bold text-foreground mb-1', this.isRtl() && 'text-right')
-  );
-
-  readonly infoListClass = computed(() =>
-    cn('space-y-4', this.isRtl() && 'text-right')
-  );
-
-  readonly infoRowClass = computed(() =>
-    cn('flex items-start gap-3 text-sm', this.isRtl() && 'flex-row-reverse')
-  );
-
-  readonly eyeIconClass = computed(() =>
-    cn(
-      'w-5 h-5 group-hover:scale-110 transition-transform',
-      this.isRtl() ? 'ml-2' : 'mr-2'
-    )
-  );
 }

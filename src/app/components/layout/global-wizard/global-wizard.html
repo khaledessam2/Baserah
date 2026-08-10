@@ -13,6 +13,7 @@
         @for (step of steps; track $index; let index = $index) {
           <div class="relative flex flex-col items-center">
             <div
+              class="relative flex items-center justify-center w-10 h-10 md:w-12 md:h-12 rounded-xl transition-all duration-500 z-10 cursor-pointer"
               [class]="markerClass(index)"
               (click)="onStepClick(index)">
               @if (isCompleted(index)) {
@@ -20,11 +21,16 @@
                   name="Check"
                   class="w-5 h-5 md:w-6 md:h-6 animate-in zoom-in-95 duration-300" />
               } @else {
-                <app-icon [name]="step.icon" [class]="stepIconClass(index)" />
+                <app-icon
+                  [name]="step.icon"
+                  class="w-4 h-4 md:w-5 md:h-5 transition-transform duration-500"
+                  [class.scale-110]="isActive(index)" />
               }
             </div>
 
-            <span [class]="labelClass(index)">
+            <span
+              class="absolute -bottom-8 text-xs font-bold whitespace-nowrap transition-all duration-300 hidden md:block"
+              [class]="labelClass(index)">
               {{ i18n.t(step.labelKey, step.fallback) }}
             </span>
           </div>

@@ -27,7 +27,10 @@
     </div>
   </div>
 } @else if (report(); as rep) {
-  <div [class]="rootClass()" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+  <div
+    class="min-h-screen bg-background pb-20"
+    [class.rtl]="isRtl()"
+    [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
     <!-- Action Bar (Sticky) -->
     <div
       class="sticky top-0 z-20 bg-card/80 backdrop-blur-md border-b border-border print:hidden">
@@ -86,8 +89,12 @@
         <!-- Report Header -->
         <div
           class="bg-gradient-to-br from-indigo-900 via-indigo-800 to-purple-900 text-white p-12 relative overflow-hidden">
-          <div [class]="headerBlobTopClass()"></div>
-          <div [class]="headerBlobBottomClass()"></div>
+          <div
+            class="absolute top-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 blur-3xl"
+            [class]="headerBlobTopClass()"></div>
+          <div
+            class="absolute bottom-0 w-96 h-96 bg-purple-500/10 rounded-full translate-y-1/2 blur-3xl"
+            [class]="headerBlobBottomClass()"></div>
 
           <div
             class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
@@ -168,8 +175,14 @@
 
       <div class="space-y-4 py-4">
         <!-- AI Suggestions Section -->
-        <div [class]="fieldClass()">
-          <label appLabel [class]="labelClass()">
+        <div
+          class="space-y-2"
+          [class.text-right]="isRtl()"
+          [class.text-left]="!isRtl()">
+          <label
+            appLabel
+            class="flex items-center gap-2"
+            [class.font-cairo]="isRtl()">
             <app-icon name="Sparkles" class="w-4 h-4 text-amber-500" />
             {{
               'development_plan.ai_suggestions_title'
@@ -199,6 +212,7 @@
                   type="button"
                   [disabled]="isAlreadyAssigned(s.course_name)"
                   (click)="pickSuggestion(s)"
+                  class="w-full p-3 rounded-xl border text-sm transition-all duration-200 text-right"
                   [class]="suggestionClass(s)">
                   <span
                     class="font-bold text-foreground flex items-center gap-2">
@@ -236,7 +250,10 @@
           }
         </div>
 
-        <div [class]="fieldClass()">
+        <div
+          class="space-y-2"
+          [class.text-right]="isRtl()"
+          [class.text-left]="!isRtl()">
           <label appLabel [class]="isRtl() ? 'font-cairo' : ''">
             {{ 'development_plan.course_name' | t: 'اسم الدورة' }}
           </label>
@@ -248,7 +265,10 @@
             [class]="isRtl() ? 'text-right' : 'text-left'" />
         </div>
 
-        <div [class]="fieldClass()">
+        <div
+          class="space-y-2"
+          [class.text-right]="isRtl()"
+          [class.text-left]="!isRtl()">
           <label appLabel [class]="isRtl() ? 'font-cairo' : ''">
             {{
               'development_plan.course_reason' | t: 'ملاحظات وتفاصيل الدورة'

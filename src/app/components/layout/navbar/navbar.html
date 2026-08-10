@@ -1,5 +1,9 @@
-<div [class]="wrapperClass()">
-  <nav [class]="navClass()">
+<div
+  class="fixed top-0 left-0 right-0 z-50 flex justify-center transition-all duration-300"
+  [class]="wrapperClass()">
+  <nav
+    class="w-full max-w-[1400px] mx-4 sm:mx-6 rounded-2xl transition-all duration-500 ease-out"
+    [class]="navClass()">
     <div class="flex h-20 md:h-14 items-center justify-between">
       <div class="flex items-center gap-10">
         <!-- Logo — light/dark handled via CSS visibility -->
@@ -21,7 +25,11 @@
           class="hidden md:flex items-center p-1 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl rounded-full shadow-sm transition-all hover:bg-white/60 dark:hover:bg-slate-900/60">
           @for (item of navItems(); track item.path) {
             <a [routerLink]="item.path">
-              <button appButton variant="ghost" [class]="navItemClass(item.path)">
+              <button
+                appButton
+                variant="ghost"
+                class="gap-2 px-5 h-10 rounded-full transition-all duration-300 font-semibold"
+                [class]="navItemClass(item.path)">
                 <span class="text-sm">{{ item.name }}</span>
               </button>
             </a>
@@ -54,6 +62,7 @@
             <button
               type="button"
               (click)="showUserMenu.set(!showUserMenu())"
+              class="flex items-center gap-3 pl-1 pr-3 py-1 rounded-full transition-all duration-300 border border-transparent"
               [class]="userButtonClass()">
               <div
                 class="w-9 h-9 bg-linear-to-br from-indigo-500 to-violet-600 text-white rounded-full flex items-center justify-center font-bold shadow-lg shadow-indigo-400/30">
@@ -74,12 +83,18 @@
                   {{ user.role }}
                 </span>
               </div>
-              <app-icon name="ChevronDown" [class]="chevronClass()" />
+              <app-icon
+                name="ChevronDown"
+                class="w-4 h-4 transition-transform duration-300 ml-1"
+                [class]="chevronClass()" />
             </button>
 
             <!-- Custom User Dropdown -->
             @if (showUserMenu()) {
-              <div [class]="dropdownClass()">
+              <div
+                class="absolute mt-4 w-72 glass-card p-2 animate-fade-in-up origin-top-right"
+                [class.left-0]="isRtl()"
+                [class.right-0]="!isRtl()">
                 <div
                   class="px-4 py-4 mb-2 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-white/50 dark:border-white/10">
                   <p class="text-sm font-bold text-slate-900 dark:text-white">
@@ -95,7 +110,9 @@
                   <button
                     type="button"
                     (click)="openChangePassword()"
-                    [class]="menuItemClass()">
+                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 hover:text-primary dark:hover:text-white hover:shadow-sm transition-all group"
+                    [class.flex-row-reverse]="isRtl()"
+                    [class.text-right]="isRtl()">
                     <div
                       class="p-2 bg-slate-100 dark:bg-slate-700 rounded-lg group-hover:bg-indigo-50 dark:group-hover:bg-indigo-900/50 group-hover:text-primary dark:group-hover:text-indigo-300 transition-colors text-slate-400 dark:text-slate-500">
                       <app-icon name="Lock" class="w-4 h-4" />
@@ -109,7 +126,9 @@
                   <button
                     type="button"
                     (click)="handleLogout()"
-                    [class]="logoutItemClass()">
+                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold text-red-600 hover:bg-red-50 hover:shadow-sm transition-all group"
+                    [class.flex-row-reverse]="isRtl()"
+                    [class.text-right]="isRtl()">
                     <div
                       class="p-2 bg-red-50 rounded-lg text-red-500 group-hover:bg-red-100 transition-colors">
                       <app-icon name="LogOut" class="w-4 h-4" />
@@ -153,8 +172,12 @@
           class="p-2 glass-card border border-white/60 dark:border-white/10 shadow-2xl">
           @for (item of navItems(); track item.path) {
             <a [routerLink]="item.path" (click)="isOpen.set(false)">
-              <div [class]="mobileItemClass(item.path)">
-                <div [class]="mobileIconClass(item.path)">
+              <div
+                class="flex items-center gap-4 p-3 rounded-xl mb-1 transition-all"
+                [class]="mobileItemClass(item.path)">
+                <div
+                  class="p-2 rounded-lg"
+                  [class]="mobileIconClass(item.path)">
                   <app-icon [name]="item.icon" class="w-5 h-5" />
                 </div>
                 <span class="text-[17px]">{{ item.name }}</span>

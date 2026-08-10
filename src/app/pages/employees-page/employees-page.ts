@@ -17,7 +17,6 @@ import { TourService } from '@/services/tour.service';
 import { EmployeeService } from '@/services/employee.service';
 import type { Employee, OrganizationStats } from '@/models/employee.model';
 import { getTourSteps } from '@/shared/config/tour-config';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { ConfirmationModal } from '@/shared/components/confirmation-modal/confirmation-modal';
@@ -271,22 +270,4 @@ export class EmployeesPage implements OnDestroy {
     URL.revokeObjectURL(url);
   }
 
-  readonly rootClass = computed(() =>
-    cn('w-full px-8 py-8 md:px-12', this.isRtl() && 'rtl')
-  );
-
-  readonly headerRowClass = computed(() =>
-    cn('flex items-center gap-4', this.isRtl() ? 'flex-row-reverse' : 'flex-row')
-  );
-
-  readonly searchIconClass = computed(() =>
-    cn(
-      'absolute top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4',
-      this.isRtl() ? 'right-3' : 'left-3'
-    )
-  );
-
-  readonly tableClass = computed(() =>
-    cn('w-full border-collapse', this.isRtl() ? 'text-right' : 'text-left')
-  );
 }

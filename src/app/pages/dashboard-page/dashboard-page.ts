@@ -16,7 +16,6 @@ import { ToastService } from '@/services/toast.service';
 import { TourService } from '@/services/tour.service';
 import { AnalysisService } from '@/services/analysis.service';
 import { getTourSteps } from '@/shared/config/tour-config';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { BadgeDirective } from '@/shared/directives/form-controls.directive';
@@ -457,18 +456,9 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   viewButtonClass(target: 'analyzer' | 'history'): string {
-    return cn(
-      'flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 relative overflow-hidden',
-      this.view() === target
-        ? 'text-primary-foreground shadow-lg shadow-primary/25 -translate-y-px'
-        : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-    );
+    return this.view() === target
+      ? 'text-primary-foreground shadow-lg shadow-primary/25 -translate-y-px'
+      : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground';
   }
 
-  readonly playIconClass = computed(() =>
-    cn(
-      'w-4 h-4 z-10 relative',
-      this.view() === 'analyzer' ? 'fill-primary-foreground/20' : ''
-    )
-  );
 }

@@ -34,6 +34,7 @@
             <button
               appTabsTrigger
               [value]="cat.id"
+              class="relative data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 rounded-none h-full px-4 gap-3 transition-all duration-300 hover:text-primary/80 opacity-60 data-[state=active]:opacity-100"
               [class]="tabTriggerClass(cat)">
               <div class="p-2 rounded-lg transition-colors" [class]="cat.bg">
                 <app-icon [name]="cat.icon" [class]="'w-4 h-4 ' + cat.color" />
@@ -64,7 +65,9 @@
           class="mt-0 space-y-6 animate-fade-up block">
           <div class="grid gap-6">
             @for (comp of byCategory(cat.id); track comp.name) {
-              <div [class]="competencyRowClass(comp)">
+              <div
+                class="group flex items-center justify-between p-6 rounded-2xl border transition-all duration-300"
+                [class]="competencyRowClass(comp)">
                 <div class="flex items-center gap-6 flex-1">
                   <div class="relative">
                     <input
@@ -108,6 +111,7 @@
                       @for (star of stars; track star) {
                         <app-icon
                           name="Star"
+                          class="w-5 h-5 cursor-pointer transition-all duration-200 hover:scale-110"
                           [class]="starClass(star, comp.priority)"
                           (click)="updatePriority(comp.name, star)" />
                       }
@@ -170,7 +174,10 @@
               class="gap-3 border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 h-12 px-6 rounded-2xl transition-all shadow-sm"
               (click)="handleAiReweight()"
               [disabled]="isReweighting()">
-              <app-icon name="Wand2" [class]="reweightIconClass()" />
+              <app-icon
+                name="Wand2"
+                class="w-5 h-5"
+                [class.animate-spin]="isReweighting()" />
               <span class="font-bold">
                 {{ 'analyzer.reweight_ai' | t: 'Recalculate with AI' }}
               </span>
@@ -215,7 +222,9 @@
             }
           </div>
 
-          <div [class]="totalBoxClass()">
+          <div
+            class="p-6 rounded-2xl border-2 flex items-center justify-between backdrop-blur-md transition-all duration-500"
+            [class]="totalBoxClass()">
             <div class="flex items-center gap-4">
               @if (isBalanced()) {
                 <app-icon name="CheckCircle2" class="w-8 h-8" />

@@ -82,7 +82,11 @@
     size="sm"
     class="w-full mt-4 text-xs h-8 hover:bg-primary/5 text-muted-foreground hover:text-primary transition-colors"
     (click)="edit.emit(competency())">
-    <app-icon name="Edit" [class]="editIconClass()" />
+    <app-icon
+            name="Edit"
+            class="w-3 h-3"
+            [class.ml-2]="isRtl()"
+            [class.mr-2]="!isRtl()" />
     {{ 'common.edit' | t }}
   </button>
 </div>

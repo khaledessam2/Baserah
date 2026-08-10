@@ -3,7 +3,10 @@
     {{ 'job_title_competencies.no_job_title' | t }}
   </div>
 } @else {
-  <div [class]="rootClass()" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+  <div
+    class="min-h-screen bg-background pb-20 font-sans transition-colors duration-500"
+    [class.rtl]="isRtl()"
+    [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
     <!-- Top Decoration Line -->
     <div
       class="h-1 bg-linear-to-r from-primary via-secondary to-tertiary w-full absolute top-0 left-0"></div>
@@ -14,7 +17,11 @@
         class="text-center mb-10 relative animate-in slide-in-from-top-2 duration-700">
         <h1
           class="text-4xl md:text-5xl font-extrabold mb-4 text-gradient">
-          <app-icon name="Brain" [class]="brainIconClass()" />
+          <app-icon
+            name="Brain"
+            class="inline-block w-10 h-10 text-primary"
+            [class.ml-3]="isRtl()"
+            [class.mr-3]="!isRtl()" />
           {{ 'job_title_competencies.header_title' | t }}
         </h1>
         <p class="text-primary font-medium text-xl">
@@ -29,8 +36,13 @@
           appButton
           variant="ghost"
           (click)="router.navigate(['/app/job-titles'])"
-          [class]="backButtonClass()">
-          <app-icon name="ArrowRight" [class]="backArrowClass()" />
+          class="absolute top-0 gap-2 hover:bg-muted hidden md:flex text-muted-foreground hover:text-foreground"
+          [class.right-0]="isRtl()"
+          [class.left-0]="!isRtl()">
+          <app-icon
+            name="ArrowRight"
+            class="w-4 h-4"
+            [class.rotate-180]="!isRtl()" />
           {{ 'job_title_competencies.back' | t }}
         </button>
       </div>
@@ -193,7 +205,7 @@
                   {{ 'job_title_competencies.jd_edit' | t }}
                 </button>
               </div>
-              <div appCardContent [class]="jdContentClass()">
+              <div appCardContent class="p-8" [class.text-right]="isRtl()">
                 <div
                   class="prose max-w-none text-foreground/80 leading-relaxed whitespace-pre-wrap text-start">
                   {{ jd() || ('job_title_competencies.jd_empty' | t) }}
@@ -294,10 +306,14 @@
                 <div appCardContent class="p-6">
                   <div class="space-y-3">
                     @for (comp of allCompetencies(); track $index) {
-                      <div [class]="weightRowClass()">
+                      <div
+                        class="group flex items-center justify-between gap-6 p-4 bg-card rounded-xl border border-border shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200"
+                        [class.flex-row-reverse]="isRtl()">
                         <!-- Text Section (Right in RTL) -->
                         <div
-                          [class]="weightLabelClass()"
+                          class="w-1/3 text-sm font-medium text-foreground truncate"
+                          [class.text-right]="isRtl()"
+                          [class.text-left]="!isRtl()"
                           [title]="comp.competency_name">
                           {{ comp.competency_name }}
                         </div>
@@ -326,11 +342,21 @@
                     }
 
                     <!-- Total Weight Indicator -->
-                    <div [class]="totalWeightRowClass()">
-                      <span [class]="totalWeightLabelClass()">
+                    <div
+                      class="mt-6 pt-4 border-t flex justify-between items-center px-2"
+                      [class.flex-row-reverse]="isRtl()">
+                      <span
+                        class="text-sm font-bold text-slate-700"
+                        [class.text-right]="isRtl()">
                         {{ 'job_title_competencies.total_weight' | t }}
                       </span>
-                      <span [class]="totalWeightBadgeClass()">
+                      <span
+                        class="px-4 py-1.5 rounded-full text-sm font-bold shadow-sm border"
+                        [class]="
+                          isBalancedWeight()
+                            ? 'bg-green-100 text-green-700 border-green-200'
+                            : 'bg-amber-100 text-amber-700 border-amber-200'
+                        ">
                         {{ totalWeightPercent() }}%
                       </span>
                     </div>
@@ -566,7 +592,14 @@
                   </button>
                 }
               </div>
-              <div appCardContent [class]="assessmentContentClass()">
+              <div
+                appCardContent
+                class="p-6"
+                [class.p-12]="!hasAssessment()"
+                [class.flex]="!hasAssessment()"
+                [class.flex-col]="!hasAssessment()"
+                [class.items-center]="!hasAssessment()"
+                [class.text-center]="!hasAssessment()">
                 @if (hasAssessment()) {
                   <div class="space-y-8 animate-in fade-in-0 duration-500">
                     <!-- Stats Summary -->
@@ -601,7 +634,9 @@
                     <!-- Technical Assessment Questions -->
                     @if (technicalQuestions().length > 0) {
                       <div class="space-y-4">
-                        <h4 [class]="techHeadingClass()">
+                        <h4
+                          class="text-lg font-bold text-primary flex items-center gap-2"
+                          [class.flex-row-reverse]="isRtl()">
                           <app-icon name="Brain" class="w-5 h-5" />
                           {{
                             'job_title_competencies.technical_assessment_title'
@@ -613,7 +648,10 @@
                         </h4>
                         <div class="grid gap-3">
                           @for (q of technicalQuestions(); track $index; let idx = $index) {
-                            <div [class]="questionCardClass('primary')">
+                            <div
+                              class="p-4 bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all"
+                              [class.text-right]="isRtl()"
+                              [class]="questionCardClass('primary')">
                               <div class="flex items-start gap-3">
                                 <span
                                   class="flex-shrink-0 w-8 h-8 bg-primary/10 text-primary rounded-full flex items-center justify-center text-sm font-bold">
@@ -627,6 +665,7 @@
                                     <div class="grid gap-2">
                                       @for (choice of q.choices; track $index) {
                                         <div
+                                          class="px-3 py-2 text-sm rounded-lg border"
                                           [class]="
                                             choiceClass(q, choice, 'emerald')
                                           ">
@@ -666,7 +705,9 @@
                     <!-- Manager Assessment Questions -->
                     @if (managerQuestions().length > 0) {
                       <div class="space-y-4">
-                        <h4 [class]="mgrHeadingClass()">
+                        <h4
+                          class="text-lg font-bold text-secondary flex items-center gap-2"
+                          [class.flex-row-reverse]="isRtl()">
                           <app-icon name="Award" class="w-5 h-5" />
                           {{
                             'job_title_competencies.manager_assessment_title'
@@ -678,7 +719,10 @@
                         </h4>
                         <div class="grid gap-3">
                           @for (q of managerQuestions(); track $index; let idx = $index) {
-                            <div [class]="questionCardClass('secondary')">
+                            <div
+                              class="p-4 bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all"
+                              [class.text-right]="isRtl()"
+                              [class]="questionCardClass('secondary')">
                               <div class="flex items-start gap-3">
                                 <span
                                   class="flex-shrink-0 w-8 h-8 bg-secondary/10 text-secondary rounded-full flex items-center justify-center text-sm font-bold">
@@ -692,6 +736,7 @@
                                     <div class="grid gap-2">
                                       @for (choice of q.choices; track $index) {
                                         <div
+                                          class="px-3 py-2 text-sm rounded-lg border"
                                           [class]="
                                             choiceClass(q, choice, 'amber')
                                           ">

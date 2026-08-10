@@ -18,7 +18,6 @@ import { AuthApi } from '@/services/auth.api';
 import { AssessmentService } from '@/services/assessment.service';
 import type { Assessment } from '@/models/api.model';
 import { getTourSteps } from '@/shared/config/tour-config';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { Icon } from '@/shared/components/icon/icon';
@@ -229,64 +228,23 @@ export class EmployeeAssessmentsPage implements OnDestroy {
   }
 
   statCardClass(color: string): string {
-    return cn(
-      'border-l-4 shadow-sm hover:shadow-md transition-shadow',
-      STAT_COLORS[color]
-    );
+    return STAT_COLORS[color];
   }
 
+  /** Kept as the original wrote it — a colour class beside an opacity utility. */
   statIconWrapClass(color: string): string {
-    // Kept as the original wrote it — an opacity utility plus a colour class.
-    return cn('p-3 rounded-xl bg-opacity-10', `bg-${color}-500`);
+    return `bg-${color}-500`;
   }
 
   cardBannerClass(assessment: Assessment): string {
-    return cn(
-      'p-4 flex justify-between items-center text-white',
-      this.isTechnical(assessment)
-        ? 'bg-gradient-to-r from-blue-600 to-cyan-500'
-        : 'bg-gradient-to-r from-indigo-600 to-purple-500'
-    );
+    return this.isTechnical(assessment)
+      ? 'from-blue-600 to-cyan-500'
+      : 'from-indigo-600 to-purple-500';
   }
 
   filterButtonClass(value: FilterValue): string {
-    return cn(
-      'px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200',
-      this.filter() === value
-        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
-        : 'bg-muted text-muted-foreground hover:bg-muted/80'
-    );
+    return this.filter() === value
+      ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+      : 'bg-muted text-muted-foreground hover:bg-muted/80';
   }
-
-  readonly headerClass = computed(() =>
-    cn(
-      'bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-indigo-200/50 animate-in fade-in-0 slide-in-from-top-2 duration-500',
-      this.isRtl() ? 'text-right' : 'text-left'
-    )
-  );
-
-  readonly headerRowClass = computed(() =>
-    cn(
-      'flex items-center gap-4 sm:gap-6',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row'
-    )
-  );
-
-  readonly filterBarClass = computed(() =>
-    cn(
-      'flex flex-col md:flex-row md:items-center justify-between gap-4',
-      this.isRtl() ? 'md:flex-row-reverse' : 'md:flex-row'
-    )
-  );
-
-  readonly filterLabelClass = computed(() =>
-    cn(
-      'flex items-center gap-2 text-foreground font-bold',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row'
-    )
-  );
-
-  readonly filterButtonsClass = computed(() =>
-    cn('flex flex-wrap gap-2', this.isRtl() ? 'justify-end' : 'justify-start')
-  );
 }

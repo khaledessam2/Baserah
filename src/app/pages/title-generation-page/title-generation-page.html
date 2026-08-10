@@ -21,8 +21,14 @@
         <!-- Progress Steps -->
         <div class="space-y-3">
           @for (s of loadingSteps(); track s.id; let idx = $index) {
-            <div [class]="loadingRowClass(s)">
-              <div [class]="loadingBadgeClass(s)">
+            <div
+              class="flex items-center gap-3 p-3 rounded-xl transition-all"
+              [class.flex-row-reverse]="isRtl()"
+              [class.flex-row]="!isRtl()"
+              [class]="loadingRowClass(s)">
+              <div
+                class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-colors"
+                [class]="loadingBadgeClass(s)">
                 @if (s.status === 'completed') {
                   <app-icon name="Check" class="w-4 h-4" />
                 } @else {
@@ -35,7 +41,11 @@
         </div>
 
         @if (uploadResult(); as result) {
-          <div [class]="uploadResultClass(result.success)">
+          <div
+            class="mt-6 p-4 rounded-xl text-sm whitespace-pre-wrap ring-1"
+            [class.text-right]="isRtl()"
+            [class.text-left]="!isRtl()"
+            [class]="uploadResultClass(result.success)">
             {{ result.message }}
           </div>
         }
@@ -45,19 +55,44 @@
 
   <!-- Wizard Steps Header -->
   <div class="flex justify-center mb-12">
-    <div [class]="wizardRowClass()">
+    <div
+      class="flex items-center gap-4"
+      [class.flex-row-reverse]="isRtl()"
+      [class.flex-row]="!isRtl()">
       @for (s of steps(); track s.number; let idx = $index) {
-        <div [class]="stepWrapperClass(s.number)" (click)="goToStep(s.number)">
-          <div [class]="stepCircleClass(s.number)">
+        <div
+          class="flex items-center"
+          [class.flex-row-reverse]="isRtl()"
+          [class.flex-row]="!isRtl()"
+          [class.cursor-pointer]="isReachable(s.number)"
+          [class.cursor-not-allowed]="!isReachable(s.number)"
+          [class.opacity-60]="!isReachable(s.number)"
+          (click)="goToStep(s.number)">
+          <div
+            class="flex items-center justify-center w-10 h-10 rounded-full font-bold border-2 transition-all duration-300"
+            [class.hover:border-primary/50]="isReachable(s.number)"
+            [class]="stepCircleClass(s.number)">
             @if (step() > s.number) {
               <app-icon name="CheckCircle2" class="w-6 h-6" />
             } @else {
               {{ s.number }}
             }
           </div>
-          <span [class]="stepLabelClass(s.number)">{{ s.title }}</span>
+          <span
+            class="text-sm font-semibold hidden sm:block"
+            [class.mr-3]="isRtl()"
+            [class.ml-3]="!isRtl()"
+            [class.text-foreground]="isStepDone(s.number)"
+            [class.text-muted-foreground]="!isStepDone(s.number)">
+            {{ s.title }}
+          </span>
           @if (idx < steps().length - 1) {
-            <div [class]="stepConnectorClass(s.number)"></div>
+            <div
+              class="w-12 h-0.5 rounded-full"
+              [class.mr-4]="isRtl()"
+              [class.ml-4]="!isRtl()"
+              [class.bg-primary]="step() > s.number"
+              [class.bg-border]="step() <= s.number"></div>
           }
         </div>
       }
@@ -150,6 +185,7 @@
           class="grid md:grid-cols-2 gap-6 animate-in fade-in-0 slide-in-from-right-2 duration-300">
           <div
             (click)="generationMethod.set('ai')"
+            class="cursor-pointer rounded-4xl border-2 p-8 transition-all duration-300 flex flex-col items-center text-center gap-4 hover:-translate-y-1"
             [class]="methodCardClass('ai')">
             <div
               class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center">
@@ -173,6 +209,7 @@
 
           <div
             (click)="generationMethod.set('manual')"
+            class="cursor-pointer rounded-4xl border-2 p-8 transition-all duration-300 flex flex-col items-center text-center gap-4 hover:-translate-y-1"
             [class]="methodCardClass('manual')">
             <div
               class="w-20 h-20 rounded-2xl bg-secondary/10 flex items-center justify-center">
@@ -242,7 +279,10 @@
               @if (file(); as selected) {
                 <div
                   class="p-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 flex items-center justify-between animate-in slide-in-from-bottom-2">
-                  <div [class]="fileRowClass()">
+                  <div
+                    class="flex items-center gap-3"
+                    [class.flex-row-reverse]="isRtl()"
+                    [class.flex-row]="!isRtl()">
                     <div
                       class="p-2.5 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/20">
                       <app-icon
@@ -315,9 +355,15 @@
                 "
                 [(ngModel)]="manualTitles"
                 dir="auto"></textarea>
-              <div [class]="manualHintClass()">
+              <div
+                class="flex items-center gap-3 p-4 bg-primary/5 text-primary rounded-2xl text-xs ring-1 ring-primary/10"
+                [class.flex-row-reverse]="isRtl()"
+                [class.flex-row]="!isRtl()">
                 <app-icon name="CheckCircle2" class="w-5 h-5 shrink-0" />
-                <p [class]="manualHintTextClass()">
+                <p
+                  class="leading-relaxed"
+                  [class.text-right]="isRtl()"
+                  [class.text-left]="!isRtl()">
                   {{
                     'title_gen.manual_hint'
                       | t
@@ -331,14 +377,20 @@
       }
     </div>
 
-    <div [class]="footerClass()">
+    <div
+      class="p-8 border-t border-border bg-muted/20 flex justify-between rounded-b-4xl"
+      [class.flex-row-reverse]="isRtl()"
+      [class.flex-row]="!isRtl()">
       <button
         appButton
         variant="ghost"
         (click)="handleBack()"
         [disabled]="step() === 1"
         class="w-32 font-bold hover:bg-background gap-2 rounded-xl text-muted-foreground">
-        <app-icon name="ChevronRight" [class]="backArrowClass()" />
+        <app-icon
+          name="ChevronRight"
+          class="w-4 h-4"
+          [class.rotate-180]="isRtl()" />
         {{ 'common.back' | t: 'Back' }}
       </button>
 
@@ -357,7 +409,10 @@
         } @else {
           <span class="flex items-center gap-2">
             {{ 'common.next' | t: 'Next' }}
-            <app-icon name="ChevronLeft" [class]="nextArrowClass()" />
+            <app-icon
+              name="ChevronLeft"
+              class="w-4 h-4"
+              [class.rotate-180]="isRtl()" />
           </span>
         }
       </button>

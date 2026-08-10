@@ -73,7 +73,11 @@
           {{ 'common.cancel' | t }}
         </button>
         <button appButton (click)="handleSubmit()">
-          <app-icon name="Save" [class]="saveIconClass()" />
+          <app-icon
+            name="Save"
+            class="w-4 h-4"
+            [class.ml-2]="isRtl()"
+            [class.mr-2]="!isRtl()" />
           {{ 'common.save' | t }}
         </button>
       </div>

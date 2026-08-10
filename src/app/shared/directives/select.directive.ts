@@ -1,25 +1,15 @@
-import { Directive, computed } from '@angular/core';
-import { cn } from '@/shared/utils/utils';
-import { authoredClasses } from '@/shared/utils/host-class';
+import { Directive } from '@angular/core';
 
 @Directive({
   selector: '[appSelectLabel]',
   standalone: true,
-  host: { '[class]': 'classes()' },
+  host: { class: 'select-label' },
 })
-export class SelectLabelDirective {
-  private readonly authored = authoredClasses();
-  readonly classes = computed(() =>
-    cn('px-2 py-1.5 text-sm font-semibold', this.authored)
-  );
-}
+export class SelectLabelDirective {}
 
 @Directive({
   selector: '[appSelectSeparator]',
   standalone: true,
-  host: { '[class]': 'classes()' },
+  host: { class: 'select-separator' },
 })
-export class SelectSeparatorDirective {
-  private readonly authored = authoredClasses();
-  readonly classes = computed(() => cn('-mx-1 my-1 h-px bg-muted', this.authored));
-}
+export class SelectSeparatorDirective {}

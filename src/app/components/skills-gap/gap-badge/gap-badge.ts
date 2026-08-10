@@ -6,7 +6,6 @@ import {
   input,
 } from '@angular/core';
 import { I18nService } from '@/services/i18n.service';
-import { cn } from '@/shared/utils/utils';
 
 const SEVERITY_STYLES: Record<string, string> = {
   critical:
@@ -33,10 +32,7 @@ export class GapBadge {
     this.i18n.t(`skills_gap.severity.${this.severity()}`, this.severity())
   );
 
-  readonly classes = computed(() =>
-    cn(
-      'px-2.5 py-0.5 rounded-lg text-[10px] font-black border tracking-wide',
-      SEVERITY_STYLES[this.severity()] || SEVERITY_STYLES['low']
-    )
+  readonly severityStyle = computed(
+    () => SEVERITY_STYLES[this.severity()] || SEVERITY_STYLES['low']
   );
 }

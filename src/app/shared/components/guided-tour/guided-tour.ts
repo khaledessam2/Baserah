@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { I18nService } from '@/services/i18n.service';
 import { TourService } from '@/services/tour.service';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { Icon } from '@/shared/components/icon/icon';
 import type { TourStep } from '@/models/tour.model';
@@ -143,12 +142,9 @@ export class GuidedTour implements OnDestroy {
   }
 
   dotClass(index: number): string {
-    return cn(
-      'h-2 md:h-3 rounded-full transition-all duration-500',
-      index === this.currentStepIndex()
-        ? 'w-8 md:w-12 bg-primary shadow-[0_0_20px_rgba(37,99,235,0.4)]'
-        : 'w-2 md:w-3 bg-slate-200 dark:bg-slate-700'
-    );
+    return index === this.currentStepIndex()
+      ? 'w-8 md:w-12 bg-primary shadow-[0_0_20px_rgba(37,99,235,0.4)]'
+      : 'w-2 md:w-3 bg-slate-200 dark:bg-slate-700';
   }
 
   readonly effectivePlacement = computed<'top' | 'bottom' | 'left' | 'right'>(
@@ -162,19 +158,18 @@ export class GuidedTour implements OnDestroy {
     }
   );
 
+  /** The four placements are mutually exclusive, so exactly one string wins. */
   arrowClass(): string {
-    const placement = this.effectivePlacement();
-    return cn(
-      'absolute w-5 h-5 bg-white dark:bg-slate-900 border-inherit rotate-45',
-      placement === 'top' &&
-        'bottom-[-10px] left-1/2 -translate-x-1/2 border-b border-r border-slate-200 dark:border-slate-800',
-      placement === 'bottom' &&
-        'top-[-10px] left-1/2 -translate-x-1/2 border-t border-l border-slate-200 dark:border-slate-800',
-      placement === 'left' &&
-        'right-[-10px] top-1/2 -translate-y-1/2 border-t border-r border-slate-200 dark:border-slate-800',
-      placement === 'right' &&
-        'left-[-10px] top-1/2 -translate-y-1/2 border-b border-l border-slate-200 dark:border-slate-800'
-    );
+    switch (this.effectivePlacement()) {
+      case 'top':
+        return 'bottom-[-10px] left-1/2 -translate-x-1/2 border-b border-r border-slate-200 dark:border-slate-800';
+      case 'bottom':
+        return 'top-[-10px] left-1/2 -translate-x-1/2 border-t border-l border-slate-200 dark:border-slate-800';
+      case 'left':
+        return 'right-[-10px] top-1/2 -translate-y-1/2 border-t border-r border-slate-200 dark:border-slate-800';
+      case 'right':
+        return 'left-[-10px] top-1/2 -translate-y-1/2 border-b border-l border-slate-200 dark:border-slate-800';
+    }
   }
 
   readonly tooltipStyles = computed(() => {

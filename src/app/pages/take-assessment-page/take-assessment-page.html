@@ -44,7 +44,10 @@
     (closed)="showConfirmDialog.set(false)"
     (confirmed)="submitAssessment()" />
 
-  <div [class]="rootClass()" [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
+  <div
+    class="min-h-screen bg-background py-12 px-4 transition-all duration-500"
+    [class.rtl]="isRtl()"
+    [attr.dir]="isRtl() ? 'rtl' : 'ltr'">
     <div class="container max-w-4xl mx-auto space-y-8">
       <!-- Header Card -->
       <div
@@ -72,7 +75,11 @@
                 {{ assessment()?.department }}
               </p>
             </div>
-            <div [class]="progressWrapClass()">
+            <div
+              class="w-full md:w-auto space-y-1"
+              [class]="
+                isRtl() ? 'text-right md:text-left' : 'text-left md:text-right'
+              ">
               <p class="text-sm font-bold text-muted-foreground">
                 {{ 'take_assessment.progress' | t }}
               </p>
@@ -124,15 +131,26 @@
                   <button
                     type="button"
                     (click)="handleOptionSelect(idx)"
+                    class="group flex items-center p-5 rounded-2xl border-2 transition-all duration-300"
+                    [class.text-right]="isRtl()"
+                    [class.text-left]="!isRtl()"
                     [class]="optionButtonClass(idx)">
-                    <div [class]="optionBadgeClass(idx)">
+                    <div
+                      class="w-8 h-8 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors"
+                      [class.ml-4]="isRtl()"
+                      [class.mr-4]="!isRtl()"
+                      [class]="optionBadgeClass(idx)">
                       @if (currentAnswer() === idx) {
                         <app-icon name="CheckCircle2" class="w-5 h-5" />
                       } @else {
                         <span class="text-sm font-bold">{{ idx + 1 }}</span>
                       }
                     </div>
-                    <span [class]="optionTextClass(idx)">{{ option }}</span>
+                    <span
+                      class="text-lg font-bold transition-colors"
+                      [class]="optionTextClass(idx)">
+                      {{ option }}
+                    </span>
                   </button>
                 }
               </div>
@@ -169,6 +187,7 @@
                     <button
                       type="button"
                       (click)="handleOptionSelect(val)"
+                      class="flex flex-col items-center gap-2 md:gap-4 flex-1 p-3 sm:p-4 md:p-6 rounded-xl md:rounded-2xl border-2 transition-all duration-300"
                       [class]="likertButtonClass(val)">
                       <span class="text-3xl font-black">{{ val }}</span>
                     </button>
@@ -200,7 +219,10 @@
               [variant]="isLastQuestion() ? 'default' : 'secondary'"
               (click)="handlePrimaryAction()"
               [disabled]="isSubmitting() || (!isReadOnly() && !hasAnswered())"
-              [class]="primaryButtonClass()">
+              class="px-10 py-6 h-auto text-lg font-bold"
+              [class]="primaryButtonClass()"
+              [class.opacity-50]="isBlocked()"
+              [class.cursor-not-allowed]="isBlocked()">
               @if (isSubmitting()) {
                 <app-icon name="Loader2" class="w-5 h-5 animate-spin" />
               } @else {

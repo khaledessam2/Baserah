@@ -11,7 +11,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '@/services/auth.service';
 import { I18nService } from '@/services/i18n.service';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { InputDirective, LabelDirective } from '@/shared/directives/form-controls.directive';
@@ -53,36 +52,8 @@ export class AuthPage {
 
   private readonly destroyRef = inject(DestroyRef);
 
-  private readonly isRtl = computed(() => this.i18n.language() === 'ar');
+  readonly isRtl = computed(() => this.i18n.language() === 'ar');
 
-  fieldClass(extra = ''): string {
-    return cn(
-      'space-y-1.5',
-      extra,
-      this.isRtl() ? 'text-right' : 'text-left'
-    );
-  }
-
-  readonly iconClass = computed(() =>
-    cn(
-      'absolute top-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors',
-      this.isRtl() ? 'right-3' : 'left-3'
-    )
-  );
-
-  readonly inputClass = computed(() =>
-    cn(
-      'h-11 bg-white/50 dark:bg-slate-950/30 border-gray-200 dark:border-white/10 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground/60',
-      this.isRtl() ? 'pr-10' : 'pl-10'
-    )
-  );
-
-  readonly submitArrowClass = computed(() =>
-    cn(
-      'w-5 h-5 transition-transform group-hover:translate-x-1',
-      this.isRtl() && 'rotate-180'
-    )
-  );
 
   handleSubmit(): void {
     this.isLoading.set(true);

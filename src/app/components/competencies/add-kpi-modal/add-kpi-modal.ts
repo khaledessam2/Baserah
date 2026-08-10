@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { I18nService } from '@/services/i18n.service';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { Icon } from '@/shared/components/icon/icon';
 import { TranslatePipe } from '@/shared/pipes/translate.pipe';
@@ -46,9 +45,7 @@ export class AddKpiModal {
   readonly measurements = computed(() => measurementTypes(this.i18n));
   readonly periods = computed(() => targetPeriods(this.i18n));
 
-  readonly saveIconClass = computed(() =>
-    cn('w-4 h-4', this.i18n.language() === 'ar' ? 'ml-2' : 'mr-2')
-  );
+  readonly isRtl = computed(() => this.i18n.language() === 'ar');
 
   handleSubmit(): void {
     if (!this.kpiText().trim()) return;

@@ -1,7 +1,13 @@
 <div class="container mx-auto px-4 py-6 sm:py-8">
   <!-- Header -->
-  <div [class]="headerClass()">
-    <div [class]="headerRowClass()">
+  <div
+    class="mb-6 sm:mb-8"
+    [class.text-right]="isRtl()"
+    [class.text-left]="!isRtl()">
+    <div
+      class="flex items-center gap-4 mb-2"
+      [class.flex-row-reverse]="isRtl()"
+      [class.flex-row]="!isRtl()">
       <div
         class="bg-linear-to-br from-indigo-500 to-purple-600 text-white p-3 rounded-2xl shadow-xl shadow-indigo-500/20">
         <app-icon name="FileText" class="w-7 h-7" />
@@ -408,6 +414,7 @@
                                               isReevaluated(employee)
                                             "
                                             (click)="openReeval(employee)"
+                                            class="h-8 gap-1.5 px-3 rounded-lg shadow-sm font-bold transition-all text-[11px]"
                                             [class]="reevalButtonClass(employee)"
                                             [title]="reevalTitle(employee)">
                                             <app-icon
@@ -463,7 +470,8 @@
                                   size="sm"
                                   [disabled]="isGenerating(employee)"
                                   (click)="handleGenerateReport(employee)"
-                                  [class]="generateButtonClass(employee, true)">
+                                  class="mt-1 h-8 gap-2 px-3 text-white rounded-lg shadow-sm w-full font-bold transition-all"
+                                  [class]="generateButtonClass(employee)">
                                   @if (isGenerating(employee)) {
                                     <app-icon
                                       name="RefreshCw"
@@ -482,7 +490,8 @@
                               size="sm"
                               [disabled]="isGenerating(employee)"
                               (click)="handleGenerateReport(employee)"
-                              [class]="generateButtonClass(employee, false)">
+                              class="h-8 gap-2 px-3 text-white rounded-lg shadow-sm w-full font-bold transition-all"
+                              [class]="generateButtonClass(employee)">
                               @if (isGenerating(employee)) {
                                 <app-icon
                                   name="RefreshCw"

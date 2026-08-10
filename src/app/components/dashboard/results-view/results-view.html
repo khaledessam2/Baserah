@@ -48,8 +48,12 @@
 
         <div class="grid gap-3 pt-4">
           @for (stage of stages; track stage.id) {
-            <div [class]="stageRowClass(stage.id)">
-              <div [class]="stageBadgeClass(stage.id)">
+            <div
+              class="flex items-center gap-4 p-4 rounded-2xl border transition-all duration-500"
+              [class]="stageRowClass(stage.id)">
+              <div
+                class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors duration-500"
+                [class]="stageBadgeClass(stage.id)">
                 @if (activeStage() > stage.id) {
                   <app-icon name="CheckCircle2" class="w-6 h-6" />
                 } @else {
@@ -188,7 +192,10 @@
               class="glass-card rounded-3xl border-none overflow-hidden group/cat shadow-lg shadow-black/5">
               <button
                 type="button"
-                [class]="sectionHeaderClass(category.id)"
+                class="w-full p-6 flex items-center justify-between transition-all duration-300 hover:bg-muted/30 focus:outline-hidden"
+                [class.bg-muted/20]="isExpanded(category.id)"
+                [class.border-b]="isExpanded(category.id)"
+                [class.border-border/50]="isExpanded(category.id)"
                 (click)="toggleSection(category.id)">
                 <div class="flex items-center gap-4">
                   <div
@@ -208,7 +215,9 @@
                     {{ itemsFor(category.id).length }}
                   </div>
                 </div>
-                <div [class]="chevronClass(category.id)">
+                <div
+                  class="p-2 bg-muted/50 rounded-lg transition-transform duration-300"
+                  [class]="chevronClass(category.id)">
                   <app-icon name="ChevronDown" class="w-5 h-5" />
                 </div>
               </button>
@@ -244,7 +253,9 @@
                           </span>
                           <div class="flex gap-1">
                             @for (s of stars; track s) {
-                              <div [class]="priorityDotClass(s, comp.priority)"></div>
+                              <div
+                                class="w-2 h-2 rounded-full transition-all duration-300"
+                                [class]="priorityDotClass(s, comp.priority)"></div>
                             }
                           </div>
                           <div class="text-3xl font-black text-primary mt-1">

@@ -11,7 +11,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '@/services/auth.service';
 import { I18nService } from '@/services/i18n.service';
 import { SkillsGapService } from '@/services/skills-gap.service';
-import { cn } from '@/shared/utils/utils';
 import { Icon } from '@/shared/components/icon/icon';
 import type { IconName } from '@/shared/icons/icons';
 import { TABS_DIRECTIVES } from '@/shared/components/tabs';
@@ -65,14 +64,6 @@ export class SkillsGapPage {
     { value: 'risks', labelKey: 'skills_gap.tabs.risks', icon: 'ShieldAlert' },
   ];
 
-  readonly triggerClass = cn(
-    'rounded-xl px-4 py-2.5 font-bold transition-all text-xs sm:text-sm',
-    'data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-600 data-[state=active]:to-purple-600',
-    'data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-500/25',
-    'text-slate-400 hover:text-white',
-    'hover:bg-white/10'
-  );
-
   private readonly destroyRef = inject(DestroyRef);
 
   constructor() {
@@ -90,10 +81,4 @@ export class SkillsGapPage {
     });
   }
 
-  readonly tabsListClass = computed(() =>
-    cn(
-      'bg-slate-800/80 dark:bg-slate-900/80 backdrop-blur-xl p-1.5 shadow-lg shadow-black/20 rounded-2xl border border-white/10 flex-wrap h-auto gap-1 w-full',
-      this.isRtl() ? 'flex flex-row-reverse justify-start' : 'flex justify-start'
-    )
-  );
 }

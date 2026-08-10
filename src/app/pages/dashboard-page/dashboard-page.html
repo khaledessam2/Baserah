@@ -28,17 +28,22 @@
       <button
         type="button"
         (click)="view.set('analyzer')"
+        class="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 relative overflow-hidden"
         [class]="viewButtonClass('analyzer')">
         @if (view() === 'analyzer') {
           <div class="absolute inset-0 bg-primary opacity-100 z-0"></div>
         }
-        <app-icon name="Play" [class]="playIconClass()" />
+        <app-icon
+          name="Play"
+          class="w-4 h-4 z-10 relative"
+          [class.fill-primary-foreground/20]="view() === 'analyzer'" />
         <span class="z-10 relative">{{ 'nav.analyzer' | t }}</span>
       </button>
 
       <button
         type="button"
         (click)="showHistory()"
+        class="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 relative overflow-hidden"
         [class]="viewButtonClass('history')">
         @if (view() === 'history') {
           <div class="absolute inset-0 bg-primary opacity-100 z-0"></div>

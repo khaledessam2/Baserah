@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-} from '@angular/core';
-import { cn } from '@/shared/utils/utils';
-import { authoredClasses } from '@/shared/utils/host-class';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Icon } from '@/shared/components/icon/icon';
 import { Select } from '../select';
 
@@ -14,10 +7,8 @@ import { Select } from '../select';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Icon],
-  // `display: block` lives in styles, not a host `class`. A static host class is
-  // on the element before `authoredClasses()` reads it, so `block` would be
-  // swept into the authored string and `cn()` would drop the button's `flex`
-  // as a conflicting display utility — stacking the chevron under the label.
+  // The look sits on the inner <button> (`.select-trigger`), so the host needs a
+  // display of its own or it would collapse around it.
   styles: `
     :host {
       display: block;
@@ -27,13 +18,4 @@ import { Select } from '../select';
 })
 export class SelectTrigger {
   readonly select = inject(Select);
-
-  private readonly authored = authoredClasses();
-
-  readonly classes = computed(() =>
-    cn(
-      'flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
-      this.authored
-    )
-  );
 }

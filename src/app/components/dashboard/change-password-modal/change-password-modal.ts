@@ -14,7 +14,6 @@ import type { Observable } from 'rxjs';
 import { I18nService } from '@/services/i18n.service';
 import { ToastService } from '@/services/toast.service';
 import { AuthApi } from '@/services/auth.api';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import {
   Dialog,
@@ -65,8 +64,10 @@ export class ChangePasswordModal {
 
   private readonly isRtl = computed(() => this.i18n.language() === 'ar');
 
+  // Crosses a component boundary as `[contentClass]`, so this stays a string
+  // rather than a class binding on an element.
   readonly contentClass = computed(() =>
-    cn('sm:max-w-[400px]', this.isRtl() && 'rtl')
+    this.isRtl() ? 'sm:max-w-[400px] rtl' : 'sm:max-w-[400px]'
   );
 
   readonly heading = computed(() =>

@@ -1,7 +1,13 @@
 <div class="mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
   <!-- Header -->
-  <div [class]="headerClass()">
-    <div [class]="headerRowClass()">
+  <div
+    class="bg-linear-to-r from-indigo-600 to-purple-600 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white shadow-2xl shadow-indigo-200/50 animate-in fade-in-0 slide-in-from-top-2 duration-500"
+    [class.text-right]="isRtl()"
+    [class.text-left]="!isRtl()">
+    <div
+      class="flex items-center gap-4 sm:gap-6"
+      [class.flex-row-reverse]="isRtl()"
+      [class.flex-row]="!isRtl()">
       <div
         class="w-16 h-16 sm:w-20 sm:h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center shrink-0">
         <app-icon
@@ -24,7 +30,10 @@
     data-tour="stats-grid"
     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     @for (stat of statCards(); track stat.label) {
-      <div appCard [class]="statCardClass(stat.color)">
+      <div
+        appCard
+        class="border-l-4 shadow-sm hover:shadow-md transition-shadow"
+        [class]="statCardClass(stat.color)">
         <div appCardContent class="p-6">
           <div class="flex justify-between items-start">
             <div class="space-y-1">
@@ -36,7 +45,9 @@
                 {{ stat.value }}
               </p>
             </div>
-            <div [class]="statIconWrapClass(stat.color)">
+            <div
+              class="p-3 rounded-xl bg-opacity-10"
+              [class]="statIconWrapClass(stat.color)">
               <app-icon [name]="stat.icon" class="w-6 h-6" />
             </div>
           </div>
@@ -51,16 +62,25 @@
     data-tour="filter-section"
     class="border-none shadow-lg glass-card overflow-hidden">
     <div appCardContent class="p-6">
-      <div [class]="filterBarClass()">
-        <div [class]="filterLabelClass()">
+      <div
+        class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+        [class.md:flex-row-reverse]="isRtl()">
+        <div
+          class="flex items-center gap-2 text-foreground font-bold"
+          [class.flex-row-reverse]="isRtl()"
+          [class.flex-row]="!isRtl()">
           <app-icon name="Filter" class="w-5 h-5 text-primary" />
           <span>{{ 'employee_assessments.filter_title' | t }}</span>
         </div>
-        <div [class]="filterButtonsClass()">
+        <div
+          class="flex flex-wrap gap-2"
+          [class.justify-end]="isRtl()"
+          [class.justify-start]="!isRtl()">
           @for (option of filterOptions; track option.value) {
             <button
               type="button"
               (click)="filter.set(option.value)"
+              class="px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200"
               [class]="filterButtonClass(option.value)">
               {{ option.labelKey | t }}
             </button>
@@ -98,7 +118,9 @@
             appCard
             class="group hover:shadow-xl transition-all duration-300 border-none bg-card overflow-hidden animate-in fade-in-0 zoom-in-95"
             [style.animation-delay.ms]="index * 50">
-            <div [class]="cardBannerClass(assessment)">
+            <div
+              class="p-4 flex justify-between items-center text-white bg-linear-to-r"
+              [class]="cardBannerClass(assessment)">
               <div class="flex items-center gap-3">
                 @if (isTechnical(assessment)) {
                   <app-icon name="Code2" class="w-5 h-5" />

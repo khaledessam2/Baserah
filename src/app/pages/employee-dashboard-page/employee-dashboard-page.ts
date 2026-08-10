@@ -17,7 +17,6 @@ import { AuthApi } from '@/services/auth.api';
 import { DevelopmentService } from '@/services/development.service';
 import type { DevelopmentCourse, EmployeeProfile } from '@/models/api.model';
 import { getTourSteps } from '@/shared/config/tour-config';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { ConfirmationModal } from '@/shared/components/confirmation-modal/confirmation-modal';
@@ -69,7 +68,7 @@ export class EmployeeDashboardPage implements OnInit, OnDestroy {
   readonly isLoadingCourses = signal(true);
   readonly courseToComplete = signal<string | null>(null);
 
-  private readonly isRtl = computed(() => this.i18n.language() === 'ar');
+  readonly isRtl = computed(() => this.i18n.language() === 'ar');
   private tourTimer?: ReturnType<typeof setTimeout>;
 
   ngOnInit(): void {
@@ -241,15 +240,14 @@ export class EmployeeDashboardPage implements OnInit, OnDestroy {
     alert(this.i18n.t('common.coming_soon'));
   }
 
+  /**
+   * The palette classes are darkened for dark mode the same way the React
+   * component did, by rewriting the tint suffixes.
+   */
   cardIconClass(card: DashboardCard): string {
-    return cn(
-      'w-14 h-14 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110 duration-300 bg-primary/10 text-primary',
-      // The palette classes are darkened for dark mode the same way the React
-      // component did, by rewriting the tint suffixes.
-      card.color
-        .replace('100', '100 dark:bg-opacity-10')
-        .replace('600', '600 dark:text-opacity-90')
-    );
+    return card.color
+      .replace('100', '100 dark:bg-opacity-10')
+      .replace('600', '600 dark:text-opacity-90');
   }
 
   readonly infoRows = computed<InfoRow[]>(() => {
@@ -297,17 +295,4 @@ export class EmployeeDashboardPage implements OnInit, OnDestroy {
     ];
   });
 
-  readonly headerRowClass = computed(() =>
-    cn(
-      'flex items-center gap-4 sm:gap-6',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row'
-    )
-  );
-
-  readonly headerTextClass = computed(() =>
-    cn(
-      'space-y-1 sm:space-y-2 flex-1',
-      this.isRtl() ? 'text-right' : 'text-left'
-    )
-  );
 }

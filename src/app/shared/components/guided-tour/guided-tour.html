@@ -57,7 +57,9 @@
         class="flex items-center justify-between gap-8 pt-6 border-t border-slate-100 dark:border-slate-800/60">
         <div class="flex gap-1.5 md:gap-2.5 items-center">
           @for (s of tour.steps(); track $index) {
-            <div [class]="dotClass($index)"></div>
+            <div
+              class="h-2 md:h-3 rounded-full transition-all duration-500"
+              [class]="dotClass($index)"></div>
           }
         </div>
 
@@ -99,7 +101,9 @@
       </div>
 
       @if (!isMobile()) {
-        <div [class]="arrowClass()"></div>
+        <div
+          class="absolute w-5 h-5 bg-white dark:bg-slate-900 border-inherit rotate-45"
+          [class]="arrowClass()"></div>
       }
     </div>
   </div>

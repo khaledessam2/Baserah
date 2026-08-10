@@ -13,7 +13,6 @@ import { catchError, forkJoin, of } from 'rxjs';
 import { I18nService } from '@/services/i18n.service';
 import { SkillsGapService } from '@/services/skills-gap.service';
 import type { EmployeeGap } from '@/models/skills-gap.model';
-import { cn } from '@/shared/utils/utils';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { ChartComponent } from '@/shared/components/chart/chart';
 import { Icon } from '@/shared/components/icon/icon';
@@ -409,8 +408,7 @@ export class SkillsGapOverviewTab {
   }
 
   scoreClass(score: number): string {
-    return cn(
-      'text-xs font-black px-2 py-0.5 rounded-lg',
+    return (
       score >= 60
         ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20'
         : score >= 40

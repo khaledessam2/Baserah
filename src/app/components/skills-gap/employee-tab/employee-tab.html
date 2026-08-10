@@ -128,7 +128,9 @@
           </p>
         </div>
         <div class="text-center">
-          <p [class]="mgrScoreClass(d.summary.latest_mgr_score)">
+          <p
+            class="text-2xl font-black"
+            [class]="mgrScoreClass(d.summary.latest_mgr_score)">
             {{
               d.summary.latest_mgr_score !== null
                 ? d.summary.latest_mgr_score + '%'
@@ -141,7 +143,9 @@
         </div>
         <div class="text-center">
           @if (d.summary.has_improvement !== null) {
-            <div [class]="improvementClass(d.summary.has_improvement)">
+            <div
+              class="text-2xl font-black"
+              [class]="improvementClass(d.summary.has_improvement)">
               @if (d.summary.has_improvement) {
                 <app-icon name="TrendingUp" class="w-6 h-6 mx-auto" />
               } @else {
@@ -205,7 +209,9 @@
               @for (g of trainingGaps(); track $index; let i = $index) {
                 <div
                   class="px-5 py-3 flex items-center gap-3 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/10 transition-colors">
-                  <div [class]="trainingBadgeClass(g.severity)">
+                  <div
+                    class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-black shrink-0"
+                    [class]="trainingBadgeClass(g.severity)">
                     {{ i + 1 }}
                   </div>
                   <div class="flex-1 min-w-0">
@@ -265,7 +271,9 @@
               </p>
             </div>
             <div class="flex flex-col items-center gap-1">
-              <div [class]="directionCircleClass(comparison.direction)">
+              <div
+                class="w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
+                [class]="directionCircleClass(comparison.direction)">
                 @switch (comparison.direction) {
                   @case ('improved') {
                     <app-icon name="TrendingUp" class="w-6 h-6 text-white" />
@@ -280,7 +288,9 @@
                   }
                 }
               </div>
-              <span [class]="changeTextClass(comparison.score_change)">
+              <span
+                class="text-sm font-black"
+                [class]="changeToneClass(comparison.score_change)">
                 {{ comparison.score_change > 0 ? '+' : ''
                 }}{{ comparison.score_change }}%
               </span>
@@ -317,7 +327,9 @@
                     {{ c.initial_score ?? '—' }}%
                   </span>
                   <div class="w-16 flex justify-center">
-                    <span [class]="changeIndicatorClass(c.change)">
+                    <span
+                      class="inline-flex items-center gap-0.5 font-bold text-sm"
+                      [class]="changeToneClass(c.change)">
                       @if (c.change > 0) {
                         <app-icon
                           name="ArrowUpRight"
@@ -413,6 +425,7 @@
               <div
                 class="flex flex-col items-center gap-1.5 flex-1 max-w-[80px]">
                 <span
+                  class="text-sm font-black"
                   [class]="historyScoreClass(i === d.history.length - 1)">
                   {{ h.score }}%
                 </span>
@@ -420,6 +433,7 @@
                   class="w-full relative rounded-t-xl overflow-hidden bg-slate-100 dark:bg-slate-800"
                   style="height: 100px">
                   <div
+                    class="absolute bottom-0 w-full rounded-t-xl transition-all duration-700 bg-linear-to-t"
                     [class]="historyBarClass(i === d.history.length - 1)"
                     [style.height.%]="h.score"></div>
                 </div>

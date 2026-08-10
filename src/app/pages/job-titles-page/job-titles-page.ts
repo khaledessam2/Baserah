@@ -17,7 +17,6 @@ import { TourService } from '@/services/tour.service';
 import { DashboardService } from '@/services/dashboard.service';
 import type { JobTitleData } from '@/models/dashboard.model';
 import { getTourSteps } from '@/shared/config/tour-config';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { InputDirective } from '@/shared/directives/form-controls.directive';
@@ -194,22 +193,4 @@ export class JobTitlesPage implements OnDestroy {
     });
   }
 
-  readonly rootClass = computed(() =>
-    cn(
-      'container mx-auto px-4 py-8 min-h-screen transition-all duration-300',
-      this.isRtl() ? 'rtl' : 'ltr'
-    )
-  );
-
-  readonly refreshIconClass = computed(
-    () => `w-4 h-4 ${this.loading() ? 'animate-spin' : ''}`
-  );
-
-  readonly tableClass = computed(() =>
-    cn('w-full border-collapse', this.isRtl() ? 'text-right' : 'text-left')
-  );
-
-  readonly chevronCellClass = computed(() =>
-    cn('px-6 py-5', this.isRtl() ? 'text-right' : 'text-left')
-  );
 }

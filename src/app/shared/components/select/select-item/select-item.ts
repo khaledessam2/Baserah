@@ -8,8 +8,6 @@ import {
   input,
   viewChild,
 } from '@angular/core';
-import { cn } from '@/shared/utils/utils';
-import { authoredClasses } from '@/shared/utils/host-class';
 import { Icon } from '@/shared/components/icon/icon';
 import { Select } from '../select';
 
@@ -22,7 +20,7 @@ import { Select } from '../select';
     role: 'option',
     '[attr.aria-selected]': 'isSelected()',
     '[attr.data-disabled]': 'disabled() || null',
-    '[class]': 'classes()',
+    class: 'select-item',
     '(click)': 'onClick()',
   },
   templateUrl: './select-item.html',
@@ -33,16 +31,8 @@ export class SelectItem {
 
   private readonly select = inject(Select);
   private readonly label = viewChild<ElementRef<HTMLElement>>('label');
-  private readonly authored = authoredClasses();
 
   readonly isSelected = computed(() => this.select.value() === this.value());
-
-  readonly classes = computed(() =>
-    cn(
-      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      this.authored
-    )
-  );
 
   constructor() {
     // The label is projected text owned by the *parent* view, and it is usually

@@ -29,7 +29,6 @@ import { ManagerAssessmentService } from '@/services/manager-assessment.service'
 import { ReportService } from '@/services/report.service';
 import type { Assessment, GroupedEmployee } from '@/models/api.model';
 import { getTourSteps } from '@/shared/config/tour-config';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { CARD_DIRECTIVES } from '@/shared/directives/card.directive';
 import { ChartComponent } from '@/shared/components/chart/chart';
@@ -776,22 +775,15 @@ export class ReportsPage implements OnInit, OnDestroy {
   }
 
   reevalButtonClass(employee: GroupedRow): string {
-    return cn(
-      'h-8 gap-1.5 px-3 rounded-lg shadow-sm font-bold transition-all text-[11px]',
-      this.isReevaluated(employee)
-        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-        : 'bg-amber-500 hover:bg-amber-600 text-white hover:scale-105 active:scale-95'
-    );
+    return this.isReevaluated(employee)
+      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+      : 'bg-amber-500 hover:bg-amber-600 text-white hover:scale-105 active:scale-95';
   }
 
-  generateButtonClass(employee: GroupedRow, stacked: boolean): string {
-    return cn(
-      stacked ? 'mt-1 ' : '',
-      'h-8 gap-2 px-3 text-white rounded-lg shadow-sm w-full font-bold transition-all',
-      this.isGenerating(employee)
-        ? 'bg-emerald-400 cursor-wait opacity-80'
-        : 'bg-emerald-600 dark:bg-emerald-600 hover:bg-emerald-700 dark:hover:bg-emerald-500 hover:scale-105 active:scale-95'
-    );
+  generateButtonClass(employee: GroupedRow): string {
+    return this.isGenerating(employee)
+      ? 'bg-emerald-400 cursor-wait opacity-80'
+      : 'bg-emerald-600 dark:bg-emerald-600 hover:bg-emerald-700 dark:hover:bg-emerald-500 hover:scale-105 active:scale-95';
   }
 
   superiorButtonClass(mgr: ManagerStatus): string {
@@ -913,17 +905,6 @@ export class ReportsPage implements OnInit, OnDestroy {
     },
   };
 
-  readonly headerClass = computed(() =>
-    cn('mb-6 sm:mb-8', this.isRtl() ? 'text-right' : 'text-left')
-  );
-
-  readonly headerRowClass = computed(() =>
-    cn(
-      'flex items-center gap-4 mb-2',
-      this.isRtl() ? 'flex-row-reverse' : 'flex-row'
-    )
-  );
-
   statTopBarClass(gradient: string): string {
     return `absolute top-0 left-0 w-full h-1.5 bg-linear-to-r ${gradient} opacity-80`;
   }
@@ -932,10 +913,10 @@ export class ReportsPage implements OnInit, OnDestroy {
     return `p-3.5 rounded-2xl bg-linear-to-br ${gradient} shadow-xl shadow-indigo-500/20 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`;
   }
 
-  readonly progressDialogClass = computed(() =>
-    cn(
-      'max-w-4xl max-h-[90vh] overflow-y-auto',
-      this.isRtl() ? 'rtl text-right' : 'ltr text-left'
-    )
+  // Crosses a component boundary as `[contentClass]`, so this stays a string.
+  readonly progressDialogClass = computed(
+    () =>
+      'max-w-4xl max-h-[90vh] overflow-y-auto ' +
+      (this.isRtl() ? 'rtl text-right' : 'ltr text-left')
   );
 }

@@ -63,7 +63,10 @@
     <div appCardContent class="px-4 sm:px-6">
       <form (ngSubmit)="handleSubmit()" class="space-y-4">
         @if (!isLogin()) {
-          <div [class]="fieldClass('animate-in slide-in-from-top-2 duration-300')">
+          <div
+            class="space-y-1.5 animate-in slide-in-from-top-2 duration-300"
+            [class.text-right]="isRtl()"
+            [class.text-left]="!isRtl()">
             <label
               appLabel
               for="fullName"
@@ -71,7 +74,9 @@
               {{ 'auth.full_name' | t: 'Full Name' }}
             </label>
             <div class="relative group">
-              <app-icon name="User" [class]="iconClass()" />
+              <app-icon name="User" class="absolute top-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors"
+              [class.right-3]="isRtl()"
+              [class.left-3]="!isRtl()" />
               <input
                 appInput
                 id="fullName"
@@ -80,12 +85,17 @@
                 [placeholder]="'auth.full_name_placeholder' | t: 'Belal Mohamed'"
                 required
                 [(ngModel)]="fullName"
-                [class]="inputClass()" />
+                class="h-11 bg-white/50 dark:bg-slate-950/30 border-gray-200 dark:border-white/10 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground/60"
+                [class.pr-10]="isRtl()"
+                [class.pl-10]="!isRtl()" />
             </div>
           </div>
         }
 
-        <div [class]="fieldClass()">
+        <div
+          class="space-y-1.5"
+          [class.text-right]="isRtl()"
+          [class.text-left]="!isRtl()">
           <label
             appLabel
             for="email"
@@ -93,7 +103,9 @@
             {{ 'auth.email_label' | t: 'Email or ID Number' }}
           </label>
           <div class="relative group">
-            <app-icon name="Mail" [class]="iconClass()" />
+            <app-icon name="Mail" class="absolute top-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors"
+              [class.right-3]="isRtl()"
+              [class.left-3]="!isRtl()" />
             <input
               appInput
               id="email"
@@ -103,11 +115,16 @@
               required
               [ngModel]="email()"
               (ngModelChange)="email.set($event.toLowerCase())"
-              [class]="inputClass()" />
+              class="h-11 bg-white/50 dark:bg-slate-950/30 border-gray-200 dark:border-white/10 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground/60"
+              [class.pr-10]="isRtl()"
+              [class.pl-10]="!isRtl()" />
           </div>
         </div>
 
-        <div [class]="fieldClass()">
+        <div
+          class="space-y-1.5"
+          [class.text-right]="isRtl()"
+          [class.text-left]="!isRtl()">
           <label
             appLabel
             for="password"
@@ -115,7 +132,9 @@
             {{ 'auth.password' | t: 'Password' }}
           </label>
           <div class="relative group">
-            <app-icon name="Lock" [class]="iconClass()" />
+            <app-icon name="Lock" class="absolute top-3 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors"
+              [class.right-3]="isRtl()"
+              [class.left-3]="!isRtl()" />
             <input
               appInput
               id="password"
@@ -124,7 +143,9 @@
               placeholder="••••••••"
               required
               [(ngModel)]="password"
-              [class]="inputClass()" />
+              class="h-11 bg-white/50 dark:bg-slate-950/30 border-gray-200 dark:border-white/10 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-foreground placeholder:text-muted-foreground/60"
+              [class.pr-10]="isRtl()"
+              [class.pl-10]="!isRtl()" />
           </div>
         </div>
 
@@ -150,7 +171,10 @@
                   ? ('auth.login_button' | t: 'Login')
                   : ('auth.register_button' | t: 'Create Account')
               }}
-              <app-icon name="ArrowRight" [class]="submitArrowClass()" />
+              <app-icon
+                name="ArrowRight"
+                class="w-5 h-5 transition-transform group-hover:translate-x-1"
+                [class.rotate-180]="isRtl()" />
             </span>
           }
         </button>

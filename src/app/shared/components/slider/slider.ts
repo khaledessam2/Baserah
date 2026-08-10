@@ -8,8 +8,6 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { cn } from '@/shared/utils/utils';
-import { authoredClasses } from '@/shared/utils/host-class';
 
 /**
  * Port of `ui/slider.tsx` (Radix Slider), single-thumb — the only shape the app
@@ -21,7 +19,7 @@ import { authoredClasses } from '@/shared/utils/host-class';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
-    '[class]': 'classes()',
+    class: 'slider',
     'data-orientation': 'horizontal',
     '(pointerdown)': 'onPointerDown($event)',
     '(keydown)': 'onKeyDown($event)',
@@ -42,15 +40,6 @@ export class Slider {
 
   private readonly trackEl = viewChild.required<ElementRef<HTMLElement>>('track');
   private readonly dragging = signal(false);
-
-  private readonly authored = authoredClasses();
-
-  readonly classes = computed(() =>
-    cn(
-      'relative flex w-full touch-none select-none items-center',
-      this.authored
-    )
-  );
 
   readonly percent = computed(() => {
     const span = this.max() - this.min();

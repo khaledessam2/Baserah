@@ -1,11 +1,9 @@
 @if (open()) {
-  <div
-    class="fixed inset-0 z-50 bg-black/80 animate-in fade-in-0"
-    (click)="requestClose()"></div>
+  <div class="dialog-overlay animate-in fade-in-0" (click)="requestClose()"></div>
   <div
     role="dialog"
     aria-modal="true"
-    class="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 animate-in fade-in-0 zoom-in-95 sm:rounded-lg max-h-[90vh] overflow-y-auto"
+    class="dialog-content animate-in fade-in-0 zoom-in-95"
     [class]="contentClass()"
     (keydown.escape)="requestClose()">
     <ng-content />

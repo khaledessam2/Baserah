@@ -11,7 +11,6 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@/services/auth.service';
 import { I18nService } from '@/services/i18n.service';
 import { ThemeService } from '@/services/theme.service';
-import { cn } from '@/shared/utils/utils';
 import { ButtonDirective } from '@/shared/directives/button.directive';
 import { Icon } from '@/shared/components/icon/icon';
 import { RevealDirective } from '@/shared/directives/reveal.directive';
@@ -93,12 +92,9 @@ export class LandingPage implements OnDestroy {
   );
 
   readonly navClass = computed(() =>
-    cn(
-      'fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b',
-      this.isScrolled()
-        ? 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-slate-200 dark:border-slate-800 py-2 shadow-sm'
-        : 'bg-transparent border-transparent py-4'
-    )
+    this.isScrolled()
+      ? 'bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-slate-200 dark:border-slate-800 py-2 shadow-sm'
+      : 'bg-transparent border-transparent py-4'
   );
 
   readonly logoSrc = computed(() => {
@@ -108,22 +104,14 @@ export class LandingPage implements OnDestroy {
     return this.isRtl() ? '/baserah-ar.png' : '/baserah.png';
   });
 
-  readonly logoClass = computed(() =>
-    cn(
-      'w-auto object-contain transition-all duration-500 hover:scale-105',
-      this.isRtl()
-        ? this.isScrolled()
-          ? 'h-22 md:h-16'
-          : 'h-24 md:h-24'
-        : this.isDarkMode()
-        ? this.isScrolled()
-          ? 'h-10 md:h-24'
-          : 'h-12 md:h-12'
-        : this.isScrolled()
-        ? 'h-20 md:h-20'
-        : 'h-12 md:h-12'
-    )
-  );
+  /** Height only — the rest of the logo styling is static in the template. */
+  readonly logoClass = computed(() => {
+    if (this.isRtl()) return this.isScrolled() ? 'h-22 md:h-16' : 'h-24 md:h-24';
+    if (this.isDarkMode()) {
+      return this.isScrolled() ? 'h-10 md:h-24' : 'h-12 md:h-12';
+    }
+    return this.isScrolled() ? 'h-20 md:h-20' : 'h-12 md:h-12';
+  });
 
   goToApp(): void {
     this.isMobileMenuOpen.set(false);
